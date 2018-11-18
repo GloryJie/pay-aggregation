@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gloryjie.pay.channel.dao.ChannelConfigDao">
+
+    <resultMap id="BaseResultMap" type="com.gloryjie.pay.channel.model.ChannelConfig">
+        <id column="id" property="id"/>
+        <result column="app_id" property="appId"/>
+        <result column="channel" property="channel"/>
+        <result column="channel_config" property="channelConfig"/>
+        <result column="start_date" property="startDate"/>
+        <result column="end_date" property="endDate"/>
+        <result column="status" property="status"/>
+        <result column="logical_del" property="logicalDel"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+
+    <sql id="table">
+        t_channel_config
+    </sql>
+
+    <sql id="all_column">
+        id, app_id, channel, channel_config, start_date, end_date, status, logical_del, create_time,
+        update_time
+    </sql>
+
+    <sql id="all_value">
+        #{id}, #{appId}, #{channel}, #{channelConfig}, #{startDate}, #{endDate}, #{status}, #{logicalDel}, now(), now()
+    </sql>
+
+    <select id="load" parameterType="integer" resultMap="BaseResultMap">
+        select
+        <include refid="all_column"/>
+        from
+        <include refid="table"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insert" parameterType="com.gloryjie.pay.channel.model.ChannelConfig" useGeneratedKeys="true"
+            keyProperty="id">
+        insert into
+        <include refid="table"/>
+        (<include refid="all_column"/>)
+        values
+        (<include refid="all_value"/>)
+    </insert>
+
+    <update id="update" parameterType="com.gloryjie.pay.channel.model.ChannelConfig">
+        update
+        <include refid="table"/>
+        <set>
+            <if test="appId != null">app_id = #{appId},</if>
+            <if test="channel != null">channel = #{channel},</if>
+            <if test="channelConfig != null">channel_config = #{channelConfig},</if>
+            <if test="startDate != null">start_date = #{startDate},</if>
+            <if test="endDate != null">end_date = #{endDate},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="logicalDel != null">logical_del = #{logicalDel},</if>
+            update_time = now()
+        </set>
+        where id = #{id}
+    </update>
+
+
+</mapper>

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gloryjie.pay.refund.dao.RefundDao">
+
+    <resultMap id="BaseResultMap" type="com.gloryjie.pay.refund.model.Refund">
+        <id column="refund_no" property="refundNo"/>
+        <result column="charge_no" property="chargeNo"/>
+        <result column="order_no" property="orderNo"/>
+        <result column="app_id" property="appId"/>
+        <result column="channel" property="channel"/>
+        <result column="amount" property="amount"/>
+        <result column="description" property="description"/>
+        <result column="client_ip" property="clientIp"/>
+        <result column="extra" property="extra"/>
+        <result column="user_hold" property="userHold"/>
+        <result column="transaction_no" property="transactionNo"/>
+        <result column="time_created" property="timeCreated"/>
+        <result column="time_succeed" property="timeSucceed"/>
+        <result column="status" property="status"/>
+        <result column="failure_code" property="failureCode"/>
+        <result column="failure_msg" property="failureMsg"/>
+        <result column="currency" property="currency"/>
+        <result column="operator_id" property="operatorId"/>
+        <result column="version" property="version"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <sql id="table">
+        t_refund
+    </sql>
+
+
+    <sql id="all_column">
+        refund_no, charge_no, order_no, app_id, channel, amount, description, client_ip,
+        extra, user_hold, transaction_no, time_created, time_succeed, status, failure_code,
+        failure_msg, currency, operator_id, version, create_time, update_time
+    </sql>
+
+    <sql id="all_value">
+        #{refundNo}, #{chargeNo}, #{orderNo}, #{appId}, #{channel}, #{amount}, #{description}, #{clientIp}, #{extra},
+        #{userHold}, #{transactionNo}, #{timeCreated}, #{timeSucceed}, #{status}, #{failureCode},#{failureMsg},
+        #{currency}, #{operatorId}, #{version}, now(), now()
+    </sql>
+
+    <insert id="insert" parameterType="com.gloryjie.pay.refund.model.Refund">
+        insert into
+        <include refid="table"/>
+        (<include refid="all_column"/>)
+        values
+        (<include refid="all_value"/>)
+    </insert>
+
+    <select id="load" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="all_column"/>
+        from
+        <include refid="table"/>
+        where refund_no = #{refundNo}
+    </select>
+
+
+    <update id="update" parameterType="com.gloryjie.pay.refund.model.Refund">
+        update <include refid="table"/>
+        <set>
+            <if test="chargeNo != null">charge_no = #{chargeNo},</if>
+            <if test="orderNo != null">order_no = #{orderNo},</if>
+            <if test="appId != null">app_id = #{appId},</if>
+            <if test="channel != null">channel = #{channel},</if>
+            <if test="amount != null">amount = #{amount},</if>
+            <if test="description != null">description = #{description},</if>
+            <if test="clientIp != null">client_ip = #{clientIp},</if>
+            <if test="extra != null">extra = #{extra},</if>
+            <if test="userHold != null">user_hold = #{userHold},</if>
+            <if test="transactionNo != null">transaction_no = #{transactionNo},</if>
+            <if test="timeCreated != null">time_created = #{timeCreated},</if>
+            <if test="timeSucceed != null">time_succeed = #{timeSucceed},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="failureCode != null">failure_code = #{failureCode},</if>
+            <if test="failureMsg != null">failure_msg = #{failureMsg},</if>
+            <if test="currency != null">currency = #{currency},</if>
+            <if test="operatorId != null">operator_id = #{operatorId},</if>
+            <if test="version != null">version = #{version},</if>
+            update_time = now()
+        </set>
+        where refund_no = #{refundNo}
+    </update>
+
+
+</mapper>
