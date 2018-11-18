@@ -8,7 +8,7 @@
     <version>0.0.1-SNAPSHOT</version>
     <modules>
         <module>pay-base</module>
-        <module>pay-entry</module>
+        <module>pay-service-entry</module>
         <module>pay-service</module>
     </modules>
     <packaging>pom</packaging>
