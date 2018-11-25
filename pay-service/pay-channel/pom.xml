@@ -11,5 +11,26 @@
 
     <artifactId>pay-channel</artifactId>
 
+    <properties>
+        <pay-channel-api>0.0.1-SNAPSHOT</pay-channel-api>
+        <pay-base>0.0.1-SNAPSHOT</pay-base>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.gloryjie</groupId>
+            <artifactId>pay-channel-api</artifactId>
+            <version>${pay-channel-api}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.gloryjie</groupId>
+            <artifactId>pay-base</artifactId>
+            <version>${pay-base}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.alipay.sdk</groupId>
+            <artifactId>alipay-sdk-java</artifactId>
+        </dependency>
+    </dependencies>
 
 </project>

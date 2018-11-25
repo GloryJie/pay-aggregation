@@ -37,6 +37,14 @@
         where id = #{id}
     </select>
 
+    <select id="loadByAppIdAndChannel" resultMap="BaseResultMap">
+        select
+        <include refid="all_column"/>
+        from
+        <include refid="table"/>
+        where app_id = #{appId} and channel = #{channelType}
+    </select>
+
     <insert id="insert" parameterType="com.gloryjie.pay.channel.model.ChannelConfig" useGeneratedKeys="true"
             keyProperty="id">
         insert into
