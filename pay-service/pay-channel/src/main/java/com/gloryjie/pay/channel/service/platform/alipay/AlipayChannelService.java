@@ -55,6 +55,7 @@ public abstract class AlipayChannelService implements ChannelService {
     @Autowired
     protected ChannelConfigDao channelConfigDao;
 
+    // TODO: 2018/11/27  AlipayClient为线程安全,可以缓存起来进行优化
     protected AlipayClient getAlipayClient(AlipayChannelConfig config) {
         String url = sandboxMode ? ALIPAY_SANDBOX_URL : ALIPAY_PRODUCT_URL;
         return DefaultAlipayClient.builder(url, config.getMerchantId(), config.getMerchantPrivateKey())

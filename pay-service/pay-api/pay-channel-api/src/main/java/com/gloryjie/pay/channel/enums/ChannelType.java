@@ -24,7 +24,9 @@ public enum  ChannelType {
      * 支付渠道
      */
     ALIPAY_PAGE(10,"GATEWAY","FAST_INSTANT_TRADE_PAY","支付宝网页支付"),
-    ALIPAY_WAP(20,"GATEWAY","QUICK_WAP_WAY","支付宝手机网站支付");
+    ALIPAY_WAP(20,"GATEWAY","QUICK_WAP_WAY","支付宝手机网站支付"),
+    ALIPAY_SCAN_CODE(20,"GATEWAY","","支付宝扫码支付");
+
 
 
     /**
