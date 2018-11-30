@@ -15,6 +15,7 @@ import com.gloryjie.pay.channel.enums.ChannelType;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.util.Map;
 
 /**
  * @author Jie
@@ -52,6 +53,8 @@ public class ChannelPayDto {
      * 支付单描述
      */
     private String body;
+
+    private Map<String,String> extra;
 
 
 }
