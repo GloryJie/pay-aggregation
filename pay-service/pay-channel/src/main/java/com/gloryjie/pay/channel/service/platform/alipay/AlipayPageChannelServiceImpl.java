@@ -22,6 +22,7 @@ import com.gloryjie.pay.channel.dto.ChannelPayDto;
 import com.gloryjie.pay.channel.dto.ChannelResponse;
 import com.gloryjie.pay.channel.enums.ChannelType;
 import com.gloryjie.pay.channel.model.ChannelConfig;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 /**
@@ -30,6 +31,10 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class AlipayPageChannelServiceImpl extends AlipayChannelService {
+
+    @Value("${domain}")
+    private String domain;
+
 
 
     @Override
@@ -40,7 +45,8 @@ public class AlipayPageChannelServiceImpl extends AlipayChannelService {
         AlipayTradePagePayRequest request = new AlipayTradePagePayRequest();
         // TODO: 2018/11/25 跳转地址需要修改为商户上送,并且需要设置异步通知地址
         request.setReturnUrl("http://localhost:10020/alipay/notify");
-        request.setNotifyUrl("");
+        request.setNotifyUrl(domain + "/platform/notify/alipay");
+//        http://jierong.nat300.top/notification/alipay
 
         AlipayTradePagePayModel model = new AlipayTradePagePayModel();
         model.setOutTradeNo(payDto.getChargeNo());

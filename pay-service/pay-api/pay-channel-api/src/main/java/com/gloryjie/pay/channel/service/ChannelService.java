@@ -13,6 +13,8 @@ package com.gloryjie.pay.channel.service;
 
 import com.gloryjie.pay.channel.dto.*;
 
+import java.util.Map;
+
 /**
  * 渠道服务
  * @author Jie
@@ -50,13 +52,16 @@ public interface ChannelService {
     /**
      * 处理渠道的异步通知
      * @return
+     * @param param
      */
-    boolean handleAsync();
+    boolean handleAsync(Map<String, String> param);
 
     /**
      * 渠道验签
-     * @return
+     * @param param 参数
+     * @param publicKey 支付宝公钥
+     * @param signType 签名方式
      */
-    boolean verifySign();
+    boolean verifySign(Map<String, String> param, String publicKey, String signType);
 
 }

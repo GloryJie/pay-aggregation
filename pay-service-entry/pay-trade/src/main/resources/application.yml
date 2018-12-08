@@ -11,3 +11,6 @@ mybatis:
 logging:
   level:
     com.gloryjie.pay: debug
+server:
+  port: 10010
+domain: "http://jierong.nat300.top"
