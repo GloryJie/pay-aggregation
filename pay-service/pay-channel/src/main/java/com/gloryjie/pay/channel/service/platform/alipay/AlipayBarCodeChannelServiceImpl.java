@@ -15,12 +15,12 @@ import com.alipay.api.AlipayApiException;
 import com.alipay.api.AlipayClient;
 import com.alipay.api.AlipayResponse;
 import com.alipay.api.domain.AlipayTradePayModel;
-import com.alipay.api.request.AlipayTradePagePayRequest;
 import com.alipay.api.request.AlipayTradePayRequest;
 import com.gloryjie.pay.base.util.JsonUtil;
 import com.gloryjie.pay.channel.config.AlipayChannelConfig;
 import com.gloryjie.pay.channel.dto.ChannelPayDto;
-import com.gloryjie.pay.channel.dto.ChannelResponse;
+import com.gloryjie.pay.channel.dto.response.ChannelPayResponse;
+import com.gloryjie.pay.channel.dto.response.ChannelResponse;
 import com.gloryjie.pay.channel.enums.ChannelType;
 import com.gloryjie.pay.channel.model.ChannelConfig;
 import org.springframework.stereotype.Service;
@@ -34,7 +34,7 @@ import org.springframework.stereotype.Service;
 public class AlipayBarCodeChannelServiceImpl extends AlipayChannelService{
 
     @Override
-    public ChannelResponse pay(ChannelPayDto payDto) {
+    public ChannelPayResponse pay(ChannelPayDto payDto) {
         ChannelConfig config = channelConfigDao.loadByAppIdAndChannel(payDto.getAppId(), payDto.getChannel().name());
         AlipayChannelConfig alipayChannelConfig = JsonUtil.parse(config.getChannelConfig(), AlipayChannelConfig.class);
         AlipayClient client = getAlipayClient(alipayChannelConfig);

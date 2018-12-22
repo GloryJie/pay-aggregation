@@ -12,7 +12,7 @@
     <artifactId>pay-service-entry</artifactId>
     <packaging>pom</packaging>
     <modules>
-        <module>pay-trade</module>
+        <module>pay-trade-entry</module>
     </modules>
 
 

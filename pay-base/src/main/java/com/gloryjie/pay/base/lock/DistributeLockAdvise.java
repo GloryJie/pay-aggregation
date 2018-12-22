@@ -13,7 +13,7 @@ package com.gloryjie.pay.base.lock;
 
 import com.gloryjie.pay.base.annotation.DistributeLockAnnotation;
 import com.gloryjie.pay.base.enums.error.CommonErrorEnum;
-import com.gloryjie.pay.base.exception.error.SystemErrorException;
+import com.gloryjie.pay.base.exception.error.SystemException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -53,7 +53,7 @@ public class DistributeLockAdvise {
         String key = getKey(method, args, lockConfig);
         if (StringUtils.isBlank(key) || "null".equals(key)) {
             log.error("get param key null");
-            throw SystemErrorException.create(CommonErrorEnum.INTERNAL_SYSTEM_ERROR);
+            throw SystemException.create(CommonErrorEnum.INTERNAL_SYSTEM_ERROR);
         }
 
         boolean lockResult = distributeLock.tryLock(key, lockConfig.keyExpireTime(), lockConfig.waitTime(), lockConfig.retryInterval());
@@ -64,11 +64,11 @@ public class DistributeLockAdvise {
                 return joinPoint.proceed(args);
             } else {
                 // 否则返回系统繁忙
-                throw SystemErrorException.create(CommonErrorEnum.SYSTEM_BUSY_ERROR);
+                throw SystemException.create(CommonErrorEnum.SYSTEM_BUSY_ERROR);
             }
         } catch (Throwable throwable) {
             log.error("execute target method={} error", method.getName(), throwable);
-            throw SystemErrorException.create(CommonErrorEnum.INTERNAL_SYSTEM_ERROR, throwable.getMessage());
+            throw SystemException.create(CommonErrorEnum.INTERNAL_SYSTEM_ERROR, throwable.getMessage());
         } finally {
             // 释放锁
             distributeLock.unLock(key);
@@ -119,7 +119,7 @@ public class DistributeLockAdvise {
             }
         } catch (Exception e) {
             log.error("get param key fail ", e);
-            throw SystemErrorException.create(CommonErrorEnum.INTERNAL_SYSTEM_ERROR, e);
+            throw SystemException.create(CommonErrorEnum.INTERNAL_SYSTEM_ERROR, e);
         }
         return targetKey;
     }

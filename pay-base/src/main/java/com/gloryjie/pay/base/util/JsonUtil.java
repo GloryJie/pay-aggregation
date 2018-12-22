@@ -20,8 +20,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.gloryjie.pay.base.enums.error.CommonErrorEnum;
-import com.gloryjie.pay.base.exception.error.SystemErrorException;
-import com.sun.istack.internal.NotNull;
+import com.gloryjie.pay.base.exception.error.SystemException;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
@@ -66,7 +65,7 @@ public class JsonUtil {
             return object instanceof String ? (String) object : OBJECT_MAPPER.writeValueAsString(object);
         } catch (JsonProcessingException e) {
             log.error("serialize object={} to json fail", object, e);
-            throw SystemErrorException.create(CommonErrorEnum.INTERNAL_SYSTEM_ERROR, e);
+            throw SystemException.create(CommonErrorEnum.INTERNAL_SYSTEM_ERROR, e);
         }
     }
 
@@ -85,7 +84,7 @@ public class JsonUtil {
         } catch (Exception e) {
             log.error("deserialization src={} to object={} fail", src,
                     clazz.getSimpleName(), e);
-            throw SystemErrorException.create(CommonErrorEnum.INTERNAL_SYSTEM_ERROR, e);
+            throw SystemException.create(CommonErrorEnum.INTERNAL_SYSTEM_ERROR, e);
         }
     }
 
@@ -102,7 +101,7 @@ public class JsonUtil {
             return typeReference.getType().equals(String.class) ? (T) src : OBJECT_MAPPER.readValue(src, typeReference);
         } catch (Exception e) {
             log.error("deserialization src={} to object={} fail", src, typeReference.getType().getTypeName(), e);
-            throw SystemErrorException.create(CommonErrorEnum.INTERNAL_SYSTEM_ERROR, e);
+            throw SystemException.create(CommonErrorEnum.INTERNAL_SYSTEM_ERROR, e);
         }
     }
 
@@ -120,7 +119,7 @@ public class JsonUtil {
             return OBJECT_MAPPER.readValue(src, javaType);
         } catch (IOException e) {
             log.error("deserialization src={} to complex collection={} element={} fail", src, collections.getSimpleName(), elementClass, e);
-            throw SystemErrorException.create(CommonErrorEnum.INTERNAL_SYSTEM_ERROR, e);
+            throw SystemException.create(CommonErrorEnum.INTERNAL_SYSTEM_ERROR, e);
         }
     }
 }

@@ -54,6 +54,8 @@ public class ChannelPayDto {
      */
     private String body;
 
+    private Long timeExpire;
+
     private Map<String,String> extra;
 
 

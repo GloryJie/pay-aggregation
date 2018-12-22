@@ -26,6 +26,6 @@ public class ChannelPayQueryDto {
 
     private Integer appId;
 
-    private ChannelType channelType;
+    private ChannelType channel;
 
 }

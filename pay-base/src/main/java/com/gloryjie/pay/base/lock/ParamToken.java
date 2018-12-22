@@ -12,7 +12,7 @@
 package com.gloryjie.pay.base.lock;
 
 import com.gloryjie.pay.base.enums.error.CommonErrorEnum;
-import com.gloryjie.pay.base.exception.error.SystemErrorException;
+import com.gloryjie.pay.base.exception.error.SystemException;
 import lombok.Data;
 
 import java.util.Iterator;
@@ -50,6 +50,6 @@ public class ParamToken implements Iterator<ParamToken> {
 
     @Override
     public void remove() {
-        throw SystemErrorException.create(CommonErrorEnum.INTERNAL_SYSTEM_ERROR, " ParamToken not support remove operation");
+        throw SystemException.create(CommonErrorEnum.INTERNAL_SYSTEM_ERROR, " ParamToken not support remove operation");
     }
 }

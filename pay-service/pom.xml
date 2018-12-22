@@ -12,9 +12,8 @@
     <artifactId>pay-service</artifactId>
     <packaging>pom</packaging>
     <modules>
-        <module>pay-charge</module>
+        <module>pay-trade</module>
         <module>pay-app</module>
-        <module>pay-refund</module>
         <module>pay-api</module>
         <module>pay-channel</module>
     </modules>

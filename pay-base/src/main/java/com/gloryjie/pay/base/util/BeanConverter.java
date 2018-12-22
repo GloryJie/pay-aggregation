@@ -14,14 +14,19 @@ package com.gloryjie.pay.base.util;
 
 import com.gloryjie.pay.base.annotation.IgnoreCovertProperty;
 import com.gloryjie.pay.base.enums.error.CommonErrorEnum;
-import com.gloryjie.pay.base.exception.error.SystemErrorException;
+import com.gloryjie.pay.base.exception.error.SystemException;
+import javafx.beans.binding.ObjectExpression;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
+import org.springframework.cglib.beans.BeanMap;
+import org.springframework.context.annotation.Bean;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * model和dto之间的属性拷贝, 使用Spring BeanUtils
@@ -47,7 +52,7 @@ public class BeanConverter {
             return target;
         } catch (Exception e) {
             log.error("covert src={} to target={} failed, error message={} ", src, targetType, e.getMessage());
-            throw SystemErrorException.create(CommonErrorEnum.INTERNAL_SYSTEM_ERROR);
+            throw SystemException.create(CommonErrorEnum.INTERNAL_SYSTEM_ERROR);
         }
     }
 
@@ -68,7 +73,7 @@ public class BeanConverter {
         } catch (Exception e) {
             log.error("covertIgnore src={} to target={} failed,ignoreProperties={}", src, targetType.getSimpleName(),
                     ignoreProperties, e.getMessage());
-            throw SystemErrorException.create(CommonErrorEnum.INTERNAL_SYSTEM_ERROR);
+            throw SystemException.create(CommonErrorEnum.INTERNAL_SYSTEM_ERROR);
         }
     }
 
@@ -111,7 +116,36 @@ public class BeanConverter {
             return targetList;
         } catch (Exception e) {
             log.error("batchCovert srcList={} to target={} failed", srcList, targetType, e);
-            throw SystemErrorException.create(CommonErrorEnum.INTERNAL_SYSTEM_ERROR);
+            throw SystemException.create(CommonErrorEnum.INTERNAL_SYSTEM_ERROR);
         }
+    }
+
+    /**
+     * map转bean
+     *
+     * @param src    数据源
+     * @param tClass 目的bean的class类型
+     * @param <T>
+     * @return
+     */
+    public static <T> T mapToBean(@NonNull Map<String, Object> src, @NonNull Class<T> tClass) {
+        try {
+            T object = tClass.newInstance();
+            BeanMap beanMap = BeanMap.create(object);
+            beanMap.putAll(src);
+            return object;
+        } catch (Exception e) {
+            log.error("map to bean error map={}, bean={}", src, tClass.getSimpleName());
+            throw SystemException.create(CommonErrorEnum.INTERNAL_SYSTEM_ERROR);
+        }
+    }
+
+    public static <T> Map<String, Object> beanToMap(@NonNull T src) {
+        Map<String, Object> map = new HashMap<>(16);
+        BeanMap beanMap = BeanMap.create(src);
+        for (Object key : beanMap.keySet()) {
+            map.put(key + "", beanMap.get(key));
+        }
+        return map;
     }
 }

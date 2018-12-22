@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gloryjie.pay.trade.dao.ChargeDao">
+
+    <resultMap id="BaseResultMap" type="com.gloryjie.pay.trade.model.Charge">
+        <id column="charge_no" property="chargeNo"/>
+        <result column="order_no" property="orderNo"/>
+        <result column="app_id" property="appId"/>
+        <result column="service_app_id" property="serviceAppId"/>
+        <result column="amount" property="amount"/>
+        <result column="subject" property="subject"/>
+        <result column="body" property="body"/>
+        <result column="channel" property="channel"/>
+        <result column="client_ip" property="clientIp"/>
+        <result column="description" property="description"/>
+        <result column="user_hold" property="userHold"/>
+        <result column="platform_trade_no" property="platformTradeNo"/>
+        <result column="time_created" property="timeCreated"/>
+        <result column="time_paid" property="timePaid"/>
+        <result column="time_expire" property="timeExpire"/>
+        <result column="expire_timestamp" property="expireTimestamp"/>
+        <result column="live_mode" jdbcType="BIT" property="liveMode"/>
+        <result column="status" jdbcType="BIT" property="status"/>
+        <result column="currency" property="currency"/>
+        <result column="extra" property="extra"/>
+        <result column="version" property="version"/>
+        <result column="failure_code" property="failureCode"/>
+        <result column="failure_msg" property="failureMsg"/>
+        <result column="credential" property="credential"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+
+    <sql id="table">
+        t_charge
+    </sql>
+
+    <sql id="all_column">
+        charge_no, order_no, app_id, service_app_id, amount,
+        subject, body, channel, client_ip, description, user_hold, platform_trade_no, time_created,
+        time_paid, time_expire, expire_timestamp, live_mode, status, currency, extra, version,
+        failure_code, failure_msg, credential, update_time, create_time
+    </sql>
+
+    <sql id="all_value">
+        #{chargeNo}, #{orderNo}, #{appId}, #{serviceAppId}, #{amount},  #{subject}, #{body},
+        #{channel}, #{clientIp}, #{description}, #{userHold}, #{platformTradeNo}, #{timeCreated}, #{timePaid}, #{timeExpire},
+        #{expireTimestamp}, #{liveMode}, #{status}, #{currency}, #{extra}, #{version}, #{failureCode}, #{failureMsg},
+        #{credential}, now(), now()
+    </sql>
+
+    <select id="load" parameterType="string" resultMap="BaseResultMap">
+        select
+        <include refid="all_column"/>
+        from
+        <include refid="table"/>
+        where charge_no = #{chargeNo}
+    </select>
+
+    <select id="loadByAppIdAndOrderNo" resultType="com.gloryjie.pay.trade.model.Charge">
+        select
+        <include refid="all_column"/>
+        from
+        <include refid="table"/>
+        where order_no = #{orderNo} and app_id = #{appId}
+    </select>
+
+    <insert id="insert" parameterType="com.gloryjie.pay.trade.model.Charge">
+        insert into
+        <include refid="table"/>
+        (<include refid="all_column"/>)
+        values
+        (<include refid="all_value"/>)
+    </insert>
+
+    <update id="update" parameterType="com.gloryjie.pay.trade.model.Charge">
+        update t_charge
+        <set>
+            <if test="orderNo != null">order_no = #{orderNo},</if>
+            <if test="appId != null">app_id = #{appId},</if>
+            <if test="serviceAppId != null">service_app_id = #{serviceAppId},</if>
+            <if test="amount != null">amount = #{amount},</if>
+            <if test="subject != null">subject = #{subject},</if>
+            <if test="body != null">body = #{body},</if>
+            <if test="channel != null">channel = #{channel},</if>
+            <if test="clientIp != null">client_ip = #{clientIp},</if>
+            <if test="description != null">description = #{description},</if>
+            <if test="userHold != null">user_hold = #{userHold},</if>
+            <if test="platformTradeNo != null">platform_trade_no = #{platformTradeNo},</if>
+            <if test="timeCreated != null">time_created = #{timeCreated},</if>
+            <if test="timePaid != null">time_paid = #{timePaid},</if>
+            <if test="timeExpire != null">time_expire = #{timeExpire},</if>
+            <if test="expireTimestamp != null">expire_timestamp = #{expireTimestamp},</if>
+            <if test="liveMode != null">live_mode = #{liveMode},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="currency != null">currency = #{currency},</if>
+            <if test="extra != null">extra = #{extra},</if>
+            <if test="version != null">version = #{version},</if>
+            <if test="failureCode != null">failure_code = #{failureCode},</if>
+            <if test="failureMsg != null">failure_msg = #{failureMsg},</if>
+            <if test="credential != null">credential = #{credential},</if>
+            update_time = now()
+        </set>
+        where charge_no = #{chargeNo}
+    </update>
+
+</mapper>

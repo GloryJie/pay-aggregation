@@ -16,24 +16,27 @@ import com.alipay.api.AlipayClient;
 import com.alipay.api.AlipayResponse;
 import com.alipay.api.domain.AlipayTradeWapPayModel;
 import com.alipay.api.request.AlipayTradeWapPayRequest;
+import com.gloryjie.pay.base.exception.error.ExternalException;
 import com.gloryjie.pay.base.util.JsonUtil;
 import com.gloryjie.pay.channel.config.AlipayChannelConfig;
 import com.gloryjie.pay.channel.dto.ChannelPayDto;
-import com.gloryjie.pay.channel.dto.ChannelResponse;
+import com.gloryjie.pay.channel.dto.response.ChannelPayResponse;
 import com.gloryjie.pay.channel.enums.ChannelType;
+import com.gloryjie.pay.channel.error.ChannelError;
 import com.gloryjie.pay.channel.model.ChannelConfig;
 import org.springframework.stereotype.Service;
 
 /**
  * 支付宝手机网页支付
+ *
  * @author Jie
  * @since
  */
 @Service
-public class AlipayWapChannelServiceImpl extends AlipayChannelService{
+public class AlipayWapChannelServiceImpl extends AlipayChannelService {
 
     @Override
-    public ChannelResponse pay(ChannelPayDto payDto) {
+    public ChannelPayResponse pay(ChannelPayDto payDto) {
         ChannelConfig config = channelConfigDao.loadByAppIdAndChannel(payDto.getAppId(), payDto.getChannel().name());
         AlipayChannelConfig alipayChannelConfig = JsonUtil.parse(config.getChannelConfig(), AlipayChannelConfig.class);
         AlipayClient client = getAlipayClient(alipayChannelConfig);
@@ -44,18 +47,21 @@ public class AlipayWapChannelServiceImpl extends AlipayChannelService{
         model.setOutTradeNo(payDto.getChargeNo());
         model.setTotalAmount(payDto.getAmount().toString());
         model.setSubject(payDto.getSubject());
+        model.setTimeExpire(payDto.getTimeExpire() + "m");
         model.setProductCode(ChannelType.ALIPAY_WAP.getProductCode());
 
         request.setBizModel(model);
 
         try {
-            AlipayResponse response = client.pageExecute(request);
-            System.out.println(JsonUtil.toJson(response));
-            System.out.println(response.getBody());
+            AlipayResponse alipayResponse = client.pageExecute(request);
+            ChannelPayResponse payResponse = new ChannelPayResponse(alipayResponse);
+            if (alipayResponse.isSuccess()) {
+                payResponse.setCredential(alipayResponse.getBody());
+            }
+            return payResponse;
         } catch (AlipayApiException e) {
-            e.printStackTrace();
+            throw ExternalException.create(ChannelError.PAY_PLATFORM_ERROR, e.getErrMsg());
         }
-        return null;
     }
 
 }

@@ -29,7 +29,7 @@ import com.gloryjie.pay.channel.dao.ChannelConfigDao;
 import com.gloryjie.pay.channel.dto.ChannelPayQueryDto;
 import com.gloryjie.pay.channel.dto.ChannelRefundDto;
 import com.gloryjie.pay.channel.dto.ChannelRefundQueryDto;
-import com.gloryjie.pay.channel.dto.ChannelResponse;
+import com.gloryjie.pay.channel.dto.response.ChannelResponse;
 import com.gloryjie.pay.channel.model.ChannelConfig;
 import com.gloryjie.pay.channel.service.ChannelService;
 import lombok.extern.slf4j.Slf4j;
@@ -76,7 +76,7 @@ public abstract class AlipayChannelService implements ChannelService {
 
     @Override
     public ChannelResponse queryPayment(ChannelPayQueryDto queryDto) {
-        ChannelConfig config = channelConfigDao.loadByAppIdAndChannel(queryDto.getAppId(), queryDto.getChannelType().name());
+        ChannelConfig config = channelConfigDao.loadByAppIdAndChannel(queryDto.getAppId(), queryDto.getChannel().name());
         AlipayClient client = getAlipayClient(JsonUtil.parse(config.getChannelConfig(), AlipayChannelConfig.class));
         AlipayTradeQueryRequest request = new AlipayTradeQueryRequest();
         AlipayTradeQueryModel model = new AlipayTradeQueryModel();

@@ -12,6 +12,8 @@
 package com.gloryjie.pay.channel.service;
 
 import com.gloryjie.pay.channel.dto.*;
+import com.gloryjie.pay.channel.dto.response.ChannelPayResponse;
+import com.gloryjie.pay.channel.dto.response.ChannelResponse;
 
 import java.util.Map;
 
@@ -26,7 +28,7 @@ public interface ChannelService {
      * 发起支付请求
      * @return
      */
-    ChannelResponse pay(ChannelPayDto payDto);
+    ChannelPayResponse pay(ChannelPayDto payDto);
 
     /**
      * 发起退款请求
