@@ -50,6 +50,8 @@ public class ChargeDto {
      */
     private BigDecimal amount;
 
+    private BigDecimal actualAmount;
+
     private ChargeStatus status;
 
     /**

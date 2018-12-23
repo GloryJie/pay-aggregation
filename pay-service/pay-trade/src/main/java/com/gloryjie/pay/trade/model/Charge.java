@@ -36,6 +36,12 @@ public class Charge {
     private BigDecimal amount;
 
     /**
+     * 实付金额
+     */
+    private BigDecimal actualAmount;
+
+
+    /**
      * 购买商品的标题
      */
     private String subject;

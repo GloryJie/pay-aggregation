@@ -42,7 +42,7 @@ public interface ChannelService {
      * @return
      * @param queryDto
      */
-    ChannelResponse queryPayment(ChannelPayQueryDto queryDto);
+    ChannelPayQueryResponse queryPayment(ChannelPayQueryDto queryDto);
 
     /**
      * 退款结果查询

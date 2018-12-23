@@ -11,6 +11,7 @@
  */
 package com.gloryjie.pay.trade.service;
 
+import com.gloryjie.pay.base.util.JsonUtil;
 import com.gloryjie.pay.channel.dto.param.ChargeCreateParam;
 import com.gloryjie.pay.channel.enums.ChannelType;
 import com.gloryjie.pay.trade.PayTradeApplication;
@@ -54,6 +55,13 @@ public class ChargeServiceTest {
         ChargeDto chargeDto = chargeService.pay(createParam);
 
         Assert.assertNotNull(chargeDto);
+    }
+
+    @Test
+    public void queryPaymentTest(){
+        ChargeDto chargeDto = chargeService.queryPayment(123456,"1545482478");
+
+        System.out.println(JsonUtil.toJson(chargeDto));
     }
 
 

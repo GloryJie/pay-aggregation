@@ -18,18 +18,24 @@ import com.alipay.api.DefaultAlipayClient;
 import com.alipay.api.domain.AlipayTradeFastpayRefundQueryModel;
 import com.alipay.api.domain.AlipayTradeQueryModel;
 import com.alipay.api.domain.AlipayTradeRefundModel;
+import com.alipay.api.domain.TradeFundBill;
 import com.alipay.api.internal.util.AlipaySignature;
 import com.alipay.api.request.AlipayTradeFastpayRefundQueryRequest;
 import com.alipay.api.request.AlipayTradeQueryRequest;
 import com.alipay.api.request.AlipayTradeRefundRequest;
+import com.alipay.api.response.AlipayTradeQueryResponse;
 import com.gloryjie.pay.base.constant.DefaultConstant;
+import com.gloryjie.pay.base.util.DateTimeUtil;
 import com.gloryjie.pay.base.util.JsonUtil;
 import com.gloryjie.pay.channel.config.AlipayChannelConfig;
+import com.gloryjie.pay.channel.constant.ChannelConstant;
 import com.gloryjie.pay.channel.dao.ChannelConfigDao;
 import com.gloryjie.pay.channel.dto.ChannelPayQueryDto;
+import com.gloryjie.pay.channel.dto.ChannelPayQueryResponse;
 import com.gloryjie.pay.channel.dto.ChannelRefundDto;
 import com.gloryjie.pay.channel.dto.ChannelRefundQueryDto;
 import com.gloryjie.pay.channel.dto.response.ChannelResponse;
+import com.gloryjie.pay.channel.enums.AlipayStatus;
 import com.gloryjie.pay.channel.model.ChannelConfig;
 import com.gloryjie.pay.channel.service.ChannelService;
 import lombok.extern.slf4j.Slf4j;
@@ -37,6 +43,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -53,6 +62,8 @@ public abstract class AlipayChannelService implements ChannelService {
     protected static final String ALIPAY_SANDBOX_URL = "https://openapi.alipaydev.com/gateway.do";
 
     protected static final String ALIPAY_PRODUCT_URL = "https://openapi.alipay.com/gateway.do";
+
+    private static final List<String> REDUCE_PRICE_TYPE = Arrays.asList("COUPON", "DISCOUNT", "MDISCOUNT", "MCOUPON");
 
     @Autowired
     protected RedisTemplate redisTemplate;
@@ -75,22 +86,49 @@ public abstract class AlipayChannelService implements ChannelService {
     }
 
     @Override
-    public ChannelResponse queryPayment(ChannelPayQueryDto queryDto) {
+    public ChannelPayQueryResponse queryPayment(ChannelPayQueryDto queryDto) {
         ChannelConfig config = channelConfigDao.loadByAppIdAndChannel(queryDto.getAppId(), queryDto.getChannel().name());
         AlipayClient client = getAlipayClient(JsonUtil.parse(config.getChannelConfig(), AlipayChannelConfig.class));
         AlipayTradeQueryRequest request = new AlipayTradeQueryRequest();
         AlipayTradeQueryModel model = new AlipayTradeQueryModel();
         model.setOutTradeNo(queryDto.getChargeNo());
         request.setBizModel(model);
-
+        AlipayTradeQueryResponse response;
+        ChannelPayQueryResponse queryResponse;
         try {
-            AlipayResponse response = client.execute(request);
-            // TODO: 2018/11/25 需要结合结合业务
-            System.out.println(JsonUtil.toJson(response));
+            response = client.execute(request);
+            queryResponse = new ChannelPayQueryResponse(response);
+            AlipayStatus status = AlipayStatus.TRADE_FAIL;
+            if (response.isSuccess()) {
+                status = AlipayStatus.valueOf(response.getTradeStatus());
+                queryResponse.setPlatformTradeNo(response.getTradeNo());
+                queryResponse.setAmount(new BigDecimal(response.getTotalAmount()));
+                queryResponse.setTimePaid(response.getSendPayDate().getTime());
+                if (response.getFundBillList() != null) {
+                    // 需要减去一些平台优惠的金额, 得到实付金额
+                    BigDecimal reducedPrice = BigDecimal.ZERO;
+                    for (TradeFundBill fundBill : response.getFundBillList()) {
+                        if (REDUCE_PRICE_TYPE.contains(fundBill.getFundChannel())) {
+                            reducedPrice = reducedPrice.add(new BigDecimal(fundBill.getAmount()));
+                        }
+                    }
+                    queryResponse.setActualAmount(queryResponse.getAmount().subtract(reducedPrice));
+                } else {
+                    queryResponse.setActualAmount(queryResponse.getAmount());
+                }
+            } else {
+                // 支付未完成, 返回交易不存在 ACQ.TRADE_NOT_EXIST
+                if (ChannelConstant.Alipay.TRADE_NOT_EXISTS_STATUS.equals(response.getSubCode())) {
+                    status = AlipayStatus.WAIT_BUYER_PAY;
+                }
+            }
+            queryResponse.setStatus(status.name());
         } catch (AlipayApiException e) {
-            e.printStackTrace();
+            queryResponse = new ChannelPayQueryResponse();
+            queryResponse.setStatus(AlipayStatus.TRADE_FAIL.name());
+            queryResponse.setSubMsg(e.getErrMsg());
         }
-        return null;
+        return queryResponse;
     }
 
     @Override
@@ -142,7 +180,7 @@ public abstract class AlipayChannelService implements ChannelService {
     public boolean verifySign(Map<String, String> param, String publicKey, String signType) {
         try {
             // 默认使用RSA2的方式
-            return AlipaySignature.rsaCheckV1(param, publicKey, DefaultConstant.CHARSET,"RSA2");
+            return AlipaySignature.rsaCheckV1(param, publicKey, DefaultConstant.CHARSET, "RSA2");
         } catch (AlipayApiException e) {
             log.error("verify alipay notify fail", e);
         }

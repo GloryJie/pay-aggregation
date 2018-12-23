@@ -59,6 +59,7 @@ CREATE TABLE `t_charge` (
   `app_id` int(11) NOT NULL COMMENT '平台应用Id',
   `service_app_id` int(11) NOT NULL COMMENT '服务方应用id',
   `amount` decimal(12,2) NOT NULL COMMENT '支付单金额',
+  `actual_amount` decimal(12,2) COMMENT '实付金额',
   `subject` varchar(256) NOT NULL COMMENT '购买商品的标题',
   `body` varchar(128) DEFAULT NULL COMMENT '购买商品的描述信息',
   `channel` varchar(32) NOT NULL COMMENT '支付渠道',

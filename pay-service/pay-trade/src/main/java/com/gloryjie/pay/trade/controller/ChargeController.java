@@ -16,10 +16,7 @@ import com.gloryjie.pay.trade.api.ChargeControllerApi;
 import com.gloryjie.pay.trade.dto.ChargeDto;
 import com.gloryjie.pay.trade.service.ChargeService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -35,8 +32,13 @@ public class ChargeController implements ChargeControllerApi {
     private ChargeService chargeService;
 
     @PostMapping("/charge")
-    public ChargeDto createCharge(@RequestBody @Valid ChargeCreateParam createParam){
+    public ChargeDto createCharge(@RequestBody @Valid ChargeCreateParam createParam) {
         return chargeService.pay(createParam);
+    }
+
+    @GetMapping("/charge/order/{orderNo}")
+    public ChargeDto queryCharge(@PathVariable("orderNo") String orderNo, @RequestHeader("appId") Integer appId) {
+        return chargeService.queryPayment(appId, orderNo);
     }
 
 }
