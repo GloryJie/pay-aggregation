@@ -53,7 +53,7 @@ public class AlipayPageChannelServiceTest {
     public void payTest(){
         ChannelPayDto payDto = new ChannelPayDto();
         payDto.setAppId(123456);
-        payDto.setAmount(new BigDecimal("1"));
+        payDto.setAmount(1L);
         payDto.setChannel(ChannelType.ALIPAY_PAGE);
         payDto.setSubject("测试");
         payDto.setChargeNo(IdFactory.generateStringId());

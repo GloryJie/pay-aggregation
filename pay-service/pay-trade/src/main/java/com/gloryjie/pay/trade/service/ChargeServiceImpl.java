@@ -12,18 +12,13 @@
 package com.gloryjie.pay.trade.service;
 
 import com.gloryjie.pay.base.exception.error.BusinessException;
-import com.gloryjie.pay.base.exception.error.ExternalException;
 import com.gloryjie.pay.base.util.BeanConverter;
-import com.gloryjie.pay.base.util.JsonUtil;
-import com.gloryjie.pay.base.util.idGenerator.IdFactory;
-import com.gloryjie.pay.channel.dto.ChannelPayDto;
 import com.gloryjie.pay.channel.dto.ChannelPayQueryDto;
 import com.gloryjie.pay.channel.dto.ChannelPayQueryResponse;
 import com.gloryjie.pay.channel.dto.param.ChargeCreateParam;
-import com.gloryjie.pay.channel.dto.response.ChannelPayResponse;
 import com.gloryjie.pay.channel.enums.ChannelType;
-import com.gloryjie.pay.channel.error.ChannelError;
 import com.gloryjie.pay.channel.service.ChannelGatewayService;
+import com.gloryjie.pay.trade.biz.ChargeBiz;
 import com.gloryjie.pay.trade.dao.ChargeDao;
 import com.gloryjie.pay.trade.dao.RefundDao;
 import com.gloryjie.pay.trade.dto.ChargeDto;
@@ -35,7 +30,7 @@ import com.gloryjie.pay.trade.model.Charge;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Map;
+import java.util.List;
 
 /**
  * @author Jie
@@ -53,51 +48,35 @@ public class ChargeServiceImpl implements ChargeService {
     @Autowired
     private ChannelGatewayService channelGatewayService;
 
+    @Autowired
+    private ChargeBiz chargeBiz;
+
 
     @Override
     public ChargeDto pay(ChargeCreateParam createParam) {
-        if (createParam.getServiceAppId() == null) {
-            createParam.setServiceAppId(createParam.getAppId());
-        }
-        if (createParam.getTimeExpire() == null) {
-            createParam.setTimeExpire(120L);
-        }
-
         ChannelType channel = createParam.getChannel();
         // 检查渠道额外参数是否正确
         channel.checkExtraParam(createParam.getExtra());
-        // TODO: 2018/12/21 此处待商榷, 有可能会出现一笔订单出现两笔支付单的情况,例如收银台切换支付方式, 可用渠道加以区分
         // 检查支付单是否已存在
-        Charge charge = chargeDao.loadByAppIdAndOrderNo(createParam.getAppId(), createParam.getOrderNo());
-        if (charge != null) {
-            throw BusinessException.create(TradeError.ORDER_ALREADY_EXISTS);
+        List<Charge> chargeList = chargeDao.listByAppIdAndOrderNo(createParam.getAppId(), createParam.getOrderNo());
+        Charge charge = checkChargeExist(chargeList, createParam);
+        if (charge == null) {
+            charge = chargeBiz.createChargeAndDistribute(createParam);
         }
-        charge = generateCharge(createParam);
-        // 分发渠道支付
-        ChannelPayDto payDto = BeanConverter.covert(charge, ChannelPayDto.class);
-        ChannelPayResponse payResponse = channelGatewayService.pay(payDto);
-        if (payResponse.isSuccess()) {
-            if (channel.isGateway()) {
-                charge.setCredential(payResponse.getCredential());
-            }
-        } else {
-            throw ExternalException.create(ChannelError.PAY_PLATFORM_ERROR, payResponse.getMsg());
-        }
-        // 入库
-        chargeDao.insert(charge);
+
         // TODO: 2018/12/22 需要定时关单
 
-        ChargeDto chargeDto = BeanConverter.covert(charge, ChargeDto.class);
-        chargeDto.setExtra(createParam.getExtra());
-        return chargeDto;
+
+        return BeanConverter.covert(charge, ChargeDto.class);
     }
 
     @Override
     public ChargeDto queryPayment(Integer appId, String orderNo) {
-        Charge charge = chargeDao.loadByAppIdAndOrderNo(appId, orderNo);
-        if (charge == null) {
+        List<Charge> chargeList = chargeDao.listByAppIdAndOrderNo(appId, orderNo);
+        if (chargeList == null) {
             return new ChargeDto();
         }
+        Charge charge = chargeList.get(0);
         ChargeDto chargeDto;
         // 若当前为待支付状态,则交由渠道进行查询
         if (ChargeStatus.WAIT_PAY.equals(charge.getStatus())) {
@@ -119,7 +98,7 @@ public class ChargeServiceImpl implements ChargeService {
             }
         }
         chargeDto = BeanConverter.covert(charge, ChargeDto.class);
-        if (!ChargeStatus.WAIT_PAY.equals(chargeDto.getStatus())){
+        if (!ChargeStatus.WAIT_PAY.equals(chargeDto.getStatus())) {
             chargeDto.setCredential(null);
         }
         return chargeDto;
@@ -136,15 +115,23 @@ public class ChargeServiceImpl implements ChargeService {
     }
 
 
-    private Charge generateCharge(ChargeCreateParam createParam) {
-        Charge charge = BeanConverter.covert(createParam, Charge.class);
-        charge.setChargeNo(IdFactory.generateStringId());
-        charge.setVersion(0);
-        charge.setLiveMode(createParam.getLiveMode());
-        charge.setStatus(ChargeStatus.WAIT_PAY);
-        charge.setTimeCreated(System.currentTimeMillis());
-        charge.setExpireTimestamp(charge.getTimeCreated() + createParam.getTimeExpire() * 60 * 1000);
-        return charge;
+    /**
+     * 检查订单存在性
+     *
+     * @param chargeList
+     * @param param
+     * @return
+     */
+    private Charge checkChargeExist(List<Charge> chargeList, ChargeCreateParam param) {
+        if (chargeList != null && chargeList.size() > 0) {
+            for (Charge charge : chargeList) {
+                // 简单处理: 若渠道也相同,则认为是同一订单
+                if (charge.getChannel().equals(param.getChannel())) {
+                    return charge;
+                }
+            }
+        }
+        return null;
     }
 
 }

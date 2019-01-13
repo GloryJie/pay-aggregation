@@ -51,7 +51,7 @@ public class AlipayPageChannelServiceImpl extends AlipayChannelService {
 
         AlipayTradePagePayModel model = new AlipayTradePagePayModel();
         model.setOutTradeNo(payDto.getChargeNo());
-        model.setTotalAmount(payDto.getAmount().toString());
+        model.setTotalAmount(String.valueOf(payDto.getAmount() / 100));
         model.setSubject(payDto.getSubject());
         model.setProductCode(ChannelType.ALIPAY_PAGE.getProductCode());
 

@@ -45,7 +45,7 @@ public class AlipayWapChannelServiceImpl extends AlipayChannelService {
 
         AlipayTradeWapPayModel model = new AlipayTradeWapPayModel();
         model.setOutTradeNo(payDto.getChargeNo());
-        model.setTotalAmount(payDto.getAmount().toString());
+        model.setTotalAmount(String.valueOf(payDto.getAmount() / 100));
         model.setSubject(payDto.getSubject());
         model.setTimeExpire(payDto.getTimeExpire() + "m");
         model.setProductCode(ChannelType.ALIPAY_WAP.getProductCode());

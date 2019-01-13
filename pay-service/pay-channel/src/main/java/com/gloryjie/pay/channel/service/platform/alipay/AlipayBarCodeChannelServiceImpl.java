@@ -43,7 +43,7 @@ public class AlipayBarCodeChannelServiceImpl extends AlipayChannelService{
 
         AlipayTradePayModel model = new AlipayTradePayModel();
         model.setOutTradeNo(payDto.getChargeNo());
-        model.setTotalAmount(payDto.getAmount().toString());
+        model.setTotalAmount(String.valueOf(payDto.getAmount()/100));
         model.setSubject(payDto.getSubject());
         model.setProductCode(ChannelType.ALIPAY_BAR_CODE.getProductCode());
         model.setAuthCode(payDto.getExtra().get("authCode"));

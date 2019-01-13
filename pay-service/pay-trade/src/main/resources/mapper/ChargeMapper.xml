@@ -58,7 +58,7 @@
         where charge_no = #{chargeNo}
     </select>
 
-    <select id="loadByAppIdAndOrderNo" resultMap="BaseResultMap">
+    <select id="listByAppIdAndOrderNo" resultMap="BaseResultMap">
         select
         <include refid="all_column"/>
         from

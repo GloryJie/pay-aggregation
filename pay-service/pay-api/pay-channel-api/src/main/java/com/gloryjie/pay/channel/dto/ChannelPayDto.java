@@ -37,7 +37,7 @@ public class ChannelPayDto {
     /**
      * 支付单金额
      */
-    private BigDecimal amount;
+    private Long amount;
 
     /**
      * 支付单标题

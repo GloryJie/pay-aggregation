@@ -27,6 +27,7 @@ import org.springframework.stereotype.Service;
 
 /**
  * 支付宝扫码支付
+ *
  * @author Jie
  * @since
  */
@@ -41,7 +42,7 @@ public class AlipayScanCodeChannelServiceImpl extends AlipayChannelService {
 
         AlipayTradePrecreateRequest request = new AlipayTradePrecreateRequest();
         AlipayTradePrecreateModel model = new AlipayTradePrecreateModel();
-        model.setTotalAmount(payDto.getAmount().toString());
+        model.setTotalAmount(String.valueOf(payDto.getAmount() / 100));
         model.setOutTradeNo(payDto.getChargeNo());
         model.setSubject(payDto.getSubject());
         model.setTimeoutExpress(payDto.getTimeExpire() + "m");

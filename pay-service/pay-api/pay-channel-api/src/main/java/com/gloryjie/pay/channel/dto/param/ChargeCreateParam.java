@@ -45,7 +45,7 @@ public class ChargeCreateParam {
      * 支付单金额
      */
     @NotNull
-    private BigDecimal amount;
+    private Long amount;
     /**
      * 购买商品的标题
      */

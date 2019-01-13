@@ -42,7 +42,7 @@ public class ChargeServiceTest {
     @Test
     public void payTest(){
         ChargeCreateParam createParam = new ChargeCreateParam();
-        createParam.setAmount(new BigDecimal("0.01"));
+        createParam.setAmount(1L);
         createParam.setAppId(123456);
         createParam.setChannel(ChannelType.ALIPAY_WAP);
         createParam.setSubject("测试1222");
