@@ -1,7 +1,7 @@
 /* ------------------------------------------------------------------
  *   Product:      pay
  *   Module Name:  COMMON
- *   Package Name: com.gloryjie.pay.charge.dao
+ *   Package Name: com.gloryjie.pay.newCharge.dao
  *   Date Created: 2018/11/18
  * ------------------------------------------------------------------
  * Modification History
@@ -28,6 +28,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Jie
@@ -44,6 +46,8 @@ public class ChargeDaoTest {
     public static String chargeNo;
 
     public static String orderNo;
+
+    public static Charge newCharge;
 
 
     @BeforeClass
@@ -63,7 +67,7 @@ public class ChargeDaoTest {
         charge.setOrderNo(orderNo);
         charge.setAppId(123456);
         charge.setServiceAppId(123456);
-        charge.setAmount(new BigDecimal("1.00"));
+        charge.setAmount(1L);
         charge.setSubject("测试");
         charge.setBody("测试");
         charge.setChannel(ChannelType.ALIPAY_WAP);
@@ -79,21 +83,25 @@ public class ChargeDaoTest {
         charge.setVersion(0);
         charge.setCredential("测试凭证");
 
+        Map<String,String> extra = new HashMap<>(1);
+        extra.put("redirectUrl","http://www.baidu.com");
+
+        charge.setExtra(extra);
+
         Assert.assertEquals(1, chargeDao.insert(charge));
 
     }
 
     @Test
     public void bLoadTest() {
-        Assert.assertNotNull(chargeDao.load(chargeNo));
+        newCharge = chargeDao.load(chargeNo);
+        Assert.assertNotNull(newCharge);
     }
 
     @Test
     public void cUpdateTest() {
-        Charge charge = new Charge();
-        charge.setChargeNo(chargeNo);
-        charge.setSubject("测试更新");
+        newCharge.setSubject("测试更新");
 
-        Assert.assertEquals(1, chargeDao.update(charge));
+        Assert.assertEquals(1, chargeDao.update(newCharge));
     }
 }

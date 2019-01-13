@@ -6,6 +6,7 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.Map;
 
 @Data
 public class Charge {
@@ -33,12 +34,12 @@ public class Charge {
     /**
      * 支付单金额
      */
-    private BigDecimal amount;
+    private Long amount;
 
     /**
      * 实付金额
      */
-    private BigDecimal actualAmount;
+    private Long actualAmount;
 
 
     /**
@@ -114,7 +115,7 @@ public class Charge {
     /**
      * 渠道额外参数
      */
-    private String extra;
+    private Map<String,String> extra;
 
     private Integer version;
 

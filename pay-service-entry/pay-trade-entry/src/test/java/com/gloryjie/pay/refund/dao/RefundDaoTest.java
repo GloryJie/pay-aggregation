@@ -69,7 +69,7 @@ public class RefundDaoTest {
         refund.setChargeNo(chargeNo);
         refund.setAppId(123456);
         refund.setChannel("ALIPAY");
-        refund.setAmount(new BigDecimal("1.00"));
+        refund.setAmount(1L);
         refund.setDescription("测试");
         refund.setClientIp("127.0.0.1");
         refund.setExtra("额外数据");

@@ -31,9 +31,9 @@ public class ChannelPayQueryResponse extends ChannelResponse {
 
     private String status;
 
-    private BigDecimal amount;
+    private Long amount;
 
-    private BigDecimal actualAmount;
+    private Long actualAmount;
 
     private Long timePaid;
 

@@ -67,7 +67,7 @@ public class ChargeServiceImpl implements ChargeService {
         // 检查渠道额外参数是否正确
         channel.checkExtraParam(createParam.getExtra());
         // TODO: 2018/12/21 此处待商榷, 有可能会出现一笔订单出现两笔支付单的情况,例如收银台切换支付方式, 可用渠道加以区分
-        // 检查订单是否已存在
+        // 检查支付单是否已存在
         Charge charge = chargeDao.loadByAppIdAndOrderNo(createParam.getAppId(), createParam.getOrderNo());
         if (charge != null) {
             throw BusinessException.create(TradeError.ORDER_ALREADY_EXISTS);
@@ -105,7 +105,9 @@ public class ChargeServiceImpl implements ChargeService {
             queryDto.setAppId(appId);
             queryDto.setChargeNo(charge.getChargeNo());
             queryDto.setChannel(charge.getChannel());
+            // TODO: 2019/1/13 渠道查询需要限制,避免流量穿透
             ChannelPayQueryResponse queryResponse = channelGatewayService.queryPayment(queryDto);
+            // TODO: 2019/1/13 状态变化刷新需要抽取出来,异步通知,主动查询等也需要
             ChargeStatus status = ChannelStatusToChargeStatus.switchStatus(charge.getChannel(), queryResponse.getStatus());
             if (ChargeStatus.SUCCESS.equals(status) && charge.getAmount().equals(queryResponse.getAmount())) {
                 charge.setStatus(ChargeStatus.SUCCESS);
@@ -117,7 +119,6 @@ public class ChargeServiceImpl implements ChargeService {
             }
         }
         chargeDto = BeanConverter.covert(charge, ChargeDto.class);
-        chargeDto.setExtra(JsonUtil.parse(charge.getExtra(), Map.class));
         if (!ChargeStatus.WAIT_PAY.equals(chargeDto.getStatus())){
             chargeDto.setCredential(null);
         }
@@ -141,7 +142,6 @@ public class ChargeServiceImpl implements ChargeService {
         charge.setVersion(0);
         charge.setLiveMode(createParam.getLiveMode());
         charge.setStatus(ChargeStatus.WAIT_PAY);
-        charge.setExtra(createParam.getExtra() == null ? null : JsonUtil.toJson(createParam.getExtra()));
         charge.setTimeCreated(System.currentTimeMillis());
         charge.setExpireTimestamp(charge.getTimeCreated() + createParam.getTimeExpire() * 60 * 1000);
         return charge;

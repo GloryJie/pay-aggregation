@@ -36,7 +36,7 @@ public class Refund {
     /**
      * 退款金额
      */
-    private BigDecimal amount;
+    private Long amount;
 
     /**
      * 退款备注
