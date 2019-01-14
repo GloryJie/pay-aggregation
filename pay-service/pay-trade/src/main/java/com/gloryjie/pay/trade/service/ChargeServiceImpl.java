@@ -11,7 +11,6 @@
  */
 package com.gloryjie.pay.trade.service;
 
-import com.gloryjie.pay.base.exception.error.BusinessException;
 import com.gloryjie.pay.base.util.BeanConverter;
 import com.gloryjie.pay.channel.dto.ChannelPayQueryDto;
 import com.gloryjie.pay.channel.dto.ChannelPayQueryResponse;
@@ -22,10 +21,10 @@ import com.gloryjie.pay.trade.biz.ChargeBiz;
 import com.gloryjie.pay.trade.dao.ChargeDao;
 import com.gloryjie.pay.trade.dao.RefundDao;
 import com.gloryjie.pay.trade.dto.ChargeDto;
+import com.gloryjie.pay.trade.dto.RefreshChargeDto;
 import com.gloryjie.pay.trade.dto.RefundDto;
 import com.gloryjie.pay.trade.enums.ChannelStatusToChargeStatus;
 import com.gloryjie.pay.trade.enums.ChargeStatus;
-import com.gloryjie.pay.trade.enums.TradeError;
 import com.gloryjie.pay.trade.model.Charge;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -71,37 +70,41 @@ public class ChargeServiceImpl implements ChargeService {
     }
 
     @Override
-    public ChargeDto queryPayment(Integer appId, String orderNo) {
-        List<Charge> chargeList = chargeDao.listByAppIdAndOrderNo(appId, orderNo);
-        if (chargeList == null) {
+    public ChargeDto queryPayment(Integer appId, String chargeNo) {
+        Charge charge = chargeDao.getByAppIdAndChargeNo(appId, chargeNo);
+        if (charge == null) {
             return new ChargeDto();
         }
-        Charge charge = chargeList.get(0);
         ChargeDto chargeDto;
         // 若当前为待支付状态,则交由渠道进行查询
         if (ChargeStatus.WAIT_PAY.equals(charge.getStatus())) {
-            ChannelPayQueryDto queryDto = new ChannelPayQueryDto();
-            queryDto.setAppId(appId);
-            queryDto.setChargeNo(charge.getChargeNo());
-            queryDto.setChannel(charge.getChannel());
             // TODO: 2019/1/13 渠道查询需要限制,避免流量穿透
-            ChannelPayQueryResponse queryResponse = channelGatewayService.queryPayment(queryDto);
-            // TODO: 2019/1/13 状态变化刷新需要抽取出来,异步通知,主动查询等也需要
-            ChargeStatus status = ChannelStatusToChargeStatus.switchStatus(charge.getChannel(), queryResponse.getStatus());
-            if (ChargeStatus.SUCCESS.equals(status) && charge.getAmount().equals(queryResponse.getAmount())) {
-                charge.setStatus(ChargeStatus.SUCCESS);
-                charge.setPlatformTradeNo(queryResponse.getPlatformTradeNo());
-                charge.setActualAmount(queryResponse.getActualAmount());
-                charge.setTimePaid(queryResponse.getTimePaid());
-                // 更新数据库
-                chargeDao.update(charge);
-            }
+            ChannelPayQueryResponse queryResponse = channelGatewayService.queryPayment(BeanConverter.covert(charge, ChannelPayQueryDto.class));
+            RefreshChargeDto refreshChargeDto = generateRefreshChargeDto(charge, queryResponse);
+            charge = chargeBiz.refreshCharge(refreshChargeDto, charge);
         }
         chargeDto = BeanConverter.covert(charge, ChargeDto.class);
+        // 若非待支付状态则不返回支付凭证
         if (!ChargeStatus.WAIT_PAY.equals(chargeDto.getStatus())) {
             chargeDto.setCredential(null);
         }
         return chargeDto;
+    }
+
+    private RefreshChargeDto generateRefreshChargeDto(Charge charge, ChannelPayQueryResponse queryResponse) {
+        RefreshChargeDto refreshChargeDto = new RefreshChargeDto();
+        refreshChargeDto.setChargeNo(charge.getChargeNo());
+        refreshChargeDto.setAppId(charge.getAppId());
+        refreshChargeDto.setChannel(charge.getChannel());
+
+        refreshChargeDto.setAmount(queryResponse.getAmount());
+        refreshChargeDto.setActualAmount(queryResponse.getActualAmount());
+        refreshChargeDto.setTimePaid(queryResponse.getTimePaid());
+        // 渠道状态转换为系统定义状态
+        ChargeStatus status = ChannelStatusToChargeStatus.switchStatus(charge.getChannel(), queryResponse.getStatus());
+        refreshChargeDto.setStatus(status);
+
+        return refreshChargeDto;
     }
 
     @Override

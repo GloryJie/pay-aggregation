@@ -36,9 +36,9 @@ public class ChargeController implements ChargeControllerApi {
         return chargeService.pay(createParam);
     }
 
-    @GetMapping("/charge/order/{orderNo}")
-    public ChargeDto queryCharge(@PathVariable("orderNo") String orderNo, @RequestHeader("appId") Integer appId) {
-        return chargeService.queryPayment(appId, orderNo);
+    @GetMapping("/charge/{chargeNo}")
+    public ChargeDto queryCharge(@PathVariable("chargeNo") String chargeNo, @RequestHeader("appId") Integer appId) {
+        return chargeService.queryPayment(appId, chargeNo);
     }
 
 }

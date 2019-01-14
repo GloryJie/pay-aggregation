@@ -66,6 +66,14 @@
         where order_no = #{orderNo} and app_id = #{appId}
     </select>
 
+    <select id="getByAppIdAndChargeNo" resultMap="BaseResultMap">
+        select
+        <include refid="all_column"/>
+        from
+        <include refid="table"/>
+        where charge_no = #{chargeNo} and app_id = #{appId}
+    </select>
+
     <insert id="insert" parameterType="com.gloryjie.pay.trade.model.Charge">
         insert into
         <include refid="table"/>
