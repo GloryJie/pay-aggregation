@@ -17,6 +17,7 @@ import com.alipay.api.AlipayResponse;
 import com.alipay.api.domain.AlipayTradeWapPayModel;
 import com.alipay.api.request.AlipayTradeWapPayRequest;
 import com.gloryjie.pay.base.exception.error.ExternalException;
+import com.gloryjie.pay.base.util.AmountUtil;
 import com.gloryjie.pay.base.util.JsonUtil;
 import com.gloryjie.pay.channel.config.AlipayChannelConfig;
 import com.gloryjie.pay.channel.dto.ChannelPayDto;
@@ -45,7 +46,7 @@ public class AlipayWapChannelServiceImpl extends AlipayChannelService {
 
         AlipayTradeWapPayModel model = new AlipayTradeWapPayModel();
         model.setOutTradeNo(payDto.getChargeNo());
-        model.setTotalAmount(String.valueOf(payDto.getAmount() / 100));
+        model.setTotalAmount(AmountUtil.amountToStr(payDto.getAmount()));
         model.setSubject(payDto.getSubject());
         model.setTimeExpire(payDto.getTimeExpire() + "m");
         model.setProductCode(ChannelType.ALIPAY_WAP.getProductCode());

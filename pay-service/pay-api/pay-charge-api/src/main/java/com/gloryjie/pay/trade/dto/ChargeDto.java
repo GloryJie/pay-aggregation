@@ -48,9 +48,9 @@ public class ChargeDto {
     /**
      * 支付单金额
      */
-    private BigDecimal amount;
+    private Long amount;
 
-    private BigDecimal actualAmount;
+    private Long actualAmount;
 
     private ChargeStatus status;
 

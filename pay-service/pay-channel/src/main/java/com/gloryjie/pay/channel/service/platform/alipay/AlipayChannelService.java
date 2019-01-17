@@ -25,6 +25,7 @@ import com.alipay.api.request.AlipayTradeQueryRequest;
 import com.alipay.api.request.AlipayTradeRefundRequest;
 import com.alipay.api.response.AlipayTradeQueryResponse;
 import com.gloryjie.pay.base.constant.DefaultConstant;
+import com.gloryjie.pay.base.util.AmountUtil;
 import com.gloryjie.pay.base.util.JsonUtil;
 import com.gloryjie.pay.channel.config.AlipayChannelConfig;
 import com.gloryjie.pay.channel.constant.ChannelConstant;
@@ -42,7 +43,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 
-import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -101,14 +101,14 @@ public abstract class AlipayChannelService implements ChannelService {
             if (response.isSuccess()) {
                 status = AlipayStatus.valueOf(response.getTradeStatus());
                 queryResponse.setPlatformTradeNo(response.getTradeNo());
-                queryResponse.setAmount(Long.valueOf(response.getTotalAmount()) * 100);
+                queryResponse.setAmount(AmountUtil.strToAmount(response.getTotalAmount()));
                 queryResponse.setTimePaid(response.getSendPayDate().getTime());
                 if (response.getFundBillList() != null) {
                     // 需要减去一些平台优惠的金额, 得到实付金额
                     Long reducedPrice = 0L;
                     for (TradeFundBill fundBill : response.getFundBillList()) {
                         if (REDUCE_PRICE_TYPE.contains(fundBill.getFundChannel())) {
-                            reducedPrice += Long.valueOf(fundBill.getAmount()) * 100;
+                            reducedPrice += AmountUtil.strToAmount(fundBill.getAmount());
                         }
                     }
                     queryResponse.setActualAmount(queryResponse.getAmount() - reducedPrice);

@@ -17,6 +17,7 @@ import com.alipay.api.domain.AlipayTradePrecreateModel;
 import com.alipay.api.request.AlipayTradePrecreateRequest;
 import com.alipay.api.response.AlipayTradePrecreateResponse;
 import com.gloryjie.pay.base.exception.error.ExternalException;
+import com.gloryjie.pay.base.util.AmountUtil;
 import com.gloryjie.pay.base.util.JsonUtil;
 import com.gloryjie.pay.channel.config.AlipayChannelConfig;
 import com.gloryjie.pay.channel.dto.ChannelPayDto;
@@ -42,7 +43,7 @@ public class AlipayScanCodeChannelServiceImpl extends AlipayChannelService {
 
         AlipayTradePrecreateRequest request = new AlipayTradePrecreateRequest();
         AlipayTradePrecreateModel model = new AlipayTradePrecreateModel();
-        model.setTotalAmount(String.valueOf(payDto.getAmount() / 100));
+        model.setTotalAmount(AmountUtil.amountToStr(payDto.getAmount()));
         model.setOutTradeNo(payDto.getChargeNo());
         model.setSubject(payDto.getSubject());
         model.setTimeoutExpress(payDto.getTimeExpire() + "m");

@@ -13,6 +13,7 @@ package com.gloryjie.pay.trade.enums;
 
 import com.gloryjie.pay.base.enums.base.BaseEnum;
 import lombok.Getter;
+import org.omg.CORBA.PUBLIC_MEMBER;
 
 /**
  * @author Jie
@@ -27,8 +28,9 @@ public enum ChargeStatus implements BaseEnum {
     WAIT_PAY(10, "待支付"),
     SUCCESS(20, "支付成功"),
     EXISTS_REFUND(30, "存在退款"),
-    CLOSED(40, "交易关闭"),
-    FAILURE(50, "交易失败");
+    REFUND_COMPLETED(40, "全部退款"),
+    CLOSED(50, "交易关闭"),
+    FAILURE(60, "交易失败");
 
     private int code;
 
@@ -37,5 +39,9 @@ public enum ChargeStatus implements BaseEnum {
     ChargeStatus(int code, String desc) {
         this.code = code;
         this.desc = desc;
+    }
+
+    public boolean isPaid() {
+        return this == SUCCESS || this == EXISTS_REFUND || this == REFUND_COMPLETED;
     }
 }

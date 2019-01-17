@@ -11,6 +11,7 @@
  */
 package com.gloryjie.pay.trade.service;
 
+import com.gloryjie.pay.base.exception.error.BusinessException;
 import com.gloryjie.pay.base.util.BeanConverter;
 import com.gloryjie.pay.channel.dto.ChannelPayQueryDto;
 import com.gloryjie.pay.channel.dto.ChannelPayQueryResponse;
@@ -25,6 +26,7 @@ import com.gloryjie.pay.trade.dto.RefreshChargeDto;
 import com.gloryjie.pay.trade.dto.RefundDto;
 import com.gloryjie.pay.trade.enums.ChannelStatusToChargeStatus;
 import com.gloryjie.pay.trade.enums.ChargeStatus;
+import com.gloryjie.pay.trade.error.TradeError;
 import com.gloryjie.pay.trade.model.Charge;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -120,21 +122,23 @@ public class ChargeServiceImpl implements ChargeService {
 
     /**
      * 检查订单存在性
-     *
-     * @param chargeList
-     * @param param
-     * @return
      */
     private Charge checkChargeExist(List<Charge> chargeList, ChargeCreateParam param) {
+        Charge existCharge = null;
         if (chargeList != null && chargeList.size() > 0) {
             for (Charge charge : chargeList) {
+                // 存在已支付则抛异常
+                if (charge.getStatus().isPaid()) {
+                    throw BusinessException.create(TradeError.ORDER_ALREADY_PAY);
+                }
                 // 简单处理: 若渠道也相同,则认为是同一订单
                 if (charge.getChannel().equals(param.getChannel())) {
-                    return charge;
+                    existCharge = charge;
                 }
             }
+
         }
-        return null;
+        return existCharge;
     }
 
 }

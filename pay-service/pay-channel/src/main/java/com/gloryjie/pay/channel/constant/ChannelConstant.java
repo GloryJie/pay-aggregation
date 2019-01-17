@@ -22,5 +22,7 @@ public class ChannelConstant {
 
     public interface Alipay {
         String TRADE_NOT_EXISTS_STATUS = "ACQ.TRADE_NOT_EXIST";
+
+        String PAGE_EXTRA = "redirectUrl";
     }
 }

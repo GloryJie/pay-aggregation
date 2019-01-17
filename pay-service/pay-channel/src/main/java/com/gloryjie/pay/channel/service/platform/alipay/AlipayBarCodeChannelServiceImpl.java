@@ -16,6 +16,7 @@ import com.alipay.api.AlipayClient;
 import com.alipay.api.AlipayResponse;
 import com.alipay.api.domain.AlipayTradePayModel;
 import com.alipay.api.request.AlipayTradePayRequest;
+import com.gloryjie.pay.base.util.AmountUtil;
 import com.gloryjie.pay.base.util.JsonUtil;
 import com.gloryjie.pay.channel.config.AlipayChannelConfig;
 import com.gloryjie.pay.channel.dto.ChannelPayDto;
@@ -43,7 +44,7 @@ public class AlipayBarCodeChannelServiceImpl extends AlipayChannelService{
 
         AlipayTradePayModel model = new AlipayTradePayModel();
         model.setOutTradeNo(payDto.getChargeNo());
-        model.setTotalAmount(String.valueOf(payDto.getAmount()/100));
+        model.setTotalAmount(AmountUtil.amountToStr(payDto.getAmount()));
         model.setSubject(payDto.getSubject());
         model.setProductCode(ChannelType.ALIPAY_BAR_CODE.getProductCode());
         model.setAuthCode(payDto.getExtra().get("authCode"));

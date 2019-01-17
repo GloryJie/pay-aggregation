@@ -17,13 +17,16 @@ import com.alipay.api.AlipayResponse;
 import com.alipay.api.domain.AlipayTradePagePayModel;
 import com.alipay.api.request.AlipayTradePagePayRequest;
 import com.gloryjie.pay.base.exception.error.ExternalException;
+import com.gloryjie.pay.base.util.AmountUtil;
 import com.gloryjie.pay.base.util.JsonUtil;
 import com.gloryjie.pay.channel.config.AlipayChannelConfig;
+import com.gloryjie.pay.channel.constant.ChannelConstant;
 import com.gloryjie.pay.channel.dto.ChannelPayDto;
 import com.gloryjie.pay.channel.dto.response.ChannelPayResponse;
 import com.gloryjie.pay.channel.enums.ChannelType;
 import com.gloryjie.pay.channel.error.ChannelError;
 import com.gloryjie.pay.channel.model.ChannelConfig;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -45,13 +48,15 @@ public class AlipayPageChannelServiceImpl extends AlipayChannelService {
         AlipayClient client = getAlipayClient(alipayChannelConfig);
         AlipayTradePagePayRequest request = new AlipayTradePagePayRequest();
         // TODO: 2018/11/25 跳转地址需要修改为商户上送,并且需要设置异步通知地址
-        request.setReturnUrl("http://localhost:10020/alipay/notify");
+        if (payDto.getExtra() != null && StringUtils.isNotBlank(payDto.getExtra().get(ChannelConstant.Alipay.PAGE_EXTRA))) {
+            request.setReturnUrl(payDto.getExtra().get(ChannelConstant.Alipay.PAGE_EXTRA));
+        }
         request.setNotifyUrl(domain + "/platform/notify/alipay");
 //        http://jierong.nat300.top/notification/alipay
 
         AlipayTradePagePayModel model = new AlipayTradePagePayModel();
         model.setOutTradeNo(payDto.getChargeNo());
-        model.setTotalAmount(String.valueOf(payDto.getAmount() / 100));
+        model.setTotalAmount(AmountUtil.amountToStr(payDto.getAmount()));
         model.setSubject(payDto.getSubject());
         model.setProductCode(ChannelType.ALIPAY_PAGE.getProductCode());
 
