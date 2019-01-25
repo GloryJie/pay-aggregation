@@ -16,6 +16,9 @@ import com.gloryjie.pay.channel.dto.param.ChargeCreateParam;
 import com.gloryjie.pay.channel.enums.ChannelType;
 import com.gloryjie.pay.trade.PayTradeApplication;
 import com.gloryjie.pay.trade.dto.ChargeDto;
+import com.gloryjie.pay.trade.dto.RefundDto;
+import com.gloryjie.pay.trade.dto.param.RefundParam;
+import org.apache.logging.log4j.message.ReusableMessageFactory;
 import org.junit.Assert;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -62,6 +65,21 @@ public class ChargeServiceTest {
         ChargeDto chargeDto = chargeService.queryPayment(123456,"1545482478");
 
         System.out.println(JsonUtil.toJson(chargeDto));
+    }
+
+
+    @Test
+    public void refundTest(){
+        RefundParam refundParam = new RefundParam();
+        refundParam.setAppId(123456);
+        refundParam.setOrderNo(String.valueOf(System.currentTimeMillis()));
+        refundParam.setChargeNo("537386019524182016");
+        refundParam.setAmount(1L);
+        refundParam.setDescription("测试退款");
+
+        RefundDto refundDto = chargeService.refund(refundParam);
+
+        System.out.println(JsonUtil.toJson(refundDto));
     }
 
 

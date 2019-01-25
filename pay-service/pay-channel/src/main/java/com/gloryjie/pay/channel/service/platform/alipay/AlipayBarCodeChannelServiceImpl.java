@@ -21,7 +21,6 @@ import com.gloryjie.pay.base.util.JsonUtil;
 import com.gloryjie.pay.channel.config.AlipayChannelConfig;
 import com.gloryjie.pay.channel.dto.ChannelPayDto;
 import com.gloryjie.pay.channel.dto.response.ChannelPayResponse;
-import com.gloryjie.pay.channel.dto.response.ChannelResponse;
 import com.gloryjie.pay.channel.enums.ChannelType;
 import com.gloryjie.pay.channel.model.ChannelConfig;
 import org.springframework.stereotype.Service;
@@ -32,7 +31,7 @@ import org.springframework.stereotype.Service;
  * @since
  */
 @Service
-public class AlipayBarCodeChannelServiceImpl extends AlipayChannelService{
+public class AlipayBarCodeChannelServiceImpl extends BaseAlipayChannelService {
 
     @Override
     public ChannelPayResponse pay(ChannelPayDto payDto) {

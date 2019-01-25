@@ -11,6 +11,7 @@
  */
 package com.gloryjie.pay.channel.dto.response;
 
+import com.alipay.api.AlipayResponse;
 import lombok.Data;
 
 /**
@@ -30,5 +31,16 @@ public class ChannelResponse {
     protected String msg;
 
     protected String subMsg;
+
+    public ChannelResponse(){
+    }
+
+    public ChannelResponse(AlipayResponse response){
+        this.code = response.getCode();
+        this.msg = response.getMsg();
+        this.subCode = response.getSubCode();
+        this.subCode = response.getSubCode();
+        this.success = response.isSuccess();
+    }
 
 }

@@ -44,4 +44,8 @@ public enum ChargeStatus implements BaseEnum {
     public boolean isPaid() {
         return this == SUCCESS || this == EXISTS_REFUND || this == REFUND_COMPLETED;
     }
+
+    public boolean canRefund(){
+        return this == SUCCESS || this == EXISTS_REFUND;
+    }
 }

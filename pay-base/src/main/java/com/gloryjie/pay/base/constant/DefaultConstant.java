@@ -52,6 +52,8 @@ public class DefaultConstant {
 
   public static final String NULL_STRING = "null";
 
+  public static final String CURRENCY = "cny";
+
   /**
    * IPV4正则表达式
    */

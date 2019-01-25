@@ -11,11 +11,9 @@
  */
 package com.gloryjie.pay.channel.service.platform.alipay;
 
-import com.gloryjie.pay.base.util.JsonUtil;
 import com.gloryjie.pay.base.util.idGenerator.IdFactory;
 import com.gloryjie.pay.channel.dto.*;
 import com.gloryjie.pay.channel.dto.response.ChannelPayResponse;
-import com.gloryjie.pay.channel.dto.response.ChannelResponse;
 import com.gloryjie.pay.channel.enums.ChannelType;
 import com.gloryjie.pay.trade.PayTradeApplication;
 import org.junit.BeforeClass;
@@ -26,8 +24,6 @@ import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import java.math.BigDecimal;
 
 /**
  * @author Jie

@@ -34,7 +34,7 @@ import org.springframework.stereotype.Service;
  * @since
  */
 @Service
-public class AlipayWapChannelServiceImpl extends AlipayChannelService {
+public class AlipayWapChannelServiceImpl extends BaseAlipayChannelService {
 
     @Override
     public ChannelPayResponse pay(ChannelPayDto payDto) {

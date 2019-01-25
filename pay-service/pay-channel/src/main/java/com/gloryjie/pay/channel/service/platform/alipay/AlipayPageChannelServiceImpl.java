@@ -35,7 +35,7 @@ import org.springframework.stereotype.Service;
  * @since 0.1
  */
 @Service
-public class AlipayPageChannelServiceImpl extends AlipayChannelService {
+public class AlipayPageChannelServiceImpl extends BaseAlipayChannelService {
 
     @Value("${domain}")
     private String domain;

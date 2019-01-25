@@ -33,7 +33,7 @@ import org.springframework.stereotype.Service;
  * @since
  */
 @Service
-public class AlipayScanCodeChannelServiceImpl extends AlipayChannelService {
+public class AlipayScanCodeChannelServiceImpl extends BaseAlipayChannelService {
 
     @Override
     public ChannelPayResponse pay(ChannelPayDto payDto) {

@@ -24,7 +24,9 @@ import com.alipay.api.request.AlipayTradeFastpayRefundQueryRequest;
 import com.alipay.api.request.AlipayTradeQueryRequest;
 import com.alipay.api.request.AlipayTradeRefundRequest;
 import com.alipay.api.response.AlipayTradeQueryResponse;
+import com.alipay.api.response.AlipayTradeRefundResponse;
 import com.gloryjie.pay.base.constant.DefaultConstant;
+import com.gloryjie.pay.base.exception.error.ExternalException;
 import com.gloryjie.pay.base.util.AmountUtil;
 import com.gloryjie.pay.base.util.JsonUtil;
 import com.gloryjie.pay.channel.config.AlipayChannelConfig;
@@ -34,8 +36,10 @@ import com.gloryjie.pay.channel.dto.ChannelPayQueryDto;
 import com.gloryjie.pay.channel.dto.ChannelPayQueryResponse;
 import com.gloryjie.pay.channel.dto.ChannelRefundDto;
 import com.gloryjie.pay.channel.dto.ChannelRefundQueryDto;
+import com.gloryjie.pay.channel.dto.response.ChannelRefundResponse;
 import com.gloryjie.pay.channel.dto.response.ChannelResponse;
 import com.gloryjie.pay.channel.enums.AlipayStatus;
+import com.gloryjie.pay.channel.error.ChannelError;
 import com.gloryjie.pay.channel.model.ChannelConfig;
 import com.gloryjie.pay.channel.service.ChannelService;
 import lombok.extern.slf4j.Slf4j;
@@ -52,7 +56,7 @@ import java.util.Map;
  * @since
  */
 @Slf4j
-public abstract class AlipayChannelService implements ChannelService {
+public abstract class BaseAlipayChannelService implements ChannelService {
 
     protected static final String ALIPAY_SIGN_TYPE = "RSA2";
 
@@ -124,6 +128,7 @@ public abstract class AlipayChannelService implements ChannelService {
             queryResponse.setStatus(status.name());
         } catch (AlipayApiException e) {
             queryResponse = new ChannelPayQueryResponse();
+            queryResponse.setSuccess(false);
             queryResponse.setStatus(AlipayStatus.TRADE_FAIL.name());
             queryResponse.setSubMsg(e.getErrMsg());
         }
@@ -137,17 +142,23 @@ public abstract class AlipayChannelService implements ChannelService {
         AlipayTradeRefundRequest request = new AlipayTradeRefundRequest();
         AlipayTradeRefundModel model = new AlipayTradeRefundModel();
         model.setOutTradeNo(refundDto.getChargeNo());
-        model.setRefundAmount(refundDto.getAmount().toString());
+        model.setRefundAmount(AmountUtil.amountToStr(refundDto.getAmount()));
+        // out_request_no 为退款的唯一标识
         model.setOutRequestNo(refundDto.getRefundNo());
         request.setBizModel(model);
+        AlipayTradeRefundResponse response;
+        ChannelRefundResponse refundResponse = null;
         try {
-            AlipayResponse response = client.execute(request);
-            // TODO: 2018/11/25 需要结合结合业务
-            System.out.println(JsonUtil.toJson(response));
+            response = client.execute(request);
+            refundResponse = new ChannelRefundResponse(response);
+            if (response.isSuccess()) {
+                refundResponse.setPlatformTradeNo(response.getTradeNo());
+                refundResponse.setRefundAmount(AmountUtil.strToAmount(response.getRefundFee()));
+            }
         } catch (AlipayApiException e) {
-            e.printStackTrace();
+            throw ExternalException.create(ChannelError.PAY_PLATFORM_ERROR, e.getErrMsg());
         }
-        return null;
+        return refundResponse;
     }
 
     @Override

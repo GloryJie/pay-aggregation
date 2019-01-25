@@ -14,6 +14,7 @@ package com.gloryjie.pay.trade.service;
 import com.gloryjie.pay.channel.dto.param.ChargeCreateParam;
 import com.gloryjie.pay.trade.dto.ChargeDto;
 import com.gloryjie.pay.trade.dto.RefundDto;
+import com.gloryjie.pay.trade.dto.param.RefundParam;
 
 /**
  * 支付单接口
@@ -39,10 +40,10 @@ public interface ChargeService {
 
     /**
      * 发起退款
-     * @param refundDto
+     * @param refundParam
      * @return
      */
-    RefundDto refund(RefundDto refundDto);
+    RefundDto refund(RefundParam refundParam);
 
     /**
      * 退款查询

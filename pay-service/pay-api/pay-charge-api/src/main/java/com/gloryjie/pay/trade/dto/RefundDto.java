@@ -11,18 +11,81 @@
  */
 package com.gloryjie.pay.trade.dto;
 
-import java.math.BigDecimal;
+import com.gloryjie.pay.channel.enums.ChannelType;
+import com.gloryjie.pay.trade.enums.RefundStatus;
+import lombok.Data;
+
+import java.util.Date;
 
 /**
  * @author Jie
  * @since
  */
+@Data
 public class RefundDto {
 
-    private Integer appId;
+    /**
+     * 退款单no
+     */
+    private String refundNo;
 
+    /**
+     * 退款订单对应的支付订单no
+     */
     private String chargeNo;
 
-    private BigDecimal amount;
+    /**
+     * 商户订单号
+     */
+    private String orderNo;
+
+    /**
+     * 应用id
+     */
+    private Integer appId;
+
+    /**
+     * 支付渠道
+     */
+    private ChannelType channel;
+
+    /**
+     * 退款金额
+     */
+    private Long amount;
+
+    /**
+     * 退款备注
+     */
+    private String description;
+
+    private String clientIp;
+
+    private String userHold;
+
+    /**
+     * 支付渠道退款订单号
+     */
+    private String platformTradeNo;
+
+    /**
+     * 退款成功时间
+     */
+    private Long timeSucceed;
+
+    /**
+     * 退款状态
+     */
+    private RefundStatus status;
+
+    /**
+     * 三位货币ISO代码，目前仅支持cny
+     */
+    private String currency;
+
+    /**
+     * 创建时间
+     */
+    private Date createTime;
 
 }

@@ -28,7 +28,9 @@ public enum  TradeError implements BaseErrorEnum {
     ORDER_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "400", "订单已存在"),
     UPDATE_CHARGE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR,"501","更新支付单失败"),
     CHARGE_NOT_EXISTS(HttpStatus.BAD_REQUEST,"402","支付单不存在"),
-    ORDER_ALREADY_PAY(HttpStatus.BAD_REQUEST,"403","当前订单已支付,请勿重复发起支付")
+    ORDER_ALREADY_PAY(HttpStatus.BAD_REQUEST,"403","当前订单已支付,请勿重复发起支付"),
+    REFUND_AMOUNT_OUT_RANGE(HttpStatus.BAD_REQUEST,"404","退款金额不正确"),
+    CHANNEL_REFUND_ERROR(HttpStatus.INTERNAL_SERVER_ERROR,"405","渠道退款异常")
     ;
 
     private int code;

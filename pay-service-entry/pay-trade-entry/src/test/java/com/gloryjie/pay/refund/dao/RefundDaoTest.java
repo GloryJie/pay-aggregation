@@ -13,6 +13,7 @@ package com.gloryjie.pay.refund.dao;
 
 import com.gloryjie.pay.base.util.DateTimeUtil;
 import com.gloryjie.pay.base.util.idGenerator.IdFactory;
+import com.gloryjie.pay.channel.enums.ChannelType;
 import com.gloryjie.pay.trade.enums.RefundStatus;
 import com.gloryjie.pay.trade.model.Refund;
 import com.gloryjie.pay.trade.PayTradeApplication;
@@ -68,14 +69,13 @@ public class RefundDaoTest {
         refund.setOrderNo(orderNo);
         refund.setChargeNo(chargeNo);
         refund.setAppId(123456);
-        refund.setChannel("ALIPAY");
+        refund.setChannel(ChannelType.ALIPAY_PAGE);
         refund.setAmount(1L);
         refund.setDescription("测试");
         refund.setClientIp("127.0.0.1");
         refund.setExtra("额外数据");
         refund.setUserHold("用户保留信息");
         refund.setPlatformTradeNo("212387498327");
-        refund.setTimeCreated(DateTimeUtil.currentTimeMillis());
         refund.setTimeSucceed(DateTimeUtil.currentTimeMillis());
         refund.setStatus(RefundStatus.PROCESSING);
         refund.setCurrency("cny");

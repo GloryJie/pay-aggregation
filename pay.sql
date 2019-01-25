@@ -101,7 +101,6 @@ CREATE TABLE `t_refund` (
   `extra` varchar(256) DEFAULT NULL COMMENT '特定渠道需要的的额外附加参数',
   `user_hold` varchar(100) DEFAULT NULL,
   `platform_trade_no` varchar(32) DEFAULT NULL COMMENT '支付渠道退款订单号',
-  `time_created` bigint(20) NOT NULL COMMENT '创建时间',
   `time_succeed` bigint(20) DEFAULT NULL COMMENT '退款成功时间',
   `status` tinyint(1) NOT NULL COMMENT '退款状态',
   `failure_code` varchar(128) DEFAULT NULL COMMENT '错误码',

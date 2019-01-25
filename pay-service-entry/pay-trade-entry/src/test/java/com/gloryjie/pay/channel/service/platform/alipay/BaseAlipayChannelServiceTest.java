@@ -11,12 +11,12 @@
  */
 package com.gloryjie.pay.channel.service.platform.alipay;
 
-import com.gloryjie.pay.base.util.JsonUtil;
 import com.gloryjie.pay.base.util.idGenerator.IdFactory;
 import com.gloryjie.pay.channel.dto.ChannelPayQueryDto;
 import com.gloryjie.pay.channel.dto.ChannelPayQueryResponse;
 import com.gloryjie.pay.channel.dto.ChannelRefundDto;
 import com.gloryjie.pay.channel.dto.ChannelRefundQueryDto;
+import com.gloryjie.pay.channel.dto.response.ChannelRefundResponse;
 import com.gloryjie.pay.channel.enums.ChannelType;
 import com.gloryjie.pay.trade.PayTradeApplication;
 import org.junit.Assert;
@@ -28,11 +28,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.validation.constraints.Max;
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.List;
-
 /**
  * @author Jie
  * @since
@@ -40,7 +35,7 @@ import java.util.List;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = PayTradeApplication.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class AlipayChannelServiceTest {
+public class BaseAlipayChannelServiceTest {
 
     @Autowired
     private AlipayPageChannelServiceImpl pageChannelService;
@@ -63,10 +58,10 @@ public class AlipayChannelServiceTest {
         refundDto.setChannel(ChannelType.ALIPAY_PAGE);
         refundDto.setChargeNo("516268444723707904");
         refundDto.setRefundNo(refundNo);
-        refundDto.setAmount(new BigDecimal("0.5"));
+        refundDto.setAmount(5L);
 
-        pageChannelService.refund(refundDto);
-        System.out.println(refundNo);
+        ChannelRefundResponse refundResponse = (ChannelRefundResponse) pageChannelService.refund(refundDto);
+
     }
 
     @Test

@@ -2,12 +2,12 @@
  *   Product:      pay
  *   Module Name:  COMMON
  *   Package Name: com.gloryjie.pay.channel.dto.response
- *   Date Created: 2018/12/21
+ *   Date Created: 2019/1/22
  * ------------------------------------------------------------------
  * Modification History
  * DATE            Name           Contact
  * ------------------------------------------------------------------
- * 2018/12/21      Jie            GloryJie@163.com
+ * 2019/1/22      Jie            GloryJie@163.com
  */
 package com.gloryjie.pay.channel.dto.response;
 
@@ -17,23 +17,26 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 /**
- * 渠道支付的返回对象
  * @author Jie
- * @since 0.1
+ * @since
  */
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class ChannelPayResponse extends ChannelResponse{
+public class ChannelRefundResponse extends ChannelResponse {
 
     /**
-     * 网关支付凭证
+     * 交易平台交易号
      */
-    private String credential;
+    private String platformTradeNo;
+
+    /**
+     * 当前退款的金额
+     */
+    private Long refundAmount;
 
 
-    public ChannelPayResponse(AlipayResponse response){
+    public ChannelRefundResponse(AlipayResponse response){
         super(response);
     }
-
 }

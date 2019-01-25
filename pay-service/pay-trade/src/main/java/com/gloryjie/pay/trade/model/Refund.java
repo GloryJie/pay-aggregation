@@ -1,5 +1,6 @@
 package com.gloryjie.pay.trade.model;
 
+import com.gloryjie.pay.channel.enums.ChannelType;
 import com.gloryjie.pay.trade.enums.RefundStatus;
 import lombok.Data;
 
@@ -31,7 +32,7 @@ public class Refund {
     /**
      * 支付渠道
      */
-    private String channel;
+    private ChannelType channel;
 
     /**
      * 退款金额
@@ -56,11 +57,6 @@ public class Refund {
      * 支付渠道退款订单号
      */
     private String platformTradeNo;
-
-    /**
-     * 创建时间
-     */
-    private Long timeCreated;
 
     /**
      * 退款成功时间

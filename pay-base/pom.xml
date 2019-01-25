@@ -53,6 +53,16 @@
             <artifactId>spring-boot-starter-aop</artifactId>
         </dependency>
 
+        <!--rocketMq相关-->
+        <dependency>
+            <groupId>org.apache.rocketmq</groupId>
+            <artifactId>rocketmq-client</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.rocketmq</groupId>
+            <artifactId>rocketmq-common</artifactId>
+        </dependency>
     </dependencies>
 
 </project>
