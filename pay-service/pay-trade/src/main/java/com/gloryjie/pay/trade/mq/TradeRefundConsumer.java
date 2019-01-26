@@ -13,6 +13,7 @@ package com.gloryjie.pay.trade.mq;
 
 import com.gloryjie.pay.base.constant.DefaultConstant;
 import com.gloryjie.pay.base.enums.MqTagEnum;
+import com.gloryjie.pay.trade.biz.RefundBiz;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
 import org.apache.rocketmq.client.consumer.listener.ConsumeConcurrentlyContext;
@@ -21,6 +22,7 @@ import org.apache.rocketmq.client.consumer.listener.MessageListenerConcurrently;
 import org.apache.rocketmq.client.exception.MQClientException;
 import org.apache.rocketmq.common.consumer.ConsumeFromWhere;
 import org.apache.rocketmq.common.message.MessageExt;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -47,6 +49,9 @@ public class TradeRefundConsumer implements MessageListenerConcurrently {
     @Value("${rocketMq.namesrv:localhost:9876}")
     private String nameSrv;
 
+    @Autowired
+    private RefundBiz refundBiz;
+
 
     @PostConstruct
     public void initConsumer() {
@@ -69,11 +74,12 @@ public class TradeRefundConsumer implements MessageListenerConcurrently {
         try {
             if (msgs != null && msgs.size() > 0) {
                 for (MessageExt msg : msgs) {
-                    String msgBody = new String(msg.getBody(), DefaultConstant.CHARSET);
-                    log.info("consume refund msg={}",msgBody);
+                    String refundNo = new String(msg.getBody(), DefaultConstant.CHARSET);
+                    refundBiz.actualRefund(refundNo);
                 }
             }
-        } catch (UnsupportedEncodingException e) {
+            return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
+        } catch (Exception e) {
             e.printStackTrace();
         }
 

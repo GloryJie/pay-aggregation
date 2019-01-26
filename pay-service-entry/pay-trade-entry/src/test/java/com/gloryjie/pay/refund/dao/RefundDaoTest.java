@@ -29,6 +29,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 /**
  * @author Jie
@@ -76,7 +77,7 @@ public class RefundDaoTest {
         refund.setExtra("额外数据");
         refund.setUserHold("用户保留信息");
         refund.setPlatformTradeNo("212387498327");
-        refund.setTimeSucceed(DateTimeUtil.currentTimeMillis());
+        refund.setTimeSucceed(LocalDateTime.now());
         refund.setStatus(RefundStatus.PROCESSING);
         refund.setCurrency("cny");
         refund.setVersion(0);

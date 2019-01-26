@@ -15,6 +15,7 @@ import com.gloryjie.pay.base.constant.DefaultConstant;
 import com.gloryjie.pay.base.enums.MqTagEnum;
 import com.gloryjie.pay.base.util.JsonUtil;
 import com.gloryjie.pay.channel.dto.ChannelRefundDto;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.client.exception.MQBrokerException;
 import org.apache.rocketmq.client.exception.MQClientException;
@@ -48,16 +49,15 @@ public class TradeMqProducer {
     /**
      * 发送异步退款信息
      */
-    public Boolean sendRefundMsg(ChannelRefundDto refundDto) {
+    public Boolean sendRefundMsg(@NonNull String refundNo) {
         try {
-            String msgContent = JsonUtil.toJson(refundDto);
-            Message message = new Message(tradeMqTopic, MqTagEnum.TRADE_ASYNC_REFUND.name(), msgContent.getBytes(DefaultConstant.CHARSET));
+            Message message = new Message(tradeMqTopic, MqTagEnum.TRADE_ASYNC_REFUND.name(), refundNo.getBytes(DefaultConstant.CHARSET));
             // 异步退款消息使用同步发送,确保发送成功
             SendResult sendResult = mqProducer.send(message);
             return SendStatus.SEND_OK == sendResult.getSendStatus();
         } catch (UnsupportedEncodingException | MQClientException | RemotingException | InterruptedException | MQBrokerException e) {
             // 打印日志,不需要重试
-            log.error("send refund msg error, errMsg={}",e.getMessage(),e);
+            log.error("send refund msg error, errMsg={}", e.getMessage(), e);
         }
         return Boolean.FALSE;
     }

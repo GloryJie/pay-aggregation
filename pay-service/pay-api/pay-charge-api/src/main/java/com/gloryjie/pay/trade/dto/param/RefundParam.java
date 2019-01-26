@@ -32,7 +32,8 @@ public class RefundParam {
     @NotNull
     private String chargeNo;
 
-    @NotNull
+    private String refundNo;
+
     private Long amount;
 
     private String description;

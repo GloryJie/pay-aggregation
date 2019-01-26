@@ -17,8 +17,10 @@ import lombok.NonNull;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 
 /**
  * 时间转换工具类,包含Java8时间
@@ -28,6 +30,21 @@ import java.time.format.DateTimeFormatter;
  */
 public class DateTimeUtil {
 
+    public static LocalDateTime dateToLocal(Date date){
+        Instant instant = date.toInstant();
+        ZoneId zoneId = ZoneId.systemDefault();
+        return instant.atZone(zoneId).toLocalDateTime();
+    }
+
+    public static LocalDateTime parse(String time, String pattern) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern);
+        return LocalDateTime.parse(time, formatter);
+    }
+
+    public static LocalDateTime parse(String time) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DefaultConstant.DATE_TIME_FORMAT);
+        return LocalDateTime.parse(time, formatter);
+    }
 
     /**
      * 将时间转换为string

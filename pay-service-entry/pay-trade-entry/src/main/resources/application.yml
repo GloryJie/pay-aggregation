@@ -16,5 +16,5 @@ logging:
 server:
   port: 10010
 domain: "http://jierong.nat300.top"
-rocketMq:
-  namesrv: '192.168.0.102:9876'
+rocketmq:
+  namesrv: '127.0.0.1:9876'

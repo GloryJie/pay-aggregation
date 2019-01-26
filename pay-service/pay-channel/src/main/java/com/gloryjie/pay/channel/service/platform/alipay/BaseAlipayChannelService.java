@@ -28,6 +28,7 @@ import com.alipay.api.response.AlipayTradeRefundResponse;
 import com.gloryjie.pay.base.constant.DefaultConstant;
 import com.gloryjie.pay.base.exception.error.ExternalException;
 import com.gloryjie.pay.base.util.AmountUtil;
+import com.gloryjie.pay.base.util.DateTimeUtil;
 import com.gloryjie.pay.base.util.JsonUtil;
 import com.gloryjie.pay.channel.config.AlipayChannelConfig;
 import com.gloryjie.pay.channel.constant.ChannelConstant;
@@ -127,10 +128,7 @@ public abstract class BaseAlipayChannelService implements ChannelService {
             }
             queryResponse.setStatus(status.name());
         } catch (AlipayApiException e) {
-            queryResponse = new ChannelPayQueryResponse();
-            queryResponse.setSuccess(false);
-            queryResponse.setStatus(AlipayStatus.TRADE_FAIL.name());
-            queryResponse.setSubMsg(e.getErrMsg());
+            throw ExternalException.create(ChannelError.PAY_PLATFORM_ERROR, e.getErrMsg());
         }
         return queryResponse;
     }
@@ -147,13 +145,14 @@ public abstract class BaseAlipayChannelService implements ChannelService {
         model.setOutRequestNo(refundDto.getRefundNo());
         request.setBizModel(model);
         AlipayTradeRefundResponse response;
-        ChannelRefundResponse refundResponse = null;
+        ChannelRefundResponse refundResponse;
         try {
             response = client.execute(request);
             refundResponse = new ChannelRefundResponse(response);
             if (response.isSuccess()) {
                 refundResponse.setPlatformTradeNo(response.getTradeNo());
                 refundResponse.setRefundAmount(AmountUtil.strToAmount(response.getRefundFee()));
+                refundResponse.setTimeSucceed(DateTimeUtil.dateToLocal(response.getGmtRefundPay()));
             }
         } catch (AlipayApiException e) {
             throw ExternalException.create(ChannelError.PAY_PLATFORM_ERROR, e.getErrMsg());

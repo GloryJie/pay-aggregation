@@ -5,6 +5,7 @@ import com.gloryjie.pay.trade.enums.RefundStatus;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Data
@@ -61,7 +62,7 @@ public class Refund {
     /**
      * 退款成功时间
      */
-    private Long timeSucceed;
+    private LocalDateTime timeSucceed;
 
     /**
      * 退款状态

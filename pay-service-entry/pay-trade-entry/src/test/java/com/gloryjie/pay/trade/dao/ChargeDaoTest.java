@@ -67,10 +67,11 @@ public class ChargeDaoTest {
         charge.setOrderNo(orderNo);
         charge.setAppId(123456);
         charge.setServiceAppId(123456);
+        charge.setPlatformTradeNo("123456789");
         charge.setAmount(1L);
         charge.setSubject("测试");
         charge.setBody("测试");
-        charge.setChannel(ChannelType.ALIPAY_WAP);
+        charge.setChannel(ChannelType.ALIPAY_PAGE);
         charge.setClientIp("127.0.0.1");
         charge.setDescription("测试");
         charge.setTimeCreated(DateTimeUtil.currentTimeMillis());
@@ -78,7 +79,7 @@ public class ChargeDaoTest {
         charge.setExpireTimestamp(DateTimeUtil.currentTimeMillis());
         charge.setTimeExpire(15L);
         charge.setLiveMode(false);
-        charge.setStatus(ChargeStatus.WAIT_PAY);
+        charge.setStatus(ChargeStatus.SUCCESS);
         charge.setCurrency("cny");
         charge.setVersion(0);
         charge.setCredential("测试凭证");

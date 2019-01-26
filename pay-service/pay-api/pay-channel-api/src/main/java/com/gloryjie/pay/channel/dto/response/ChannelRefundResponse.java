@@ -16,6 +16,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 /**
  * @author Jie
  * @since
@@ -34,6 +36,11 @@ public class ChannelRefundResponse extends ChannelResponse {
      * 当前退款的金额
      */
     private Long refundAmount;
+
+    /**
+     * 退款成功时间
+     */
+    private LocalDateTime timeSucceed;
 
 
     public ChannelRefundResponse(AlipayResponse response){
