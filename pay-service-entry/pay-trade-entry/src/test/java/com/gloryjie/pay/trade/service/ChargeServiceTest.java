@@ -73,10 +73,10 @@ public class ChargeServiceTest {
         RefundParam refundParam = new RefundParam();
         refundParam.setAppId(123456);
         refundParam.setOrderNo(String.valueOf(System.currentTimeMillis()));
-        refundParam.setChargeNo("538468234752425984");
+        refundParam.setChargeNo("539929842917834752");
         refundParam.setAmount(1L);
         refundParam.setDescription("测试退款");
-        refundParam.setRefundNo("538652801488650240");
+        refundParam.setRefundNo("539934755542532096");
 
         RefundDto refundDto = chargeService.refund(refundParam);
 

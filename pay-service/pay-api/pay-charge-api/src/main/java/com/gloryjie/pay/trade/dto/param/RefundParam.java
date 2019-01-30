@@ -29,7 +29,6 @@ public class RefundParam {
     @NotNull
     private String orderNo;
 
-    @NotNull
     private String chargeNo;
 
     private String refundNo;

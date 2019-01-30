@@ -15,6 +15,7 @@ import com.gloryjie.pay.channel.enums.ChannelType;
 import com.gloryjie.pay.trade.enums.RefundStatus;
 import lombok.Data;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 /**
@@ -63,15 +64,11 @@ public class RefundDto {
 
     private String userHold;
 
-    /**
-     * 支付渠道退款订单号
-     */
-    private String platformTradeNo;
 
     /**
      * 退款成功时间
      */
-    private Long timeSucceed;
+    private LocalDateTime timeSucceed;
 
     /**
      * 退款状态
@@ -86,6 +83,6 @@ public class RefundDto {
     /**
      * 创建时间
      */
-    private Date createTime;
+    private LocalDateTime createTime;
 
 }

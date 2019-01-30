@@ -16,6 +16,7 @@ import com.gloryjie.pay.trade.enums.ChargeStatus;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Map;
 
 /**
@@ -107,5 +108,7 @@ public class ChargeDto {
      * 支付凭证
      */
     private String credential;
+
+    private LocalDateTime createTime;
 
 }

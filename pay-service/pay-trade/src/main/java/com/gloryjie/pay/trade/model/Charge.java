@@ -4,8 +4,7 @@ import com.gloryjie.pay.channel.enums.ChannelType;
 import com.gloryjie.pay.trade.enums.ChargeStatus;
 import lombok.Data;
 
-import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.Map;
 
 @Data
@@ -126,12 +125,12 @@ public class Charge {
     /**
      * 记录修改时间
      */
-    private Date updateTime;
+    private LocalDateTime updateTime;
 
     /**
      * 记录创建时间
      */
-    private Date createTime;
+    private LocalDateTime createTime;
 
     /**
      * 支付凭证

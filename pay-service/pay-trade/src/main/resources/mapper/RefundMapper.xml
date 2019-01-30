@@ -66,6 +66,14 @@
         where charge_no = #{chargeNo} and app_id = #{appId}
     </select>
 
+    <select id="getByAppIdAndRefundNo" resultMap="BaseResultMap">
+        select
+        <include refid="all_column"/>
+        from
+        <include refid="table"/>
+        where refund_no = #{refundNo} and app_id = #{appId}
+    </select>
+
 
     <update id="update" parameterType="com.gloryjie.pay.trade.model.Refund">
         update <include refid="table"/>

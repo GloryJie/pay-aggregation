@@ -14,6 +14,8 @@ public interface RefundDao {
 
     Refund load(String refundNo);
 
+    Refund getByAppIdAndRefundNo(@Param("appId")Integer appId,@Param("refundNo")String refundNo);
+
     List<Refund> getByAppIdAndChargeNo(@Param("appId")Integer appId,@Param("chargeNo")String chargeNo);
 
     int update(Refund record);

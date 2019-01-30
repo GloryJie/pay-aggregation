@@ -16,6 +16,8 @@ import com.gloryjie.pay.trade.dto.ChargeDto;
 import com.gloryjie.pay.trade.dto.RefundDto;
 import com.gloryjie.pay.trade.dto.param.RefundParam;
 
+import java.util.List;
+
 /**
  * 支付单接口
  * @author Jie
@@ -51,6 +53,6 @@ public interface ChargeService {
      * @param chargeNo
      * @param refundNo
      */
-    RefundDto queryRefund(Integer appId, String chargeNo, String refundNo);
+    List<RefundDto> queryRefund(Integer appId, String chargeNo, String refundNo);
 
 }

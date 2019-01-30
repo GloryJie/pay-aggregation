@@ -94,10 +94,10 @@ public class Refund {
     /**
      * 创建时间
      */
-    private Date createTime;
+    private LocalDateTime createTime;
 
     /**
      * 修改时间
      */
-    private Date updateTime;
+    private LocalDateTime updateTime;
 }

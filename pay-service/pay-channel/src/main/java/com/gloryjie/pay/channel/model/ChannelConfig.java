@@ -2,6 +2,7 @@ package com.gloryjie.pay.channel.model;
 
 import lombok.Data;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Data
@@ -48,11 +49,11 @@ public class ChannelConfig {
     /**
      * 创建时间
      */
-    private Date createTime;
+    private LocalDateTime createTime;
 
     /**
      * 更新时间
      */
-    private Date updateTime;
+    private LocalDateTime updateTime;
 
 }

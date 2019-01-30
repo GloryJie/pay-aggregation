@@ -38,6 +38,7 @@ public enum  TradeError implements BaseErrorEnum {
     REFUND_AMOUNT_OUT_RANGE(HttpStatus.BAD_REQUEST,"151","退款金额不正确"),
     CHANNEL_REFUND_ERROR(HttpStatus.INTERNAL_SERVER_ERROR,"152","渠道退款异常"),
     REFUND_NOT_EXISTS(HttpStatus.BAD_REQUEST,"153","退款单不存在"),
+    REFUND_STATUS_NOT_SUPPORT(HttpStatus.BAD_REQUEST,"153","退款状态不支持"),
     REFUND_EXISTS(HttpStatus.BAD_REQUEST,"154","已存在退款")
     ;
 

@@ -11,17 +11,11 @@
  */
 package com.gloryjie.pay.trade.service;
 
-import com.gloryjie.pay.base.constant.DefaultConstant;
-import com.gloryjie.pay.base.enums.error.CommonErrorEnum;
 import com.gloryjie.pay.base.exception.error.BusinessException;
-import com.gloryjie.pay.base.exception.error.SystemException;
 import com.gloryjie.pay.base.util.BeanConverter;
-import com.gloryjie.pay.base.util.idGenerator.IdFactory;
 import com.gloryjie.pay.channel.dto.ChannelPayQueryDto;
 import com.gloryjie.pay.channel.dto.ChannelPayQueryResponse;
-import com.gloryjie.pay.channel.dto.ChannelRefundDto;
 import com.gloryjie.pay.channel.dto.param.ChargeCreateParam;
-import com.gloryjie.pay.channel.dto.response.ChannelRefundResponse;
 import com.gloryjie.pay.channel.enums.ChannelType;
 import com.gloryjie.pay.channel.service.ChannelGatewayService;
 import com.gloryjie.pay.trade.biz.ChargeBiz;
@@ -34,18 +28,17 @@ import com.gloryjie.pay.trade.dto.RefundDto;
 import com.gloryjie.pay.trade.dto.param.RefundParam;
 import com.gloryjie.pay.trade.enums.ChannelStatusToChargeStatus;
 import com.gloryjie.pay.trade.enums.ChargeStatus;
-import com.gloryjie.pay.trade.enums.RefundStatus;
 import com.gloryjie.pay.trade.error.TradeError;
 import com.gloryjie.pay.trade.model.Charge;
 import com.gloryjie.pay.trade.model.Refund;
-import com.gloryjie.pay.trade.mq.TradeMqProducer;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
-import java.util.function.BooleanSupplier;
 
 /**
  * @author Jie
@@ -116,17 +109,26 @@ public class ChargeServiceImpl implements ChargeService {
     public RefundDto refund(RefundParam refundParam) {
         Charge charge = chargeDao.getByAppIdAndChargeNo(refundParam.getAppId(), refundParam.getChargeNo());
         if (charge == null || !charge.getStatus().canRefund()) {
-            throw BusinessException.create(TradeError.CHARGE_NOT_EXISTS);
+            throw BusinessException.create(TradeError.CHARGE_NOT_EXISTS, "或状态不允许退款");
         }
-
-        Refund refund = refundBiz.asyncRefund(charge,refundParam);
+        // 异步退款
+        Refund refund = refundBiz.asyncRefund(charge, refundParam);
+        // 更新支付单状态
+        charge.setStatus(ChargeStatus.EXISTS_REFUND);
+        chargeDao.update(charge);
 
         return BeanConverter.covert(refund, RefundDto.class);
     }
 
     @Override
-    public RefundDto queryRefund(Integer appId, String chargeNo, String refundNo) {
-        return null;
+    public List<RefundDto> queryRefund(@NonNull Integer appId, @NonNull String chargeNo, String refundNo) {
+        // 简单处理，只从自己的数据库查询,因为部分渠道为同步退款
+        if (StringUtils.isBlank(refundNo)) {
+            List<Refund> refundList = refundDao.getByAppIdAndChargeNo(appId, chargeNo);
+            return BeanConverter.batchCovert(refundList, RefundDto.class);
+        }
+        Refund refund = refundDao.getByAppIdAndRefundNo(appId,refundNo);
+        return Collections.singletonList(BeanConverter.covert(refund, RefundDto.class));
     }
 
 

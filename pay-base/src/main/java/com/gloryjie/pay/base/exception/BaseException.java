@@ -49,7 +49,7 @@ public class BaseException extends RuntimeException implements ErrorInterface {
   }
 
   public BaseException(BaseErrorEnum error, String detailMsg) {
-    this(error.getStatus(), detailMsg);
+    this(error.getStatus(), error.getMessage() + ":" + detailMsg);
   }
 
   public BaseException(BaseErrorEnum error, String detailMsg, Throwable t) {

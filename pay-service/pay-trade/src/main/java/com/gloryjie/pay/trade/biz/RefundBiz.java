@@ -72,7 +72,7 @@ public class RefundBiz {
                 targetRefund = refundParam.getRefundNo().equals(refund.getRefundNo()) ? refund : null;
             }
             if (targetRefund == null || RefundStatus.FAILURE != targetRefund.getStatus()) {
-                throw BusinessException.create(TradeError.REFUND_NOT_EXISTS);
+                throw BusinessException.create(TradeError.REFUND_STATUS_NOT_SUPPORT,"已退款或处理中");
             }
             // 状态更新
             targetRefund.setStatus(RefundStatus.PROCESSING);
@@ -134,6 +134,7 @@ public class RefundBiz {
         ChannelRefundResponse refundResponse = channelGatewayService.refund(channelRefundDto);
         RefreshRefundDto refreshRefundDto = BeanConverter.covert(refund,RefreshRefundDto.class);
         if (refundResponse.isSuccess()){
+            refreshRefundDto.setStatus(RefundStatus.SUCCESS);
             refreshRefundDto.setPlatformTradeNo(refundResponse.getPlatformTradeNo());
             refreshRefundDto.setTimeSucceed(refundResponse.getTimeSucceed());
         }else{
