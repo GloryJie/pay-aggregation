@@ -11,12 +11,11 @@
  */
 package com.gloryjie.pay.trade.dao;
 
-import com.gloryjie.pay.base.util.DateTimeUtil;
 import com.gloryjie.pay.base.util.idGenerator.IdFactory;
 import com.gloryjie.pay.channel.enums.ChannelType;
+import com.gloryjie.pay.trade.PayTradeApplication;
 import com.gloryjie.pay.trade.enums.ChargeStatus;
 import com.gloryjie.pay.trade.model.Charge;
-import com.gloryjie.pay.trade.PayTradeApplication;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
@@ -27,7 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -74,9 +73,8 @@ public class ChargeDaoTest {
         charge.setChannel(ChannelType.ALIPAY_PAGE);
         charge.setClientIp("127.0.0.1");
         charge.setDescription("测试");
-        charge.setTimeCreated(DateTimeUtil.currentTimeMillis());
-        charge.setTimePaid(DateTimeUtil.currentTimeMillis());
-        charge.setExpireTimestamp(DateTimeUtil.currentTimeMillis());
+        charge.setTimeCreated(LocalDateTime.now());
+        charge.setTimePaid(LocalDateTime.now());
         charge.setTimeExpire(15L);
         charge.setLiveMode(false);
         charge.setStatus(ChargeStatus.SUCCESS);

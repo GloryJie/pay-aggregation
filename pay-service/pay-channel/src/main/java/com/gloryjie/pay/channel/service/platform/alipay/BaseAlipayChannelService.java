@@ -107,7 +107,7 @@ public abstract class BaseAlipayChannelService implements ChannelService {
                 status = AlipayStatus.valueOf(response.getTradeStatus());
                 queryResponse.setPlatformTradeNo(response.getTradeNo());
                 queryResponse.setAmount(AmountUtil.strToAmount(response.getTotalAmount()));
-                queryResponse.setTimePaid(response.getSendPayDate().getTime());
+                queryResponse.setTimePaid(DateTimeUtil.dateToLocal(response.getSendPayDate()));
                 if (response.getFundBillList() != null) {
                     // 需要减去一些平台优惠的金额, 得到实付金额
                     Long reducedPrice = 0L;

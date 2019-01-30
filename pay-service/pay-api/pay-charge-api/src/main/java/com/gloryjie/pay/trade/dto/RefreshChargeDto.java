@@ -15,6 +15,8 @@ import com.gloryjie.pay.channel.enums.ChannelType;
 import com.gloryjie.pay.trade.enums.ChargeStatus;
 import lombok.Data;
 
+import java.time.LocalDateTime;
+
 /**
  * 刷新支付单的参数
  * @author Jie
@@ -38,5 +40,5 @@ public class RefreshChargeDto {
 
     private Long actualAmount;
 
-    private Long timePaid;
+    private LocalDateTime timePaid;
 }

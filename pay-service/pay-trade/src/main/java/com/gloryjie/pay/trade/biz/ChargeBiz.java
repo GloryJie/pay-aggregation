@@ -31,6 +31,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+
 /**
  * 处理支付单相关的业务
  *
@@ -89,8 +91,7 @@ public class ChargeBiz {
         charge.setVersion(0);
         charge.setLiveMode(createParam.getLiveMode());
         charge.setStatus(ChargeStatus.WAIT_PAY);
-        charge.setTimeCreated(System.currentTimeMillis());
-        charge.setExpireTimestamp(charge.getTimeCreated() + createParam.getTimeExpire() * 60 * 1000);
+        charge.setTimeCreated(LocalDateTime.now());
         return charge;
     }
 

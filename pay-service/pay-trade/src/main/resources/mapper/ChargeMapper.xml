@@ -19,7 +19,6 @@
         <result column="time_created" property="timeCreated"/>
         <result column="time_paid" property="timePaid"/>
         <result column="time_expire" property="timeExpire"/>
-        <result column="expire_timestamp" property="expireTimestamp"/>
         <result column="live_mode" property="liveMode"/>
         <result column="status"  property="status"/>
         <result column="currency" property="currency"/>
@@ -39,14 +38,14 @@
     <sql id="all_column">
         charge_no, order_no, app_id, service_app_id, amount, actual_amount,
         subject, body, channel, client_ip, description, user_hold, platform_trade_no, time_created,
-        time_paid, time_expire, expire_timestamp, live_mode, status, currency, extra, version,
+        time_paid, time_expire, live_mode, status, currency, extra, version,
         failure_code, failure_msg, credential, update_time, create_time
     </sql>
 
     <sql id="all_value">
         #{chargeNo}, #{orderNo}, #{appId}, #{serviceAppId}, #{amount}, #{actualAmount}, #{subject}, #{body},
         #{channel}, #{clientIp}, #{description}, #{userHold}, #{platformTradeNo}, #{timeCreated}, #{timePaid}, #{timeExpire},
-        #{expireTimestamp}, #{liveMode}, #{status}, #{currency}, #{extra}, #{version}, #{failureCode}, #{failureMsg},
+        #{liveMode}, #{status}, #{currency}, #{extra}, #{version}, #{failureCode}, #{failureMsg},
         #{credential}, now(), now()
     </sql>
 
@@ -100,7 +99,6 @@
             <if test="timeCreated != null">time_created = #{timeCreated},</if>
             <if test="timePaid != null">time_paid = #{timePaid},</if>
             <if test="timeExpire != null">time_expire = #{timeExpire},</if>
-            <if test="expireTimestamp != null">expire_timestamp = #{expireTimestamp},</if>
             <if test="liveMode != null">live_mode = #{liveMode},</if>
             <if test="status != null">status = #{status},</if>
             <if test="currency != null">currency = #{currency},</if>

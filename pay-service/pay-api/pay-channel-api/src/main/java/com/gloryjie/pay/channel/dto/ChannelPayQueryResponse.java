@@ -16,8 +16,7 @@ import com.gloryjie.pay.channel.dto.response.ChannelResponse;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 /**
  * @author Jie
@@ -35,7 +34,7 @@ public class ChannelPayQueryResponse extends ChannelResponse {
 
     private Long actualAmount;
 
-    private Long timePaid;
+    private LocalDateTime timePaid;
 
 
     public ChannelPayQueryResponse(AlipayResponse response){

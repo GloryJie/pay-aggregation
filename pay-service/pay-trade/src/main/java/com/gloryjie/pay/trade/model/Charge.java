@@ -77,24 +77,19 @@ public class Charge {
     private String platformTradeNo;
 
     /**
-     * 支付单创建时间，13位Unix时间戳
+     * 支付单创建时间
      */
-    private Long timeCreated;
+    private LocalDateTime timeCreated;
 
     /**
-     * 支付单支付完成时间，13位Unix时间戳
+     * 支付单支付完成时间
      */
-    private Long timePaid;
+    private LocalDateTime timePaid;
 
     /**
      * 支付单单失效时间，单位分钟
      */
     private Long timeExpire;
-
-    /**
-     * 订单失效时间，13位Unix时间戳
-     */
-    private Long expireTimestamp;
 
     /**
      * 是否是生产模式
