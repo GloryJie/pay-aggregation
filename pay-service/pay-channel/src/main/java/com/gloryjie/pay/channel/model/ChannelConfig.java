@@ -1,9 +1,9 @@
 package com.gloryjie.pay.channel.model;
 
+import com.gloryjie.pay.channel.enums.ChannelType;
 import lombok.Data;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Data
 public class ChannelConfig {
@@ -18,7 +18,7 @@ public class ChannelConfig {
     /**
      * 交易渠道
      */
-    private String channel;
+    private ChannelType channel;
 
     /**
      * 渠道参数配置 json格式
@@ -28,12 +28,12 @@ public class ChannelConfig {
     /**
      * 启用时间
      */
-    private Long startDate;
+    private LocalDateTime startDate;
 
     /**
      * 停用时间
      */
-    private Long endDate;
+    private LocalDateTime stopDate;
 
     /**
      * 渠道状态

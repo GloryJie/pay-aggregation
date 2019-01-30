@@ -11,7 +11,7 @@
  */
 package com.gloryjie.pay.channel.dao;
 
-import com.gloryjie.pay.base.util.DateTimeUtil;
+import com.gloryjie.pay.channel.enums.ChannelType;
 import com.gloryjie.pay.channel.model.ChannelConfig;
 import com.gloryjie.pay.trade.PayTradeApplication;
 import org.junit.Assert;
@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.time.LocalDateTime;
 import java.util.Random;
 
 /**
@@ -53,10 +54,10 @@ public class ChannelConfigDaoTest {
     public void aInsertTest(){
         ChannelConfig config = new ChannelConfig();
         config.setAppId(appId);
-        config.setChannel("ALIPAY");
+        config.setChannel(ChannelType.ALIPAY_PAGE);
         config.setChannelConfig("{}");
-        config.setStartDate(DateTimeUtil.currentTimeMillis());
-        config.setEndDate(DateTimeUtil.currentTimeMillis());
+        config.setStartDate(LocalDateTime.now());
+        config.setStopDate(LocalDateTime.now());
         config.setStatus("0");
         config.setLogicalDel(Boolean.FALSE);
 
@@ -74,7 +75,7 @@ public class ChannelConfigDaoTest {
         ChannelConfig config = new ChannelConfig();
         config.setId(id);
         config.setAppId(appId);
-        config.setChannel("修改渠道");
+        config.setChannel(ChannelType.ALIPAY_BAR_CODE);
 
         Assert.assertEquals(1, channelConfigDao.update(config));
 

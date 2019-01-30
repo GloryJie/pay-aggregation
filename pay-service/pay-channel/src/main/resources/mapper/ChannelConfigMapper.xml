@@ -8,7 +8,7 @@
         <result column="channel" property="channel"/>
         <result column="channel_config" property="channelConfig"/>
         <result column="start_date" property="startDate"/>
-        <result column="end_date" property="endDate"/>
+        <result column="stop_date" property="stopDate"/>
         <result column="status" property="status"/>
         <result column="logical_del" property="logicalDel"/>
         <result column="create_time" property="createTime"/>
@@ -21,12 +21,12 @@
     </sql>
 
     <sql id="all_column">
-        id, app_id, channel, channel_config, start_date, end_date, status, logical_del, create_time,
+        id, app_id, channel, channel_config, start_date, stop_date, status, logical_del, create_time,
         update_time
     </sql>
 
     <sql id="all_value">
-        #{id}, #{appId}, #{channel}, #{channelConfig}, #{startDate}, #{endDate}, #{status}, #{logicalDel}, now(), now()
+        #{id}, #{appId}, #{channel}, #{channelConfig}, #{startDate}, #{stopDate}, #{status}, #{logicalDel}, now(), now()
     </sql>
 
     <select id="load" parameterType="integer" resultMap="BaseResultMap">
@@ -62,7 +62,7 @@
             <if test="channel != null">channel = #{channel},</if>
             <if test="channelConfig != null">channel_config = #{channelConfig},</if>
             <if test="startDate != null">start_date = #{startDate},</if>
-            <if test="endDate != null">end_date = #{endDate},</if>
+            <if test="stopDate != null">stop_date = #{stopDate},</if>
             <if test="status != null">status = #{status},</if>
             <if test="logicalDel != null">logical_del = #{logicalDel},</if>
             update_time = now()
