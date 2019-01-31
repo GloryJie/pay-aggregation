@@ -11,6 +11,7 @@
  */
 package com.gloryjie.pay.trade.service;
 
+import com.gloryjie.pay.base.enums.MqDelayMsgLevel;
 import com.gloryjie.pay.base.exception.error.BusinessException;
 import com.gloryjie.pay.base.util.BeanConverter;
 import com.gloryjie.pay.channel.dto.ChannelPayQueryDto;
@@ -31,6 +32,7 @@ import com.gloryjie.pay.trade.enums.ChargeStatus;
 import com.gloryjie.pay.trade.error.TradeError;
 import com.gloryjie.pay.trade.model.Charge;
 import com.gloryjie.pay.trade.model.Refund;
+import com.gloryjie.pay.trade.mq.TradeMqProducer;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -63,6 +65,9 @@ public class ChargeServiceImpl implements ChargeService {
     @Autowired
     private RefundBiz refundBiz;
 
+    @Autowired
+    private TradeMqProducer mqProducer;
+
 
     @Override
     public ChargeDto pay(ChargeCreateParam createParam) {
@@ -76,8 +81,8 @@ public class ChargeServiceImpl implements ChargeService {
             charge = chargeBiz.createChargeAndDistribute(createParam);
         }
 
-        // TODO: 2018/12/22 需要定时关单
-
+        // 定时关单
+        mqProducer.sendTimingCloseMsg(charge.getChargeNo(), MqDelayMsgLevel.computeLevel(charge.getTimeExpire() * 60));
 
         return BeanConverter.covert(charge, ChargeDto.class);
     }
@@ -127,7 +132,7 @@ public class ChargeServiceImpl implements ChargeService {
             List<Refund> refundList = refundDao.getByAppIdAndChargeNo(appId, chargeNo);
             return BeanConverter.batchCovert(refundList, RefundDto.class);
         }
-        Refund refund = refundDao.getByAppIdAndRefundNo(appId,refundNo);
+        Refund refund = refundDao.getByAppIdAndRefundNo(appId, refundNo);
         return Collections.singletonList(BeanConverter.covert(refund, RefundDto.class));
     }
 
@@ -159,9 +164,16 @@ public class ChargeServiceImpl implements ChargeService {
         refreshChargeDto.setAppId(charge.getAppId());
         refreshChargeDto.setChannel(charge.getChannel());
 
-        refreshChargeDto.setAmount(queryResponse.getAmount());
-        refreshChargeDto.setActualAmount(queryResponse.getActualAmount());
-        refreshChargeDto.setTimePaid(queryResponse.getTimePaid());
+        if (queryResponse.isSuccess()) {
+            refreshChargeDto.setAmount(queryResponse.getAmount());
+            refreshChargeDto.setActualAmount(queryResponse.getActualAmount());
+            refreshChargeDto.setTimePaid(queryResponse.getTimePaid());
+        } else {
+            refreshChargeDto.setAmount(charge.getAmount());
+            refreshChargeDto.setFailureCode(queryResponse.getSubCode());
+            refreshChargeDto.setFailureMsg(queryResponse.getSubMsg());
+        }
+
         // 渠道状态转换为系统定义状态
         ChargeStatus status = ChannelStatusToChargeStatus.switchStatus(charge.getChannel(), queryResponse.getStatus());
         refreshChargeDto.setStatus(status);

@@ -11,6 +11,8 @@
  */
 package com.gloryjie.pay.trade.biz;
 
+import com.gloryjie.pay.base.enums.MqDelayMsgLevel;
+import com.gloryjie.pay.base.enums.error.CommonErrorEnum;
 import com.gloryjie.pay.base.exception.error.BusinessException;
 import com.gloryjie.pay.base.exception.error.ExternalException;
 import com.gloryjie.pay.base.exception.error.SystemException;
@@ -26,6 +28,7 @@ import com.gloryjie.pay.trade.dto.RefreshChargeDto;
 import com.gloryjie.pay.trade.enums.ChargeStatus;
 import com.gloryjie.pay.trade.error.TradeError;
 import com.gloryjie.pay.trade.model.Charge;
+import com.gloryjie.pay.trade.mq.TradeMqProducer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -51,6 +54,9 @@ public class ChargeBiz {
 
     @Autowired
     private ChargeDao chargeDao;
+
+    @Autowired
+    private TradeMqProducer mqProducer;
 
     /**
      * 创建支付单并分发渠道支付
@@ -85,14 +91,21 @@ public class ChargeBiz {
         return charge;
     }
 
-    private Charge generateCharge(ChargeCreateParam createParam) {
-        Charge charge = BeanConverter.covert(createParam, Charge.class);
-        charge.setChargeNo(IdFactory.generateStringId());
-        charge.setVersion(0);
-        charge.setLiveMode(createParam.getLiveMode());
-        charge.setStatus(ChargeStatus.WAIT_PAY);
-        charge.setTimeCreated(LocalDateTime.now());
-        return charge;
+
+    /**
+     * 关闭支付单
+     * @param chargeNo
+     */
+    public void closeCharge(String chargeNo){
+        Charge charge = chargeDao.load(chargeNo);
+        if (charge == null || ChargeStatus.WAIT_PAY != charge.getStatus()){
+            return;
+        }
+        charge.setStatus(ChargeStatus.CLOSED);
+        // 若更新失败，则再次异步关单
+        if (chargeDao.update(charge) <= 0){
+            mqProducer.sendTimingCloseMsg(charge.getChargeNo(), MqDelayMsgLevel.FIRST);
+        }
     }
 
 
@@ -107,19 +120,28 @@ public class ChargeBiz {
 
         // 状态不变则直接返回
         if (refreshChargeDto.getStatus() == charge.getStatus()) {
-//            if (!charge.getAmount().equals(refreshChargeDto.getAmount())) {
-//                // 金额不一致异常较为严重,涉及资金安全,有可能为系统内部计算错误
-//                log.error("refresh charge={} error, total amount not consistent, old={}, new={}", charge.getChargeNo(), charge.getAmount(), refreshChargeDto.getAmount());
-//                throw SystemException.create(CommonErrorEnum.INTERNAL_SYSTEM_ERROR, "total amount not consistent");
-//            }
+            boolean compareResult = charge.getTimeCreated().plusMinutes(charge.getTimeExpire()).isAfter(LocalDateTime.now());
+            // 时间超过，则主动关单
+            if (ChargeStatus.WAIT_PAY == charge.getStatus() && compareResult ){
+                charge.setStatus(ChargeStatus.CLOSED);
+                chargeDao.update(charge);
+            }
             return charge;
         }
 
         if (checkChargeStatusChange(charge.getStatus(), refreshChargeDto.getStatus())) {
+            if (!charge.getAmount().equals(refreshChargeDto.getAmount())) {
+                // 金额不一致异常较为严重,涉及资金安全,有可能为系统内部计算错误
+                log.error("refresh charge={} error, total amount not consistent, old={}, new={}", charge.getChargeNo(), charge.getAmount(), refreshChargeDto.getAmount());
+                throw SystemException.create(CommonErrorEnum.INTERNAL_SYSTEM_ERROR, "total amount not consistent");
+            }
+
             charge.setStatus(refreshChargeDto.getStatus());
-            charge.setPlatformTradeNo(refreshChargeDto.getPlatformTradeNo());
-            charge.setActualAmount(refreshChargeDto.getActualAmount());
-            charge.setTimePaid(refreshChargeDto.getTimePaid());
+            if (ChargeStatus.SUCCESS == refreshChargeDto.getStatus()){
+                charge.setPlatformTradeNo(refreshChargeDto.getPlatformTradeNo());
+                charge.setActualAmount(refreshChargeDto.getActualAmount());
+                charge.setTimePaid(refreshChargeDto.getTimePaid());
+            }
             // 更新数据库
             int result = chargeDao.update(charge);
             if (result <= 0) {
@@ -130,6 +152,7 @@ public class ChargeBiz {
         // TODO: 2019/1/13 若状态为成功,需要异步记录流水
         return charge;
     }
+
 
     /**
      * 检查支付单状态变化的可行性
@@ -149,5 +172,15 @@ public class ChargeBiz {
             return newStatus == ChargeStatus.CLOSED || newStatus == ChargeStatus.EXISTS_REFUND;
         }
         return false;
+    }
+
+    private Charge generateCharge(ChargeCreateParam createParam) {
+        Charge charge = BeanConverter.covert(createParam, Charge.class);
+        charge.setChargeNo(IdFactory.generateStringId());
+        charge.setVersion(0);
+        charge.setLiveMode(createParam.getLiveMode());
+        charge.setStatus(ChargeStatus.WAIT_PAY);
+        charge.setTimeCreated(LocalDateTime.now());
+        return charge;
     }
 }

@@ -41,4 +41,14 @@ public class RefreshChargeDto {
     private Long actualAmount;
 
     private LocalDateTime timePaid;
+
+    /**
+     * 错误码
+     */
+    private String failureCode;
+
+    /**
+     * 错误消息的描述
+     */
+    private String failureMsg;
 }
