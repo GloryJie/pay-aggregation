@@ -94,10 +94,10 @@
             <if test="failureMsg != null">failure_msg = #{failureMsg},</if>
             <if test="currency != null">currency = #{currency},</if>
             <if test="operatorId != null">operator_id = #{operatorId},</if>
-            <if test="version != null">version = #{version},</if>
+            <if test="version != null">version = #{version} + 1,</if>
             update_time = now()
         </set>
-        where refund_no = #{refundNo}
+        where refund_no = #{refundNo} and version = #{version}
     </update>
 
 

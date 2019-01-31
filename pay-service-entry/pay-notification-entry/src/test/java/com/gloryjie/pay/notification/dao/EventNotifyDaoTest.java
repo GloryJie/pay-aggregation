@@ -45,7 +45,7 @@ public class EventNotifyDaoTest {
     public static String sourceNo;
 
 
-
+    public static EventNotify eventNotify;
 
     @BeforeClass
     public static void init() {
@@ -75,6 +75,8 @@ public class EventNotifyDaoTest {
         eventNotify.setVersion(0);
 
         Assert.assertTrue(eventNotifyDao.insert(eventNotify) > 0);
+
+        EventNotifyDaoTest.eventNotify = eventNotify;
     }
 
     @Test
@@ -84,11 +86,10 @@ public class EventNotifyDaoTest {
 
     @Test
     public void cUpdateTest(){
-       EventNotify eventNotify = new EventNotify();
-       eventNotify.setEventNo(eventNo);
-       eventNotify.setEventData("alter data");
 
-       Assert.assertTrue(eventNotifyDao.update(eventNotify) > 0);
+        EventNotifyDaoTest.eventNotify.setEventData("alter data");
+
+       Assert.assertTrue(eventNotifyDao.update(EventNotifyDaoTest.eventNotify) > 0);
     }
 
 }

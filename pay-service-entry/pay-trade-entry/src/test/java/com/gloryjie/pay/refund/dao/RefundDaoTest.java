@@ -11,13 +11,12 @@
  */
 package com.gloryjie.pay.refund.dao;
 
-import com.gloryjie.pay.base.util.DateTimeUtil;
 import com.gloryjie.pay.base.util.idGenerator.IdFactory;
 import com.gloryjie.pay.channel.enums.ChannelType;
-import com.gloryjie.pay.trade.enums.RefundStatus;
-import com.gloryjie.pay.trade.model.Refund;
 import com.gloryjie.pay.trade.PayTradeApplication;
 import com.gloryjie.pay.trade.dao.RefundDao;
+import com.gloryjie.pay.trade.enums.RefundStatus;
+import com.gloryjie.pay.trade.model.Refund;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
@@ -28,7 +27,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
@@ -48,6 +46,8 @@ public class RefundDaoTest {
     public static String orderNo;
 
     public static String refundNo;
+
+    public static Refund refund;
 
 
 
@@ -83,6 +83,8 @@ public class RefundDaoTest {
         refund.setVersion(0);
 
         Assert.assertEquals(1, refundDao.insert(refund));
+
+        RefundDaoTest.refund = refund;
     }
 
     @Test
@@ -92,10 +94,8 @@ public class RefundDaoTest {
 
     @Test
     public void cUpdateTest() {
-        Refund refund = new Refund();
-        refund.setRefundNo(refundNo);
-        refund.setDescription("更新描述");
+        RefundDaoTest.refund.setDescription("更新描述");
 
-        Assert.assertEquals(1, refundDao.update(refund));
+        Assert.assertEquals(1, refundDao.update(RefundDaoTest.refund));
     }
 }

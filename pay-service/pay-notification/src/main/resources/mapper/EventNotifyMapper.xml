@@ -48,7 +48,6 @@
         (<include refid="all_value"/>)
     </insert>
 
-
     <update id="update" parameterType="com.gloryjie.pay.notification.model.EventNotify">
         update <include refid="table"/>
         <set>
@@ -61,10 +60,10 @@
             <if test="eventData != null">event_data = #{eventData},</if>
             <if test="lastReply != null">last_reply = #{lastReply},</if>
             <if test="timeLastNotify != null">time_last_notify = #{timeLastNotify},</if>
-            version = version + 1,
+            <if test="version != null">version = #{version} + 1,</if>
             update_time = now()
         </set>
-        where event_no = #{eventNo}
+        where event_no = #{eventNo} and version = #{version}
     </update>
 
 
