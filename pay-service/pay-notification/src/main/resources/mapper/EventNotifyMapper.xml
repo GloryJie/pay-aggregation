@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.gloryjie.pay.notification.dao.EventNotifyDao">
+
+    <resultMap id="BaseResultMap" type="com.gloryjie.pay.notification.model.EventNotify">
+        <id column="event_no" property="eventNo"/>
+        <result column="source_no" property="sourceNo"/>
+        <result column="app_id" property="appId"/>
+        <result column="type" property="type"/>
+        <result column="time_occur" property="timeOccur"/>
+        <result column="notify_time" property="notifyTime"/>
+        <result column="notify_interval" property="notifyInterval"/>
+        <result column="event_data" property="eventData"/>
+        <result column="last_reply" property="lastReply"/>
+        <result column="time_last_notify" property="timeLastNotify"/>
+        <result column="version" property="version"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <sql id="table">
+        t_event_notify
+    </sql>
+
+    <sql id="all_column">
+    event_no, source_no, app_id, type, time_occur, notify_time, notify_interval, event_data,
+    last_reply, time_last_notify, version, create_time, update_time
+  </sql>
+
+    <sql id="all_value">
+      #{eventNo}, #{sourceNo}, #{appId}, #{type}, #{timeOccur}, #{notifyTime}, #{notifyInterval}, #{eventData}, 
+      #{lastReply}, #{timeLastNotify}, #{version}, now(), now()
+    </sql>
+
+    <select id="getByEventNo" parameterType="string" resultMap="BaseResultMap">
+        select
+        <include refid="all_column"/>
+        from
+        <include refid="table"/>
+        where event_no = #{eventNo}
+    </select>
+
+    <insert id="insert" parameterType="com.gloryjie.pay.notification.model.EventNotify">
+        insert into
+        <include refid="table"/>
+        (<include refid="all_column"/>)
+        values
+        (<include refid="all_value"/>)
+    </insert>
+
+
+    <update id="update" parameterType="com.gloryjie.pay.notification.model.EventNotify">
+        update <include refid="table"/>
+        <set>
+            <if test="sourceNo != null">source_no = #{sourceNo},</if>
+            <if test="appId != null">app_id = #{appId},</if>
+            <if test="type != null">type = #{type},</if>
+            <if test="timeOccur != null">time_occur = #{timeOccur},</if>
+            <if test="notifyTime != null">notify_time = #{notifyTime},</if>
+            <if test="notifyInterval != null">notify_interval = #{notifyInterval},</if>
+            <if test="eventData != null">event_data = #{eventData},</if>
+            <if test="lastReply != null">last_reply = #{lastReply},</if>
+            <if test="timeLastNotify != null">time_last_notify = #{timeLastNotify},</if>
+            version = version + 1,
+            update_time = now()
+        </set>
+        where event_no = #{eventNo}
+    </update>
+
+
+</mapper>

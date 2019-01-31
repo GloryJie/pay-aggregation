@@ -45,7 +45,7 @@ CREATE TABLE `t_channel_config` (
   `update_time` datetime NOT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `idx_app_id_channel` (`app_id`,`channel`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=77 DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT;
 
 
 
@@ -113,4 +113,39 @@ CREATE TABLE `t_refund` (
   KEY `idx_refund_no` (`charge_no`) USING BTREE,
   KEY `idx_order_no` (`order_no`) USING BTREE,
   UNIQUE KEY `uk_refund_no_app_id` (`refund_no`,`app_id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=41 DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT;
+
+-- ----------------------------
+-- 事件订阅
+-- ----------------------------
+DROP TABLE IF EXISTS `t_event_subscription`;
+CREATE TABLE `t_event_subscription` (
+  `id` int AUTO_INCREMENT NOT NULL COMMENT '主键',
+  `app_id` int NOT NULL COMMENT '订阅的应用',
+  `event_type` varchar(64) NOT NULL COMMENT '订阅的事件类型',
+  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+  `update_time` datetime DEFAULT NULL COMMENT '修改时间',
+  PRIMARY KEY (`id`)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT;
+
+-- -- ----------------------------
+-- -- 事件通知记录
+-- -- ----------------------------
+DROP TABLE IF EXISTS `t_event_notify`;
+CREATE TABLE `t_event_notify` (
+  `event_no` varchar(32) NOT NULL COMMENT '事件号',
+  `source_no` varchar(32) NOT NULL COMMENT '事件源号，如chargeNo',
+  `app_id` int(11) NOT NULL COMMENT '事件所属应用id',
+  `type` varchar(32) NOT NULL COMMENT '事件类型',
+  `time_occur` datetime NOT NULL COMMENT '事件发生时间',
+  `notify_time` int NOT NULL COMMENT '当前事件通知次数',
+  `notify_interval` varchar(62) DEFAULT NULL COMMENT '通知的时间间隔，为rmq的延迟级别，json数组',
+  `event_data` varchar(1024) NOT NULL COMMENT '事件携带的数据，json格式',
+  `last_reply` varchar(512) DEFAULT NULL COMMENT '上次响应',
+  `time_last_notify` datetime DEFAULT NULL COMMENT '上次通知时间',
+  `version` int(11) NOT NULL DEFAULT '0',
+  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+  `update_time` datetime DEFAULT NULL COMMENT '修改时间',
+  PRIMARY KEY (`event_no`),
+  KEY `idx_source_no` (`source_no`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT;

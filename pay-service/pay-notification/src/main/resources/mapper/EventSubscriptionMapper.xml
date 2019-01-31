@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.gloryjie.pay.notification.dao.EventSubscriptionDao">
+
+    <resultMap id="BaseResultMap" type="com.gloryjie.pay.notification.model.EventSubscription">
+        <id column="id" property="id"/>
+        <result column="app_id" property="appId"/>
+        <result column="event_type" property="eventType"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <sql id="table">
+        t_event_subscription
+    </sql>
+
+    <sql id="all_column">
+    id, app_id, event_type, create_time, update_time
+  </sql>
+    
+    <sql id="all_value">
+        #{id}, #{appId}, #{eventType}, now(), now()
+    </sql>
+
+    <select id="getByAppId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="all_column"/>
+        from <include refid="table"/>
+        where app_id = #{appId}
+    </select>
+    
+
+    <insert id="insert" parameterType="com.gloryjie.pay.notification.model.EventSubscription" useGeneratedKeys="true" keyProperty="id">
+        insert into
+        <include refid="table"/>
+        (<include refid="all_column"/>)
+        values
+        (<include refid="all_value"/>)
+  </insert>
+
+    
+    <update id="update" parameterType="com.gloryjie.pay.notification.model.EventSubscription">
+        update <include refid="table"/>
+        <set>
+            <if test="appId != null">app_id = #{appId},</if>
+            <if test="eventType != null">event_type = #{eventType},</if>
+            update_time = now()
+        </set>
+        where id = #{id}
+    </update>
+</mapper>

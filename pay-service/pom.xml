@@ -16,6 +16,7 @@
         <module>pay-app</module>
         <module>pay-api</module>
         <module>pay-channel</module>
+        <module>pay-notification</module>
     </modules>
 
 

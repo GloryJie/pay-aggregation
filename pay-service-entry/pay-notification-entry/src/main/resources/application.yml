@@ -1,0 +1,21 @@
+spring:
+  datasource:
+    druid:
+      username: root
+      password: 123456
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      url: "jdbc:mysql://localhost:3306/pay?useUnicode=true&characterEncoding=UTF8"
+  jackson:
+    default-property-inclusion: non_null
+    time-zone: GMT+8
+mybatis:
+  mapper-locations: classpath*:/mapper/*.xml
+  config-location: classpath:mybatis-config.xml
+logging:
+  level:
+    com.gloryjie.pay: debug
+server:
+  port: 10020
+domain: "http://jierong.nat300.top"
+rocketmq:
+  namesrv: '127.0.0.1:9876'

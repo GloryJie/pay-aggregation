@@ -13,6 +13,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>pay-trade-entry</module>
+        <module>pay-notification-entry</module>
     </modules>
 
 

@@ -9,13 +9,18 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>pay-service-api</artifactId>
-    <packaging>pom</packaging>
-    <modules>
-        <module>pay-channel-api</module>
-        <module>pay-charge-api</module>
-        <module>pay-notification-api</module>
-    </modules>
+    <artifactId>pay-notification</artifactId>
+
+    <properties>
+        <pay-notification-api.version>0.0.1-SNAPSHOT</pay-notification-api.version>
+    </properties>
 
 
+    <dependencies>
+        <dependency>
+            <groupId>com.gloryjie</groupId>
+            <artifactId>pay-notification-api</artifactId>
+            <version>${pay-notification-api.version}</version>
+        </dependency>
+    </dependencies>
 </project>
