@@ -12,6 +12,7 @@
 package com.gloryjie.pay.notification.model;
 
 import com.gloryjie.pay.notification.enums.EventType;
+import com.gloryjie.pay.notification.enums.NotifyStatus;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -37,6 +38,8 @@ public class EventNotify {
      * 事件所属应用id
      */
     private Integer appId;
+
+    private NotifyStatus notifyStatus;
 
     /**
      * 事件类型

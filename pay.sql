@@ -136,6 +136,7 @@ CREATE TABLE `t_event_notify` (
   `event_no` varchar(32) NOT NULL COMMENT '事件号',
   `source_no` varchar(32) NOT NULL COMMENT '事件源号，如chargeNo',
   `app_id` int(11) NOT NULL COMMENT '事件所属应用id',
+  `notify_status` varchar(32) NOT NULL COMMENT '时间通知状态',
   `type` varchar(32) NOT NULL COMMENT '事件类型',
   `time_occur` datetime NOT NULL COMMENT '事件发生时间',
   `notify_time` int NOT NULL COMMENT '当前事件通知次数',
