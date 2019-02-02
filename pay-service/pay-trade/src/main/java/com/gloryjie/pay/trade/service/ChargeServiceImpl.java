@@ -168,6 +168,7 @@ public class ChargeServiceImpl implements ChargeService {
             refreshChargeDto.setAmount(queryResponse.getAmount());
             refreshChargeDto.setActualAmount(queryResponse.getActualAmount());
             refreshChargeDto.setTimePaid(queryResponse.getTimePaid());
+            refreshChargeDto.setPlatformTradeNo(queryResponse.getPlatformTradeNo());
         } else {
             refreshChargeDto.setAmount(charge.getAmount());
             refreshChargeDto.setFailureCode(queryResponse.getSubCode());
