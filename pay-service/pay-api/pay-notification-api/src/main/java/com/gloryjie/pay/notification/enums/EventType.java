@@ -23,7 +23,7 @@ import lombok.Getter;
 public enum EventType implements BaseEnum {
 
     /**
-     * 时间类型
+     * 事件类型
      */
     CHARGE_CHANGE_EVENT(10,"支付单变化"),
     REFUND_CHANGE_EVENT(20,"退款单变化");

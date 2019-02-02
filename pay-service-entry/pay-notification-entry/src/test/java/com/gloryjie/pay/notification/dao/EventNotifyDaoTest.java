@@ -14,6 +14,7 @@ package com.gloryjie.pay.notification.dao;
 import com.gloryjie.pay.base.util.idGenerator.IdFactory;
 import com.gloryjie.pay.notification.PayNotificationApplication;
 import com.gloryjie.pay.notification.enums.EventType;
+import com.gloryjie.pay.notification.enums.NotifyStatus;
 import com.gloryjie.pay.notification.model.EventNotify;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -58,13 +59,13 @@ public class EventNotifyDaoTest {
     }
 
 
-
     @Test
-    public void aInsertTest(){
+    public void aInsertTest() {
         EventNotify eventNotify = new EventNotify();
         eventNotify.setEventNo(eventNo);
         eventNotify.setSourceNo(sourceNo);
         eventNotify.setAppId(123456);
+        eventNotify.setNotifyStatus(NotifyStatus.PROCESSING);
         eventNotify.setType(EventType.CHARGE_CHANGE_EVENT);
         eventNotify.setTimeOccur(LocalDateTime.now());
         eventNotify.setNotifyTime(1);
@@ -80,16 +81,16 @@ public class EventNotifyDaoTest {
     }
 
     @Test
-    public void bGetByEventNoTest(){
-       Assert.assertNotNull(eventNotifyDao.getByEventNo(eventNo));
+    public void bGetByEventNoTest() {
+        Assert.assertNotNull(eventNotifyDao.getByEventNo(eventNo));
     }
 
     @Test
-    public void cUpdateTest(){
+    public void cUpdateTest() {
 
-        EventNotifyDaoTest.eventNotify.setEventData("alter data");
+        EventNotifyDaoTest.eventNotify.setNotifyStatus(NotifyStatus.SUCCESS);
 
-       Assert.assertTrue(eventNotifyDao.update(EventNotifyDaoTest.eventNotify) > 0);
+        Assert.assertTrue(eventNotifyDao.update(EventNotifyDaoTest.eventNotify) > 0);
     }
 
 }

@@ -23,9 +23,9 @@ public enum MqDelayMsgLevel {
     /**
      * 延迟消息级别
      * 默认：1s 5s 10s 30s 1m 2m 3m 4m 5m 6m 7m 8m 9m 10m 20m 30m 1h 2h
-     * 修改后：1s 10s 30s 1m 4m 8m 10m 20m 30m 1h 2h 6h 10h 12h 14h 15h 16h 17h 20h 24h
+     * 修改后：0s 10s 30s 1m 4m 8m 10m 20m 30m 1h 2h 6h 10h 12h 14h 15h 16h 17h 20h 24h
      */
-    FIRST(1, 1L, "1s"),
+    FIRST(1, 0L, "0s"),
     SECOND(2, 10L, "10s"),
     THIRD(3, 30L, "30s"),
     FOURTH(4, 60L, "1m"),
@@ -67,6 +67,15 @@ public enum MqDelayMsgLevel {
     public static MqDelayMsgLevel computeLevel(long time) {
         for (MqDelayMsgLevel value : MqDelayMsgLevel.values()) {
             if (time <= value.getMillisecond()) {
+                return value;
+            }
+        }
+        return MqDelayMsgLevel.TWENTIETH;
+    }
+
+    public static MqDelayMsgLevel valueOfTime(String time){
+        for (MqDelayMsgLevel value : MqDelayMsgLevel.values()) {
+            if (value.getTime().equals(time)) {
                 return value;
             }
         }

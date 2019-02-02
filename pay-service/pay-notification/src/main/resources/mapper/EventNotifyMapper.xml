@@ -41,6 +41,14 @@
         where event_no = #{eventNo}
     </select>
 
+    <select id="getBySourceNo" parameterType="string" resultMap="BaseResultMap">
+        select
+        <include refid="all_column"/>
+        from
+        <include refid="table"/>
+        where source_no = #{sourceNo}
+    </select>
+
     <insert id="insert" parameterType="com.gloryjie.pay.notification.model.EventNotify">
         insert into
         <include refid="table"/>

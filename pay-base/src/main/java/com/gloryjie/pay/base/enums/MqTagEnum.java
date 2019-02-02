@@ -24,7 +24,10 @@ public enum MqTagEnum {
      * rocketMq tag枚举
      */
     TRADE_CLOSE_CHARGE(0, "定时关单"),
-    TRADE_ASYNC_REFUND(1, "异步退款");
+    TRADE_ASYNC_REFUND(1, "异步退款"),
+    CHARGE_SUCCESS(2, "支付成功"),
+    REFUND_SUCCESS(3, "退款成功"),
+    EVENT_NOTIFY(4,"事件通知");
 
     private int code;
     private String desc;

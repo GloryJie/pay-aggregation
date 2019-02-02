@@ -28,7 +28,14 @@
         from <include refid="table"/>
         where app_id = #{appId}
     </select>
-    
+
+    <select id="getByAppIdAndType" resultMap="BaseResultMap">
+        select
+        <include refid="all_column"/>
+        from <include refid="table"/>
+        where app_id = #{appId} and event_type = #{type}
+    </select>
+
 
     <insert id="insert" parameterType="com.gloryjie.pay.notification.model.EventSubscription" useGeneratedKeys="true" keyProperty="id">
         insert into

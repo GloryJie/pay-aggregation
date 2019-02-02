@@ -24,6 +24,7 @@ import com.gloryjie.pay.channel.dto.response.ChannelPayResponse;
 import com.gloryjie.pay.channel.error.ChannelError;
 import com.gloryjie.pay.channel.service.ChannelGatewayService;
 import com.gloryjie.pay.trade.dao.ChargeDao;
+import com.gloryjie.pay.trade.dto.ChargeDto;
 import com.gloryjie.pay.trade.dto.RefreshChargeDto;
 import com.gloryjie.pay.trade.enums.ChargeStatus;
 import com.gloryjie.pay.trade.error.TradeError;
@@ -94,16 +95,17 @@ public class ChargeBiz {
 
     /**
      * 关闭支付单
+     *
      * @param chargeNo
      */
-    public void closeCharge(String chargeNo){
+    public void closeCharge(String chargeNo) {
         Charge charge = chargeDao.load(chargeNo);
-        if (charge == null || ChargeStatus.WAIT_PAY != charge.getStatus()){
+        if (charge == null || ChargeStatus.WAIT_PAY != charge.getStatus()) {
             return;
         }
         charge.setStatus(ChargeStatus.CLOSED);
         // 若更新失败，则再次异步关单
-        if (chargeDao.update(charge) <= 0){
+        if (chargeDao.update(charge) <= 0) {
             mqProducer.sendTimingCloseMsg(charge.getChargeNo(), MqDelayMsgLevel.FIRST);
         }
     }
@@ -122,7 +124,7 @@ public class ChargeBiz {
         if (refreshChargeDto.getStatus() == charge.getStatus()) {
             boolean compareResult = charge.getTimeCreated().plusMinutes(charge.getTimeExpire()).isAfter(LocalDateTime.now());
             // 时间超过，则主动关单
-            if (ChargeStatus.WAIT_PAY == charge.getStatus() && compareResult ){
+            if (ChargeStatus.WAIT_PAY == charge.getStatus() && compareResult) {
                 charge.setStatus(ChargeStatus.CLOSED);
                 chargeDao.update(charge);
             }
@@ -137,7 +139,7 @@ public class ChargeBiz {
             }
 
             charge.setStatus(refreshChargeDto.getStatus());
-            if (ChargeStatus.SUCCESS == refreshChargeDto.getStatus()){
+            if (ChargeStatus.SUCCESS == refreshChargeDto.getStatus()) {
                 charge.setPlatformTradeNo(refreshChargeDto.getPlatformTradeNo());
                 charge.setActualAmount(refreshChargeDto.getActualAmount());
                 charge.setTimePaid(refreshChargeDto.getTimePaid());
@@ -150,6 +152,10 @@ public class ChargeBiz {
         }
 
         // TODO: 2019/1/13 若状态为成功,需要异步记录流水
+        if (ChargeStatus.SUCCESS == charge.getStatus()) {
+            mqProducer.sendChargeSuccessMsg(BeanConverter.covert(charge, ChargeDto.class));
+        }
+
         return charge;
     }
 

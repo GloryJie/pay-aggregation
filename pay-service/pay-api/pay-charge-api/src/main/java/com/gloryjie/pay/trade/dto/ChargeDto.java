@@ -15,7 +15,6 @@ import com.gloryjie.pay.channel.enums.ChannelType;
 import com.gloryjie.pay.trade.enums.ChargeStatus;
 import lombok.Data;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Map;
 
@@ -109,6 +108,19 @@ public class ChargeDto {
      */
     private String credential;
 
-    private LocalDateTime createTime;
+    /**
+     * 支付渠道订单号
+     */
+    private String platformTradeNo;
+
+    /**
+     * 支付单创建时间
+     */
+    private LocalDateTime timeCreated;
+
+    /**
+     * 支付单支付完成时间
+     */
+    private LocalDateTime timePaid;
 
 }

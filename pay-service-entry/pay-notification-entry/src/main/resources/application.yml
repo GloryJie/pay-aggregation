@@ -19,3 +19,5 @@ server:
 domain: "http://jierong.nat300.top"
 rocketmq:
   namesrv: '127.0.0.1:9876'
+event:
+  notifyInterval: 0s,1m,4m,10m,1h,2h,6h,15h

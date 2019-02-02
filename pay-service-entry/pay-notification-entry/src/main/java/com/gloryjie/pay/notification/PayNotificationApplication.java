@@ -14,13 +14,15 @@ package com.gloryjie.pay.notification;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ComponentScan;
 
 /**
  * @author Jie
  * @since 0.1
  */
 @SpringBootApplication
-@MapperScan(basePackages = "com.gloryjie.pay.notification*.dao")
+@ComponentScan("com.gloryjie.pay.*")
+@MapperScan(basePackages = "com.gloryjie.pay.*.dao")
 public class PayNotificationApplication {
 
     public static void main(String[] args) {

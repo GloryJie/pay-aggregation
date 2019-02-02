@@ -62,5 +62,6 @@ public class DefaultConstant {
       + "(00?\\d|1\\d{2}|2[0-4]\\d|25[0-5]|[1-9]\\d|\\d)\\."
       + "(00?\\d|1\\d{2}|2[0-4]\\d|25[0-5]|[1-9]\\d|\\d)$";
 
+  public static final String NOTIFY_SUCCESS_RESPONSE = "success";
 
 }
