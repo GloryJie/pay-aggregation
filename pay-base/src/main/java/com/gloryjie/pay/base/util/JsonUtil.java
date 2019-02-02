@@ -39,7 +39,7 @@ public class JsonUtil {
 
     static {
         // 序列化所有字段, 详细的序列化控制使用注解
-        OBJECT_MAPPER.setSerializationInclusion(Include.ALWAYS);
+        OBJECT_MAPPER.setSerializationInclusion(Include.NON_NULL);
         // 不将时间转换成时间戳
         OBJECT_MAPPER.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
         // 忽略bean为null的情况
