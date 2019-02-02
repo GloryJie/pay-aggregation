@@ -22,6 +22,7 @@ import com.gloryjie.pay.channel.dto.response.ChannelRefundResponse;
 import com.gloryjie.pay.channel.service.ChannelGatewayService;
 import com.gloryjie.pay.trade.dao.RefundDao;
 import com.gloryjie.pay.trade.dto.RefreshRefundDto;
+import com.gloryjie.pay.trade.dto.RefundDto;
 import com.gloryjie.pay.trade.dto.param.RefundParam;
 import com.gloryjie.pay.trade.enums.RefundStatus;
 import com.gloryjie.pay.trade.error.TradeError;
@@ -72,7 +73,7 @@ public class RefundBiz {
                 targetRefund = refundParam.getRefundNo().equals(refund.getRefundNo()) ? refund : null;
             }
             if (targetRefund == null || RefundStatus.FAILURE != targetRefund.getStatus()) {
-                throw BusinessException.create(TradeError.REFUND_STATUS_NOT_SUPPORT,"已退款或处理中");
+                throw BusinessException.create(TradeError.REFUND_STATUS_NOT_SUPPORT, "已退款或处理中");
             }
             // 状态更新
             targetRefund.setStatus(RefundStatus.PROCESSING);
@@ -132,21 +133,22 @@ public class RefundBiz {
         }
         ChannelRefundDto channelRefundDto = BeanConverter.covert(refund, ChannelRefundDto.class);
         ChannelRefundResponse refundResponse = channelGatewayService.refund(channelRefundDto);
-        RefreshRefundDto refreshRefundDto = BeanConverter.covert(refund,RefreshRefundDto.class);
-        if (refundResponse.isSuccess()){
+        RefreshRefundDto refreshRefundDto = BeanConverter.covert(refund, RefreshRefundDto.class);
+        if (refundResponse.isSuccess()) {
             refreshRefundDto.setStatus(RefundStatus.SUCCESS);
             refreshRefundDto.setPlatformTradeNo(refundResponse.getPlatformTradeNo());
             refreshRefundDto.setTimeSucceed(refundResponse.getTimeSucceed());
-        }else{
+        } else {
             refreshRefundDto.setFailureCode(refundResponse.getSubCode());
             refreshRefundDto.setFailureMsg(refundResponse.getSubMsg());
         }
 
-        this.refreshRefund(refreshRefundDto,refund);
+        this.refreshRefund(refreshRefundDto, refund);
     }
 
     /**
      * 刷新退款单
+     *
      * @param refreshRefundDto
      * @param refund
      * @return
@@ -168,6 +170,9 @@ public class RefundBiz {
         }
 
         // TODO: 2019/1/26 若状态成功，需要异步计流水
+        if (RefundStatus.SUCCESS == refund.getStatus()) {
+            tradeMqProducer.sendRefundSuccessMsg(BeanConverter.covert(refund, RefundDto.class));
+        }
 
         return refund;
     }

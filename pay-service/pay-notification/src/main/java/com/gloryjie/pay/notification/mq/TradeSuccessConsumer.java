@@ -16,6 +16,7 @@ import com.gloryjie.pay.base.enums.MqTagEnum;
 import com.gloryjie.pay.base.util.JsonUtil;
 import com.gloryjie.pay.notification.service.EventNotifyService;
 import com.gloryjie.pay.trade.dto.ChargeDto;
+import com.gloryjie.pay.trade.dto.RefundDto;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
 import org.apache.rocketmq.client.consumer.listener.ConsumeConcurrentlyContext;
@@ -80,10 +81,12 @@ public class TradeSuccessConsumer implements MessageListenerConcurrently {
                         case CHARGE_SUCCESS:
                             ChargeDto chargeDto = JsonUtil.parse(new String(msg.getBody(), DefaultConstant.CHARSET), ChargeDto.class);
                             sourceNo = chargeDto.getChargeNo();
-                            // TODO: 2019/2/1 需要检查dto必填项是否齐全
                             eventNotifyService.handleChargeSuccessEvent(chargeDto);
                             break;
                         case REFUND_SUCCESS:
+                            RefundDto refundDto = JsonUtil.parse(new String(msg.getBody(), DefaultConstant.CHARSET), RefundDto.class);
+                            sourceNo = refundDto.getRefundNo();
+                            eventNotifyService.handleRefundSuccessEvent(refundDto);
                             break;
                         default:
                             break;

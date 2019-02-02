@@ -16,6 +16,7 @@ import com.gloryjie.pay.base.enums.MqDelayMsgLevel;
 import com.gloryjie.pay.base.enums.MqTagEnum;
 import com.gloryjie.pay.base.util.JsonUtil;
 import com.gloryjie.pay.trade.dto.ChargeDto;
+import com.gloryjie.pay.trade.dto.RefundDto;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.client.exception.MQBrokerException;
@@ -49,24 +50,50 @@ public class TradeMqProducer {
     private DefaultMQProducer mqProducer;
 
 
-    public void sendChargeSuccessMsg(ChargeDto chargeDto){
+    public void sendChargeSuccessMsg(ChargeDto chargeDto) {
         try {
             String body = JsonUtil.toJson(chargeDto);
             Message message = new Message(tradeMqTopic, MqTagEnum.CHARGE_SUCCESS.name(), body.getBytes(DefaultConstant.CHARSET));
             mqProducer.send(message, new SendCallback() {
                 @Override
                 public void onSuccess(SendResult sendResult) {
-
+                    log.info("send charge={} success msg success", chargeDto.getChargeNo());
                 }
 
                 @Override
                 public void onException(Throwable e) {
+                    log.error("send charge={} success msg fail, errMsg={}", chargeDto.getChargeNo(), e.getMessage(), e);
+
                     // TODO: 2019/2/1 需要重试机制
                 }
             });
         } catch (UnsupportedEncodingException | MQClientException | RemotingException | InterruptedException e) {
             // TODO: 2019/2/1
-            log.error("send charge success msg error, errMsg={}", e.getMessage(), e);
+            log.error("send charge={} success msg fail, errMsg={}", chargeDto.getChargeNo(), e.getMessage(), e);
+        }
+    }
+
+    public void sendRefundSuccessMsg(RefundDto refundDto) {
+        try {
+            String body = JsonUtil.toJson(refundDto);
+            Message message = new Message(tradeMqTopic, MqTagEnum.REFUND_SUCCESS.name(), body.getBytes(DefaultConstant.CHARSET));
+            mqProducer.send(message, new SendCallback() {
+                @Override
+                public void onSuccess(SendResult sendResult) {
+                    log.info("send refund={} success msg success", refundDto.getRefundNo());
+                }
+
+                @Override
+                public void onException(Throwable e) {
+                    log.error("send charge={} success msg fail, errMsg={}", refundDto.getRefundNo(), e.getMessage(), e);
+
+                    // TODO: 2019/2/1 需要重试机制
+                }
+            });
+        } catch (UnsupportedEncodingException | MQClientException | RemotingException | InterruptedException e) {
+            // TODO: 2019/2/1
+            log.error("send refund={} success msg fail, errMsg={}", refundDto.getRefundNo(), e.getMessage(), e);
+
         }
     }
 

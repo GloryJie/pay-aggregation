@@ -75,7 +75,7 @@ public class WebhookProcessor {
             log.info("ready to notify appId={}, url={}, eventNo={}", eventNotify.getAppId(), eventNotify.getNotifyTime(), eventNo);
             responseResult = restTemplate.postForObject(url, eventNotifyDto, String.class);
         } catch (Exception e) {
-            log.info("notify eventNo={} to appId={}, url={} fail", eventNo, eventNotify.getAppId(), url);
+            log.info("notify eventNo={} to appId={}, url={} fail", eventNo, eventNotify.getAppId(), url,e);
             responseResult = e.getMessage();
         }
 

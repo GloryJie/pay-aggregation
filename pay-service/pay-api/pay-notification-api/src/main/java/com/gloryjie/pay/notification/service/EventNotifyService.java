@@ -12,6 +12,7 @@
 package com.gloryjie.pay.notification.service;
 
 import com.gloryjie.pay.trade.dto.ChargeDto;
+import com.gloryjie.pay.trade.dto.RefundDto;
 
 /**
  * @author Jie
@@ -20,6 +21,8 @@ import com.gloryjie.pay.trade.dto.ChargeDto;
 public interface EventNotifyService {
 
     void handleChargeSuccessEvent(ChargeDto chargeDto);
+
+    void handleRefundSuccessEvent(RefundDto refundDto);
 
 
 }
