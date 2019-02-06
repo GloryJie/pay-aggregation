@@ -16,7 +16,6 @@ import com.gloryjie.pay.trade.enums.RefundStatus;
 import lombok.Data;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 
 /**
  * @author Jie
@@ -64,6 +63,11 @@ public class RefundDto {
 
     private String userHold;
 
+    /**
+     * 发起退款时间
+     */
+    private LocalDateTime timeCreated;
+
 
     /**
      * 退款成功时间
@@ -79,10 +83,5 @@ public class RefundDto {
      * 三位货币ISO代码，目前仅支持cny
      */
     private String currency;
-
-    /**
-     * 创建时间
-     */
-    private LocalDateTime createTime;
 
 }

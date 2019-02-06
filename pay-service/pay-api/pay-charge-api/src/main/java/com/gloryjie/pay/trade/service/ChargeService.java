@@ -11,10 +11,13 @@
  */
 package com.gloryjie.pay.trade.service;
 
+import com.github.pagehelper.PageInfo;
 import com.gloryjie.pay.channel.dto.param.ChargeCreateParam;
 import com.gloryjie.pay.trade.dto.ChargeDto;
 import com.gloryjie.pay.trade.dto.RefundDto;
+import com.gloryjie.pay.trade.dto.param.ChargeQueryParam;
 import com.gloryjie.pay.trade.dto.param.RefundParam;
+import com.gloryjie.pay.trade.dto.param.RefundQueryParam;
 
 import java.util.List;
 
@@ -24,6 +27,7 @@ import java.util.List;
  * @since 0.1
  */
 public interface ChargeService {
+
 
     /**
      * 发起支付
@@ -54,5 +58,11 @@ public interface ChargeService {
      * @param refundNo
      */
     List<RefundDto> queryRefund(Integer appId, String chargeNo, String refundNo);
+
+
+
+    PageInfo<ChargeDto> queryPaymentList(ChargeQueryParam queryParam);
+
+    PageInfo<RefundDto> queryRefundList(RefundQueryParam queryParam);
 
 }

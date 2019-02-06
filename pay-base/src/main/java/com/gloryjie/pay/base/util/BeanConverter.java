@@ -15,12 +15,10 @@ package com.gloryjie.pay.base.util;
 import com.gloryjie.pay.base.annotation.IgnoreCovertProperty;
 import com.gloryjie.pay.base.enums.error.CommonErrorEnum;
 import com.gloryjie.pay.base.exception.error.SystemException;
-import javafx.beans.binding.ObjectExpression;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.cglib.beans.BeanMap;
-import org.springframework.context.annotation.Bean;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -111,6 +109,29 @@ public class BeanConverter {
             List<T> targetList = srcList.getClass().newInstance();
             for (Object src : srcList) {
                 targetObject = covert(src, targetType);
+                targetList.add(targetObject);
+            }
+            return targetList;
+        } catch (Exception e) {
+            log.error("batchCovert srcList={} to target={} failed", srcList, targetType, e);
+            throw SystemException.create(CommonErrorEnum.INTERNAL_SYSTEM_ERROR);
+        }
+    }
+
+    /**
+     * 批量转换
+     *
+     * @param srcList    数据源集合
+     * @param targetType 目标类型
+     * @return 目标实例集合
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> List<T> batchCovertIgnore(@NonNull List<?> srcList, @NonNull Class<T> targetType) {
+        try {
+            T targetObject;
+            List<T> targetList = srcList.getClass().newInstance();
+            for (Object src : srcList) {
+                targetObject = covertIgnore(src, targetType);
                 targetList.add(targetObject);
             }
             return targetList;

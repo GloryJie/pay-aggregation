@@ -30,7 +30,7 @@ import java.util.List;
  */
 @RequestMapping("/api/v1")
 @RestController
-public class ChargeController implements ChargeControllerApi {
+public class ChargeApiController implements ChargeControllerApi {
 
     @Autowired
     private ChargeService chargeService;

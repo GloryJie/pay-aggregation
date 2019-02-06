@@ -11,6 +11,8 @@
  */
 package com.gloryjie.pay.trade.service;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.gloryjie.pay.base.enums.MqDelayMsgLevel;
 import com.gloryjie.pay.base.exception.error.BusinessException;
 import com.gloryjie.pay.base.util.BeanConverter;
@@ -26,7 +28,9 @@ import com.gloryjie.pay.trade.dao.RefundDao;
 import com.gloryjie.pay.trade.dto.ChargeDto;
 import com.gloryjie.pay.trade.dto.RefreshChargeDto;
 import com.gloryjie.pay.trade.dto.RefundDto;
+import com.gloryjie.pay.trade.dto.param.ChargeQueryParam;
 import com.gloryjie.pay.trade.dto.param.RefundParam;
+import com.gloryjie.pay.trade.dto.param.RefundQueryParam;
 import com.gloryjie.pay.trade.enums.ChannelStatusToChargeStatus;
 import com.gloryjie.pay.trade.enums.ChargeStatus;
 import com.gloryjie.pay.trade.error.TradeError;
@@ -134,6 +138,24 @@ public class ChargeServiceImpl implements ChargeService {
         }
         Refund refund = refundDao.getByAppIdAndRefundNo(appId, refundNo);
         return Collections.singletonList(BeanConverter.covert(refund, RefundDto.class));
+    }
+
+    @Override
+    public PageInfo<ChargeDto> queryPaymentList(ChargeQueryParam queryParam) {
+        PageHelper.startPage(queryParam.getStartPage(), queryParam.getPageSize());
+        List<Charge> chargeList = chargeDao.getByQueryParam(queryParam);
+        PageInfo pageInfo = PageInfo.of(chargeList);
+        pageInfo.setList(BeanConverter.batchCovertIgnore(chargeList,ChargeDto.class));
+        return pageInfo;
+    }
+
+    @Override
+    public PageInfo<RefundDto> queryRefundList(RefundQueryParam queryParam) {
+        PageHelper.startPage(queryParam.getStartPage(), queryParam.getPageSize());
+        List<Refund> refundList = refundDao.getByQueryParam(queryParam);
+        PageInfo pageInfo = PageInfo.of(refundList);
+        pageInfo.setList(BeanConverter.batchCovertIgnore(refundList,RefundDto.class));
+        return pageInfo;
     }
 
 

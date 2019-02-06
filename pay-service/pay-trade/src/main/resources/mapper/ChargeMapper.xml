@@ -20,7 +20,7 @@
         <result column="time_paid" property="timePaid"/>
         <result column="time_expire" property="timeExpire"/>
         <result column="live_mode" property="liveMode"/>
-        <result column="status"  property="status"/>
+        <result column="status" property="status"/>
         <result column="currency" property="currency"/>
         <result column="extra" property="extra"/>
         <result column="version" property="version"/>
@@ -73,6 +73,18 @@
         where charge_no = #{chargeNo} and app_id = #{appId}
     </select>
 
+    <select id="getByQueryParam" resultMap="BaseResultMap">
+        select
+        <include refid="all_column"/>
+        from
+        <include refid="table"/>
+        where app_id = #{appId}
+        <if test="orderNo != null">AND order_no = #{orderNo}</if>
+        <if test="channel != null">AND channel = #{channel}</if>
+        <if test="status != null">AND status = #{status}</if>
+        <if test="startDate != null and endDate != null">AND (time_created BETWEEN #{startDate} AND #{endDate})</if>
+    </select>
+
     <insert id="insert" parameterType="com.gloryjie.pay.trade.model.Charge">
         insert into
         <include refid="table"/>
@@ -88,7 +100,7 @@
             <if test="appId != null">app_id = #{appId},</if>
             <if test="serviceAppId != null">service_app_id = #{serviceAppId},</if>
             <if test="amount != null">amount = #{amount},</if>
-            <if test="actualAmount != null">actual_amount = #{actualAmount}, </if>
+            <if test="actualAmount != null">actual_amount = #{actualAmount},</if>
             <if test="subject != null">subject = #{subject},</if>
             <if test="body != null">body = #{body},</if>
             <if test="channel != null">channel = #{channel},</if>

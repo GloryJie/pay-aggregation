@@ -1,7 +1,7 @@
 package com.gloryjie.pay.trade.dao;
 
 
-import com.gloryjie.pay.channel.enums.ChannelType;
+import com.gloryjie.pay.trade.dto.param.ChargeQueryParam;
 import com.gloryjie.pay.trade.model.Charge;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -33,4 +33,11 @@ public interface ChargeDao {
 
 
     int update(Charge record);
+
+    /**
+     * 根据APPID查找支付单
+     * @param queryParam 查询参数
+     * @return
+     */
+    List<Charge> getByQueryParam(ChargeQueryParam queryParam);
 }

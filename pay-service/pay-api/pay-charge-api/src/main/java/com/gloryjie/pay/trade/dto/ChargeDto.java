@@ -11,6 +11,7 @@
  */
 package com.gloryjie.pay.trade.dto;
 
+import com.gloryjie.pay.base.annotation.IgnoreCovertProperty;
 import com.gloryjie.pay.channel.enums.ChannelType;
 import com.gloryjie.pay.trade.enums.ChargeStatus;
 import lombok.Data;
@@ -106,6 +107,7 @@ public class ChargeDto {
     /**
      * 支付凭证
      */
+    @IgnoreCovertProperty
     private String credential;
 
     /**

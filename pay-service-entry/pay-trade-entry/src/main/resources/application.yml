@@ -19,3 +19,7 @@ server:
 domain: "http://jierong.nat300.top"
 rocketmq:
   namesrv: '127.0.0.1:9876'
+
+# mybatis pageHelper配置
+pagehelper:
+  reasonable: true

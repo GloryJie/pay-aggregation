@@ -1,6 +1,7 @@
 package com.gloryjie.pay.trade.dao;
 
 
+import com.gloryjie.pay.trade.dto.param.RefundQueryParam;
 import com.gloryjie.pay.trade.model.Refund;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -19,5 +20,8 @@ public interface RefundDao {
     List<Refund> getByAppIdAndChargeNo(@Param("appId")Integer appId,@Param("chargeNo")String chargeNo);
 
     int update(Refund record);
+
+    List<Refund> getByQueryParam(RefundQueryParam queryParam);
+
 
 }
