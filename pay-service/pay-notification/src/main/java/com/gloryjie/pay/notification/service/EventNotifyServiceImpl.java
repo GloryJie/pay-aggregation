@@ -57,10 +57,13 @@ public class EventNotifyServiceImpl implements EventNotifyService {
      */
     public void handleChargeSuccessEvent(ChargeDto chargeDto) {
 
-        if (!checkTriggerEvent(chargeDto.getAppId(), chargeDto.getChargeNo(), EventType.CHARGE_CHANGE_EVENT, chargeDto)){
+        EventSubscription subscription = checkTriggerEvent(chargeDto.getAppId(), chargeDto.getChargeNo(),
+                EventType.REFUND_CHANGE_EVENT, chargeDto);
+        if (subscription == null) {
             return;
         }
-        EventNotify eventNotify = generateEventNotify(chargeDto.getAppId(), chargeDto.getChargeNo(), EventType.CHARGE_CHANGE_EVENT, chargeDto);
+        EventNotify eventNotify = generateEventNotify(chargeDto.getAppId(), chargeDto.getChargeNo(),
+                EventType.CHARGE_CHANGE_EVENT, chargeDto, subscription.getNotifyUrl());
         // 2. 入库
         eventNotifyDao.insert(eventNotify);
 
@@ -73,10 +76,12 @@ public class EventNotifyServiceImpl implements EventNotifyService {
 
     @Override
     public void handleRefundSuccessEvent(RefundDto refundDto) {
-        if (!checkTriggerEvent(refundDto.getAppId(), refundDto.getRefundNo(), EventType.REFUND_CHANGE_EVENT, refundDto)) {
+        EventSubscription subscription = checkTriggerEvent(refundDto.getAppId(), refundDto.getRefundNo(), EventType.REFUND_CHANGE_EVENT, refundDto);
+        if (subscription == null) {
             return;
         }
-        EventNotify eventNotify = generateEventNotify(refundDto.getAppId(), refundDto.getRefundNo(), EventType.REFUND_CHANGE_EVENT, refundDto);
+        EventNotify eventNotify = generateEventNotify(refundDto.getAppId(), refundDto.getRefundNo(),
+                EventType.REFUND_CHANGE_EVENT, refundDto, subscription.getNotifyUrl());
 
         // 2. 入库
         eventNotifyDao.insert(eventNotify);
@@ -87,33 +92,34 @@ public class EventNotifyServiceImpl implements EventNotifyService {
     }
 
     /**
-     * 检查是否需要触发通知事件
+     * 检查是否需要触发通知事件,
      *
      * @param appId
      * @param sourceNo
      * @param eventType
-     * @return
+     * @return 返回事件订阅模型
      */
-    private Boolean checkTriggerEvent(Integer appId, String sourceNo, EventType eventType, Object data) {
+    private EventSubscription checkTriggerEvent(Integer appId, String sourceNo, EventType eventType, Object data) {
         // TODO: 2019/2/2 需要检查dto必填项是否齐全
 
         // 查看是否已经订阅
         EventSubscription subscription = subscriptionDao.getByAppIdAndType(appId, eventType);
         if (subscription == null) {
             log.info("appId={} not subscribe eventType={}, sourceNo={}", appId, eventType.name(), sourceNo);
-            return Boolean.FALSE;
+            return null;
         }
 
         // 检查是否存在，避免重复消费
         EventNotify eventNotify = eventNotifyDao.getByEventNo(sourceNo);
         if (eventNotify != null) {
             log.warn("appId={} eventNo={} sourceNo={} already exists", eventNotify.getAppId(), eventNotify.getEventNo(), eventNotify.getSourceNo());
-            return Boolean.FALSE;
+            return null;
         }
-        return Boolean.TRUE;
+        return subscription;
     }
 
-    private EventNotify generateEventNotify(Integer appId, String sourceNo, EventType eventType, Object data) {
+    private EventNotify generateEventNotify(Integer appId, String sourceNo, EventType eventType, Object data, String notifyUrl) {
+
         EventNotify eventNotify = new EventNotify();
         eventNotify.setEventNo(IdFactory.generateStringId());
         eventNotify.setSourceNo(sourceNo);
@@ -126,6 +132,9 @@ public class EventNotifyServiceImpl implements EventNotifyService {
         eventNotify.setEventData(JsonUtil.toJson(data));
         eventNotify.setTimeLastNotify(LocalDateTime.now());
         eventNotify.setVersion(0);
+
+        // 冗余推送地址
+        eventNotify.setNotifyUrl(notifyUrl);
 
         return eventNotify;
     }

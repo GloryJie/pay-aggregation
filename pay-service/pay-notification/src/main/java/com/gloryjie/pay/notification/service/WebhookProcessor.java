@@ -11,7 +11,6 @@
  */
 package com.gloryjie.pay.notification.service;
 
-import com.alibaba.fastjson.JSONObject;
 import com.gloryjie.pay.base.constant.DefaultConstant;
 import com.gloryjie.pay.base.enums.MqDelayMsgLevel;
 import com.gloryjie.pay.base.util.BeanConverter;
@@ -25,7 +24,6 @@ import com.gloryjie.pay.notification.model.EventNotify;
 import com.gloryjie.pay.notification.mq.NotifyMqProducer;
 import com.gloryjie.pay.trade.dto.ChargeDto;
 import com.gloryjie.pay.trade.dto.RefundDto;
-import com.oracle.tools.packager.Log;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -67,9 +65,7 @@ public class WebhookProcessor {
         eventNotifyDto.setEventData(JsonUtil.parse(eventNotify.getEventData(), getEventDataType(eventNotify.getType())));
         eventNotifyDto.setCurrentTimeNotify(eventNotify.getTimeLastNotify());
 
-        // TODO: 2019/2/1 需要获取应用的目标地址以及私钥
-        String url = "http://localhost:9090/notify";
-
+        String url = eventNotify.getNotifyUrl();
         String responseResult;
         try {
             log.info("ready to notify appId={}, url={}, eventNo={}", eventNotify.getAppId(), eventNotify.getNotifyTime(), eventNo);

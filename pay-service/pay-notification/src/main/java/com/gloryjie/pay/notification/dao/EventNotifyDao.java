@@ -12,13 +12,13 @@
 package com.gloryjie.pay.notification.dao;
 
 import com.gloryjie.pay.notification.model.EventNotify;
-import org.apache.ibatis.annotations.Mapper;
+import org.springframework.stereotype.Repository;
 
 /**
  * @author Jie
  * @since
  */
-@Mapper
+@Repository
 public interface EventNotifyDao {
 
     int insert(EventNotify record);
