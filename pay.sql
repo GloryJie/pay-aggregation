@@ -9,7 +9,6 @@ CREATE TABLE `t_app` (
   `description` varchar(200) NOT NULL COMMENT '应用描述',
   `status` tinyint(4) NOT NULL COMMENT '应用状态 0 停用 1 启用',
   `user_id` varchar(32) NOT NULL COMMENT '应用关联的用户对象id，创建应用时同时会创建用户',
-  `notify_url` varchar(400) DEFAULT NULL COMMENT '异步通知地址',
   `platform_app` int(11) NOT NULL COMMENT '平台应用',
   `use_platform_config` tinyint(4) DEFAULT NULL COMMENT '是否使用平台商户渠道配置，默认使用平台商户配置，子商户字段',
   `extra` varchar(300) DEFAULT NULL,
@@ -124,6 +123,7 @@ CREATE TABLE `t_event_subscription` (
   `id` int AUTO_INCREMENT NOT NULL COMMENT '主键',
   `app_id` int NOT NULL COMMENT '订阅的应用',
   `event_type` varchar(64) NOT NULL COMMENT '订阅的事件类型',
+  `notify_url` varchar(512) NOT NULL COMMENT '事件推送地址',
   `create_time` datetime DEFAULT NULL COMMENT '创建时间',
   `update_time` datetime DEFAULT NULL COMMENT '修改时间',
   PRIMARY KEY (`id`)

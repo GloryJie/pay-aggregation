@@ -37,11 +37,6 @@ public class App {
     private String userId;
 
     /**
-     * 异步通知地址
-     */
-    private String notifyUrl;
-
-    /**
      * 平台应用
      */
     private Integer platformApp;

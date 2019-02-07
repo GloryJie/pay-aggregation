@@ -9,7 +9,6 @@
         <result column="description" property="description"/>
         <result column="status" property="status"/>
         <result column="user_id" property="userId"/>
-        <result column="notify_url" property="notifyUrl"/>
         <result column="platform_app" property="platformApp"/>
         <result column="use_platform_config" property="usePlatformConfig"/>
         <result column="extra" property="extra"/>
@@ -31,13 +30,13 @@
 
 
     <sql id="all_column">
-        app_id, type, name, description, status, user_id, notify_url, platform_app, use_platform_config,
+        app_id, type, name, description, status, user_id, platform_app, use_platform_config,
         extra, access_secret, parent_app, trade_public_key, notify_private_key, notify_public_key,
         level, version, logical_del, create_time, update_time
     </sql>
 
     <sql id="all_value">
-        #{appId}, #{type}, #{name}, #{description}, #{status}, #{userId}, #{notifyUrl}, #{platformApp}, #{usePlatformConfig},
+        #{appId}, #{type}, #{name}, #{description}, #{status}, #{userId}, #{platformApp}, #{usePlatformConfig},
         #{extra}, #{accessSecret}, #{parentApp}, #{tradePublicKey}, #{notifyPrivateKey}, #{notifyPublicKey},
         #{level}, #{version}, #{logicalDel}, now(), now()
     </sql>
@@ -66,7 +65,6 @@
             <if test="description != null">description = #{description},</if>
             <if test="status != null">status = #{status},</if>
             <if test="userId != null">user_id = #{userId},</if>
-            <if test="notifyUrl != null">notify_url = #{notifyUrl},</if>
             <if test="platformApp != null">platform_app = #{platformApp},</if>
             <if test="usePlatformConfig != null">use_platform_config = #{usePlatformConfig},</if>
             <if test="extra != null">extra = #{extra},</if>

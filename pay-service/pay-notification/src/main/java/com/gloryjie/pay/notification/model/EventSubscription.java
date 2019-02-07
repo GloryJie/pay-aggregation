@@ -40,6 +40,11 @@ public class EventSubscription {
     private EventType eventType;
 
     /**
+     * 事件通知地址
+     */
+    private String notifyUrl;
+
+    /**
      * 创建时间
      */
     private LocalDateTime createTime;
