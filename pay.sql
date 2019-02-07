@@ -40,7 +40,7 @@ CREATE TABLE `t_channel_config` (
   `start_date` datetime DEFAULT NULL COMMENT '启用时间',
   `stop_date` datetime DEFAULT NULL COMMENT '停用时间',
   `status` VARCHAR(12) NOT NULL COMMENT '渠道状态\n ‘0’：未启用 ‘1’：启用',
-  `logical_del` char(1) NOT NULL DEFAULT '0' COMMENT '逻辑删除(针对App删除后设置) ‘0’未删除 1：已删除',
+  `logical_del` char(1) DEFAULT '0' COMMENT '逻辑删除(针对App删除后设置) ‘0’未删除 1：已删除',
   `create_time` datetime NOT NULL COMMENT '创建时间',
   `update_time` datetime NOT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`),

@@ -2,19 +2,20 @@
  *   Product:      pay
  *   Module Name:  COMMON
  *   Package Name: com.gloryjie.pay.channel.config
- *   Date Created: 2018/11/24
+ *   Date Created: 2019/2/7
  * ------------------------------------------------------------------
  * Modification History
  * DATE            Name           Contact
  * ------------------------------------------------------------------
- * 2018/11/24      Jie            GloryJie@163.com
+ * 2019/2/7      Jie            GloryJie@163.com
  */
 package com.gloryjie.pay.channel.config;
 
 import lombok.Data;
 
+import javax.validation.constraints.NotNull;
+
 /**
- * 支付宝渠道配置
  * @author Jie
  * @since
  */
@@ -24,17 +25,18 @@ public class AlipayChannelConfig {
     /**
      * 支付宝商户号
      */
+    @NotNull
     private String merchantId;
 
     /**
      * 商户私钥
      */
+    @NotNull
     private String merchantPrivateKey;
 
     /**
      * 支付宝公钥
      */
-    private String alipayPublicKey;
-
-
+    @NotNull
+    private String merchantPublicKey;
 }

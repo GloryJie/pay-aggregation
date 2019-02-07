@@ -18,7 +18,7 @@ import com.alipay.api.domain.AlipayTradePagePayModel;
 import com.alipay.api.request.AlipayTradePagePayRequest;
 import com.gloryjie.pay.base.exception.error.ExternalException;
 import com.gloryjie.pay.base.util.AmountUtil;
-import com.gloryjie.pay.base.util.JsonUtil;
+import com.gloryjie.pay.base.util.BeanConverter;
 import com.gloryjie.pay.channel.config.AlipayChannelConfig;
 import com.gloryjie.pay.channel.constant.ChannelConstant;
 import com.gloryjie.pay.channel.dto.ChannelPayDto;
@@ -29,6 +29,9 @@ import com.gloryjie.pay.channel.model.ChannelConfig;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Jie
@@ -43,8 +46,9 @@ public class AlipayPageChannelServiceImpl extends BaseAlipayChannelService {
 
     @Override
     public ChannelPayResponse pay(ChannelPayDto payDto) {
-        ChannelConfig config = channelConfigDao.loadByAppIdAndChannel(payDto.getAppId(), payDto.getChannel().name());
-        AlipayChannelConfig alipayChannelConfig = JsonUtil.parse(config.getChannelConfig(), AlipayChannelConfig.class);
+        ChannelConfig config = channelConfigDao.loadByAppIdAndChannel(payDto.getAppId(), payDto.getChannel());
+        Map<String,Object> payConfig = new HashMap<>(config.getChannelConfig());
+        AlipayChannelConfig alipayChannelConfig = BeanConverter.mapToBean(payConfig, AlipayChannelConfig.class);
         AlipayClient client = getAlipayClient(alipayChannelConfig);
         AlipayTradePagePayRequest request = new AlipayTradePagePayRequest();
         // TODO: 2018/11/25 跳转地址需要修改为商户上送,并且需要设置异步通知地址

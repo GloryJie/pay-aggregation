@@ -1,9 +1,11 @@
 package com.gloryjie.pay.channel.model;
 
+import com.gloryjie.pay.channel.enums.ChannelConfigStatus;
 import com.gloryjie.pay.channel.enums.ChannelType;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 
 @Data
 public class ChannelConfig {
@@ -23,7 +25,7 @@ public class ChannelConfig {
     /**
      * 渠道参数配置 json格式
      */
-    private String channelConfig;
+    private Map<String, String> channelConfig;
 
     /**
      * 启用时间
@@ -39,7 +41,7 @@ public class ChannelConfig {
      * 渠道状态
      * ‘0’：未启用 ‘1’：启用
      */
-    private String status;
+    private ChannelConfigStatus status;
 
     /**
      * 逻辑删除(针对App删除后设置) ‘0’未删除 1：已删除

@@ -36,7 +36,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 public class DefaultChannelGatewayService implements ChannelGatewayService {
 
-    Map<ChannelType, ChannelService> channelMap = new ConcurrentHashMap<>();
+    Map<ChannelType, PayChannelService> channelMap = new ConcurrentHashMap<>();
 
     @Autowired
     private AlipayPageChannelServiceImpl alipayPageChannelService;

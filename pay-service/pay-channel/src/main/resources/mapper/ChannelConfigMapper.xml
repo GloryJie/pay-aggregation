@@ -42,7 +42,15 @@
         <include refid="all_column"/>
         from
         <include refid="table"/>
-        where app_id = #{appId} and channel = #{channelType}
+        where app_id = #{appId} and channel = #{channel}
+    </select>
+
+    <select id="getByAppId" resultMap="BaseResultMap">
+        select
+        <include refid="all_column"/>
+        from
+        <include refid="table"/>
+        where app_id = #{appId}
     </select>
 
     <insert id="insert" parameterType="com.gloryjie.pay.channel.model.ChannelConfig" useGeneratedKeys="true"
@@ -58,8 +66,6 @@
         update
         <include refid="table"/>
         <set>
-            <if test="appId != null">app_id = #{appId},</if>
-            <if test="channel != null">channel = #{channel},</if>
             <if test="channelConfig != null">channel_config = #{channelConfig},</if>
             <if test="startDate != null">start_date = #{startDate},</if>
             <if test="stopDate != null">stop_date = #{stopDate},</if>
@@ -67,7 +73,7 @@
             <if test="logicalDel != null">logical_del = #{logicalDel},</if>
             update_time = now()
         </set>
-        where id = #{id}
+        where app_id = #{appId} and channel = #{channel}
     </update>
 
 

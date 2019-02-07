@@ -49,7 +49,7 @@ public class SystemException extends BaseException {
     }
 
     public static SystemException create(BaseErrorEnum errorEnum, String detailMsg, Object... args) {
-        String message = errorEnum.getMessage() + ": " + String.format(detailMsg, args);
+        String message = String.format(detailMsg, args);
         return new SystemException(errorEnum, message);
     }
 }

@@ -11,6 +11,7 @@
  */
 package com.gloryjie.pay.channel.dao;
 
+import com.gloryjie.pay.channel.enums.ChannelConfigStatus;
 import com.gloryjie.pay.channel.enums.ChannelType;
 import com.gloryjie.pay.channel.model.ChannelConfig;
 import com.gloryjie.pay.trade.PayTradeApplication;
@@ -25,6 +26,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.Random;
 
 /**
@@ -55,10 +57,10 @@ public class ChannelConfigDaoTest {
         ChannelConfig config = new ChannelConfig();
         config.setAppId(appId);
         config.setChannel(ChannelType.ALIPAY_PAGE);
-        config.setChannelConfig("{}");
+        config.setChannelConfig(new HashMap<>());
         config.setStartDate(LocalDateTime.now());
         config.setStopDate(LocalDateTime.now());
-        config.setStatus("0");
+        config.setStatus(ChannelConfigStatus.STOP_USING);
         config.setLogicalDel(Boolean.FALSE);
 
         Assert.assertEquals(1,channelConfigDao.insert(config));

@@ -17,6 +17,7 @@ import com.alipay.api.AlipayResponse;
 import com.alipay.api.domain.AlipayTradePayModel;
 import com.alipay.api.request.AlipayTradePayRequest;
 import com.gloryjie.pay.base.util.AmountUtil;
+import com.gloryjie.pay.base.util.BeanConverter;
 import com.gloryjie.pay.base.util.JsonUtil;
 import com.gloryjie.pay.channel.config.AlipayChannelConfig;
 import com.gloryjie.pay.channel.dto.ChannelPayDto;
@@ -25,8 +26,12 @@ import com.gloryjie.pay.channel.enums.ChannelType;
 import com.gloryjie.pay.channel.model.ChannelConfig;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * 支付宝条码支付
+ *
  * @author Jie
  * @since
  */
@@ -35,11 +40,12 @@ public class AlipayBarCodeChannelServiceImpl extends BaseAlipayChannelService {
 
     @Override
     public ChannelPayResponse pay(ChannelPayDto payDto) {
-        ChannelConfig config = channelConfigDao.loadByAppIdAndChannel(payDto.getAppId(), payDto.getChannel().name());
-        AlipayChannelConfig alipayChannelConfig = JsonUtil.parse(config.getChannelConfig(), AlipayChannelConfig.class);
+        ChannelConfig config = channelConfigDao.loadByAppIdAndChannel(payDto.getAppId(), payDto.getChannel());
+        Map<String,Object> payConfig = new HashMap<>(config.getChannelConfig());
+        AlipayChannelConfig alipayChannelConfig = BeanConverter.mapToBean(payConfig, AlipayChannelConfig.class);
         AlipayClient client = getAlipayClient(alipayChannelConfig);
 
-        AlipayTradePayRequest request= new AlipayTradePayRequest();
+        AlipayTradePayRequest request = new AlipayTradePayRequest();
 
         AlipayTradePayModel model = new AlipayTradePayModel();
         model.setOutTradeNo(payDto.getChargeNo());

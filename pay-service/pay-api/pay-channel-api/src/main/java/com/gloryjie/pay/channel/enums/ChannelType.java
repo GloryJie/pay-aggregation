@@ -12,6 +12,7 @@
 package com.gloryjie.pay.channel.enums;
 
 import com.gloryjie.pay.base.exception.error.BusinessException;
+import com.gloryjie.pay.channel.config.AlipayChannelConfig;
 import com.gloryjie.pay.channel.error.ChannelError;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
@@ -28,10 +29,10 @@ public enum ChannelType {
     /**
      * 支付渠道
      */
-    ALIPAY_PAGE(10, "GATEWAY", "FAST_INSTANT_TRADE_PAY", "支付宝网页支付"),
-    ALIPAY_WAP(20, "GATEWAY", "QUICK_WAP_WAY", "支付宝手机网站支付"),
-    ALIPAY_SCAN_CODE(30, "GATEWAY", "", "支付宝扫码支付"),
-    ALIPAY_BAR_CODE(30, "NON_GATEWAY", "FACE_TO_FACE_PAYMENT", "支付宝条码支付");
+    ALIPAY_PAGE(1, "GATEWAY", "FAST_INSTANT_TRADE_PAY", "支付宝网页支付"),
+    ALIPAY_WAP(2, "GATEWAY", "QUICK_WAP_WAY", "支付宝手机网站支付"),
+    ALIPAY_SCAN_CODE(3, "GATEWAY", "", "支付宝扫码支付"),
+    ALIPAY_BAR_CODE(4, "NON_GATEWAY", "FACE_TO_FACE_PAYMENT", "支付宝条码支付");
 
     /**
      * 10~19为支付宝, 20~29为微信, 30~39为银联
@@ -58,7 +59,7 @@ public enum ChannelType {
     }
 
 
-    public boolean isGateway(){
+    public boolean isGateway() {
         return this.type.equals("GATEWAY");
     }
 
@@ -72,16 +73,35 @@ public enum ChannelType {
         switch (this) {
             case ALIPAY_PAGE:
             case ALIPAY_WAP:
-                if (extra !=null && StringUtils.isBlank(extra.get("returnUrl"))){
+                if (extra != null && StringUtils.isBlank(extra.get("returnUrl"))) {
                     checkResult = false;
                 }
                 break;
             default:
                 break;
         }
-        if (!checkResult){
+        if (!checkResult) {
             throw BusinessException.create(ChannelError.EXTRA_NOT_CORRECT);
         }
+    }
+
+    public boolean isAlipay(){
+        return this.code < 20;
+    }
+
+    public boolean isWxPay(){
+        return this.code < 30 && this.code >= 20;
+    }
+
+    public boolean isUnionPay(){
+        return this.code < 40 && this.code >= 30;
+    }
+
+    public Class getConfigClass() {
+        if (isAlipay()){
+            return AlipayChannelConfig.class;
+        }
+        return Map.class;
     }
 
 }

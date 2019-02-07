@@ -18,11 +18,11 @@ import com.gloryjie.pay.channel.dto.response.ChannelResponse;
 import java.util.Map;
 
 /**
- * 渠道服务
+ * 支付渠道服务
  * @author Jie
- * @since
+ * @since 0.1
  */
-public interface ChannelService {
+public interface PayChannelService {
 
     /**
      * 发起支付请求

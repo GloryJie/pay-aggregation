@@ -23,10 +23,17 @@ import lombok.Getter;
 public enum ChannelError implements BaseErrorEnum {
 
     /**
-     * 系统异常 5xx
+     * 渠道异常1xx
      */
     EXTRA_NOT_CORRECT(HttpStatus.BAD_REQUEST, "101", "渠道额外参数不正确"),
-    PAY_PLATFORM_ERROR(HttpStatus.BAD_GATEWAY, "102", "渠道异常");
+    PAY_PLATFORM_ERROR(HttpStatus.BAD_GATEWAY, "102", "渠道异常"),
+
+    /**
+     * 渠道配置异常2xx
+     */
+    CHANNEL_CONFIG_EXISTS(HttpStatus.BAD_REQUEST,"201","渠道配置已存在"),
+    CHANNEL_CONFIG_NOT_EXISTS(HttpStatus.BAD_REQUEST,"202","渠道配置不存在")
+    ;
 
     private int code;
 

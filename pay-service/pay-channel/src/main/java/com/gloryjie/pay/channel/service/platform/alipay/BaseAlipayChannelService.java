@@ -28,6 +28,7 @@ import com.alipay.api.response.AlipayTradeRefundResponse;
 import com.gloryjie.pay.base.constant.DefaultConstant;
 import com.gloryjie.pay.base.exception.error.ExternalException;
 import com.gloryjie.pay.base.util.AmountUtil;
+import com.gloryjie.pay.base.util.BeanConverter;
 import com.gloryjie.pay.base.util.DateTimeUtil;
 import com.gloryjie.pay.base.util.JsonUtil;
 import com.gloryjie.pay.channel.config.AlipayChannelConfig;
@@ -42,13 +43,14 @@ import com.gloryjie.pay.channel.dto.response.ChannelResponse;
 import com.gloryjie.pay.channel.enums.AlipayStatus;
 import com.gloryjie.pay.channel.error.ChannelError;
 import com.gloryjie.pay.channel.model.ChannelConfig;
-import com.gloryjie.pay.channel.service.ChannelService;
+import com.gloryjie.pay.channel.service.PayChannelService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -57,7 +59,7 @@ import java.util.Map;
  * @since
  */
 @Slf4j
-public abstract class BaseAlipayChannelService implements ChannelService {
+public abstract class BaseAlipayChannelService implements PayChannelService {
 
     protected static final String ALIPAY_SIGN_TYPE = "RSA2";
 
@@ -91,8 +93,9 @@ public abstract class BaseAlipayChannelService implements ChannelService {
 
     @Override
     public ChannelPayQueryResponse queryPayment(ChannelPayQueryDto queryDto) {
-        ChannelConfig config = channelConfigDao.loadByAppIdAndChannel(queryDto.getAppId(), queryDto.getChannel().name());
-        AlipayClient client = getAlipayClient(JsonUtil.parse(config.getChannelConfig(), AlipayChannelConfig.class));
+        ChannelConfig config = channelConfigDao.loadByAppIdAndChannel(queryDto.getAppId(), queryDto.getChannel());
+        Map<String, Object> payConfig = new HashMap<>(config.getChannelConfig());
+        AlipayClient client = getAlipayClient(BeanConverter.mapToBean(payConfig, AlipayChannelConfig.class));
         AlipayTradeQueryRequest request = new AlipayTradeQueryRequest();
         AlipayTradeQueryModel model = new AlipayTradeQueryModel();
         model.setOutTradeNo(queryDto.getChargeNo());
@@ -135,8 +138,9 @@ public abstract class BaseAlipayChannelService implements ChannelService {
 
     @Override
     public ChannelResponse refund(ChannelRefundDto refundDto) {
-        ChannelConfig config = channelConfigDao.loadByAppIdAndChannel(refundDto.getAppId(), refundDto.getChannel().name());
-        AlipayClient client = getAlipayClient(JsonUtil.parse(config.getChannelConfig(), AlipayChannelConfig.class));
+        ChannelConfig config = channelConfigDao.loadByAppIdAndChannel(refundDto.getAppId(), refundDto.getChannel());
+        Map<String, Object> payConfig = new HashMap<>(config.getChannelConfig());
+        AlipayClient client = getAlipayClient(BeanConverter.mapToBean(payConfig, AlipayChannelConfig.class));
         AlipayTradeRefundRequest request = new AlipayTradeRefundRequest();
         AlipayTradeRefundModel model = new AlipayTradeRefundModel();
         model.setOutTradeNo(refundDto.getChargeNo());
@@ -162,8 +166,9 @@ public abstract class BaseAlipayChannelService implements ChannelService {
 
     @Override
     public ChannelResponse queryRefund(ChannelRefundQueryDto queryDto) {
-        ChannelConfig config = channelConfigDao.loadByAppIdAndChannel(queryDto.getAppId(), queryDto.getChannel().name());
-        AlipayClient client = getAlipayClient(JsonUtil.parse(config.getChannelConfig(), AlipayChannelConfig.class));
+        ChannelConfig config = channelConfigDao.loadByAppIdAndChannel(queryDto.getAppId(), queryDto.getChannel());
+        Map<String, Object> payConfig = new HashMap<>(config.getChannelConfig());
+        AlipayClient client = getAlipayClient(BeanConverter.mapToBean(payConfig, AlipayChannelConfig.class));
         AlipayTradeFastpayRefundQueryRequest request = new AlipayTradeFastpayRefundQueryRequest();
         AlipayTradeFastpayRefundQueryModel model = new AlipayTradeFastpayRefundQueryModel();
         model.setOutTradeNo(queryDto.getChargeNo());
