@@ -16,12 +16,17 @@
     </sql>
 
     <sql id="all_column">
-    id, app_id, event_type, create_time, update_time
+    id, app_id, event_type, notify_url, create_time, update_time
   </sql>
 
     <sql id="all_value">
-        #{id}, #{appId}, #{eventType}, now(), now()
+        #{id}, #{appId}, #{eventType}, #{notifyUrl}, now(), now()
     </sql>
+
+    <delete id="delete">
+        delete from <include refid="table"/>
+        where app_id = #{appId} and event_type = #{type}
+    </delete>
 
     <select id="getByAppId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
         select

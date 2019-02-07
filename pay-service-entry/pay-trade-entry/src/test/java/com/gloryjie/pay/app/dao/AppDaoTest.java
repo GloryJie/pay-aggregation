@@ -72,7 +72,7 @@ public class AppDaoTest {
     public void cUpdateTest(){
         App app = new App();
         app.setAppId(appId);
-        app.setNotifyUrl("http://xxxxxx");
+        app.setDescription("update");
 
         Assert.assertEquals(1, appDao.update(app));
     }

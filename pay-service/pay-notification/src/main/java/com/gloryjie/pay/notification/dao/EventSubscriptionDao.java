@@ -15,6 +15,7 @@ package com.gloryjie.pay.notification.dao;
 import com.gloryjie.pay.notification.enums.EventType;
 import com.gloryjie.pay.notification.model.EventSubscription;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
@@ -22,13 +23,16 @@ import java.util.List;
  * @author Jie
  * @since
  */
+@Repository
 public interface EventSubscriptionDao {
 
     int insert(EventSubscription record);
 
     List<EventSubscription> getByAppId(Integer appId);
 
-    EventSubscription getByAppIdAndType(@Param("appId") Integer appId,@Param("type") EventType type);
+    EventSubscription getByAppIdAndType(@Param("appId") Integer appId, @Param("type") EventType type);
 
     int update(EventSubscription record);
+
+    int delete(@Param("appId") Integer appId, @Param("type") EventType type);
 }
