@@ -57,6 +57,11 @@ public class EventNotify {
     private Integer notifyTime;
 
     /**
+     * 事件推送地址
+     */
+    private String notifyUrl;
+
+    /**
      * 通知的时间间隔，为rmq的延迟级别，json数组
      */
     private String notifyInterval;

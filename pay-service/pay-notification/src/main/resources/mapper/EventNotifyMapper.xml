@@ -9,6 +9,7 @@
         <result column="notify_status" property="notifyStatus"/>
         <result column="type" property="type"/>
         <result column="time_occur" property="timeOccur"/>
+        <result column="notify_url" property="notifyUrl"/>
         <result column="notify_time" property="notifyTime"/>
         <result column="notify_interval" property="notifyInterval"/>
         <result column="event_data" property="eventData"/>
@@ -24,12 +25,12 @@
     </sql>
 
     <sql id="all_column">
-    event_no, source_no, app_id, notify_status, type, time_occur, notify_time, notify_interval, event_data,
+    event_no, source_no, app_id, notify_status, type, time_occur, notify_url, notify_time, notify_interval, event_data,
     last_reply, time_last_notify, version, create_time, update_time
   </sql>
 
     <sql id="all_value">
-      #{eventNo}, #{sourceNo}, #{appId}, #{notifyStatus}, #{type}, #{timeOccur}, #{notifyTime}, #{notifyInterval}, #{eventData},
+      #{eventNo}, #{sourceNo}, #{appId}, #{notifyStatus}, #{type}, #{timeOccur}, #{notifyUrl}, #{notifyTime}, #{notifyInterval}, #{eventData},
       #{lastReply}, #{timeLastNotify}, #{version}, now(), now()
     </sql>
 
@@ -65,6 +66,7 @@
             <if test="notifyStatus != null">notify_status = #{notifyStatus},</if>
             <if test="type != null">type = #{type},</if>
             <if test="timeOccur != null">time_occur = #{timeOccur},</if>
+            <if test="notifyUrl != null">notify_url = #{notifyUrl},</if>
             <if test="notifyTime != null">notify_time = #{notifyTime},</if>
             <if test="notifyInterval != null">notify_interval = #{notifyInterval},</if>
             <if test="eventData != null">event_data = #{eventData},</if>

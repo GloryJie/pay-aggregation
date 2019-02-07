@@ -139,6 +139,7 @@ CREATE TABLE `t_event_notify` (
   `app_id` int(11) NOT NULL COMMENT '事件所属应用id',
   `notify_status` varchar(32) NOT NULL COMMENT '事件通知状态',
   `type` varchar(32) NOT NULL COMMENT '事件类型',
+  `notify_url` varchar(512) NOT NULL COMMENT '事件推送地址，冗余字段',
   `time_occur` datetime NOT NULL COMMENT '事件发生时间',
   `notify_time` int NOT NULL COMMENT '当前事件通知次数',
   `notify_interval` varchar(62) DEFAULT NULL COMMENT '通知的时间间隔，为rmq的延迟级别，json数组',
