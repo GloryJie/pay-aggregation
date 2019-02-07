@@ -9,17 +9,12 @@
         <result column="description" property="description"/>
         <result column="status" property="status"/>
         <result column="user_id" property="userId"/>
-        <result column="platform_app" property="platformApp"/>
         <result column="use_platform_config" property="usePlatformConfig"/>
-        <result column="extra" property="extra"/>
-        <result column="access_secret" property="accessSecret"/>
         <result column="parent_app" property="parentApp"/>
         <result column="trade_public_key" property="tradePublicKey"/>
         <result column="notify_private_key" property="notifyPrivateKey"/>
         <result column="notify_public_key" property="notifyPublicKey"/>
         <result column="level" property="level"/>
-        <result column="version" property="version"/>
-        <result column="logical_del" property="logicalDel"/>
         <result column="create_time" property="createTime"/>
         <result column="update_time" property="updateTime"/>
     </resultMap>
@@ -30,15 +25,15 @@
 
 
     <sql id="all_column">
-        app_id, type, name, description, status, user_id, platform_app, use_platform_config,
-        extra, access_secret, parent_app, trade_public_key, notify_private_key, notify_public_key,
-        level, version, logical_del, create_time, update_time
+        app_id, type, name, description, status, user_id, use_platform_config,
+        parent_app, trade_public_key, notify_private_key, notify_public_key,
+        level, create_time, update_time
     </sql>
 
     <sql id="all_value">
-        #{appId}, #{type}, #{name}, #{description}, #{status}, #{userId}, #{platformApp}, #{usePlatformConfig},
-        #{extra}, #{accessSecret}, #{parentApp}, #{tradePublicKey}, #{notifyPrivateKey}, #{notifyPublicKey},
-        #{level}, #{version}, #{logicalDel}, now(), now()
+        #{appId}, #{type}, #{name}, #{description}, #{status}, #{userId}, #{usePlatformConfig},
+        #{parentApp}, #{tradePublicKey}, #{notifyPrivateKey}, #{notifyPublicKey},
+        #{level}, now(), now()
     </sql>
 
 
@@ -65,17 +60,12 @@
             <if test="description != null">description = #{description},</if>
             <if test="status != null">status = #{status},</if>
             <if test="userId != null">user_id = #{userId},</if>
-            <if test="platformApp != null">platform_app = #{platformApp},</if>
             <if test="usePlatformConfig != null">use_platform_config = #{usePlatformConfig},</if>
-            <if test="extra != null">extra = #{extra},</if>
-            <if test="accessSecret != null">access_secret = #{accessSecret},</if>
             <if test="parentApp != null">parent_app = #{parentApp},</if>
             <if test="tradePublicKey != null">trade_public_key = #{tradePublicKey},</if>
             <if test="notifyPrivateKey != null">notify_private_key = #{notifyPrivateKey},</if>
             <if test="notifyPublicKey != null">notify_public_key = #{notifyPublicKey},</if>
             <if test="level != null">level = #{level},</if>
-            <if test="version != null">version = #{version},</if>
-            <if test="logicalDel != null">logical_del = #{logicalDel},</if>
             update_time = now()
         </set>
         where app_id = #{appId}

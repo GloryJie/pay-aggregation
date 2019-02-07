@@ -1,5 +1,7 @@
 package com.gloryjie.pay.app.model;
 
+import com.gloryjie.pay.app.enums.AppStatus;
+import com.gloryjie.pay.app.enums.AppType;
 import lombok.Data;
 
 import java.util.Date;
@@ -14,7 +16,7 @@ public class App {
     /**
      * 应用类型 1 平台应用 2 子商户应用
      */
-    private Integer type;
+    private AppType type;
 
     /**
      * 应用名
@@ -29,7 +31,7 @@ public class App {
     /**
      * 应用状态 0 停用 1 启用
      */
-    private Integer status;
+    private AppStatus status;
 
     /**
      * 应用关联的用户对象id，创建应用时同时会创建用户
@@ -37,20 +39,9 @@ public class App {
     private String userId;
 
     /**
-     * 平台应用
-     */
-    private Integer platformApp;
-
-    /**
      * 是否使用平台商户渠道配置，默认使用平台商户配置，子商户字段
      */
     private Integer usePlatformConfig;
-
-    private String extra;
-
-    private String accessSecret;
-
-    private Integer parentApp;
 
     /**
      * 交易公钥
@@ -69,15 +60,7 @@ public class App {
 
     private Integer level;
 
-    /**
-     * 用于实现乐观锁
-     */
-    private Integer version;
-
-    /**
-     * 是否逻辑删除
-     */
-    private Boolean logicalDel;
+    private Integer parentApp;
 
     /**
      * 创建时间

@@ -15,6 +15,7 @@
         <module>pay-channel-api</module>
         <module>pay-charge-api</module>
         <module>pay-notification-api</module>
+        <module>pay-app-api</module>
     </modules>
 
 

@@ -11,5 +11,17 @@
 
     <artifactId>pay-app</artifactId>
 
+    <properties>
+        <pay-app-api.version>0.0.1-SNAPSHOT</pay-app-api.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.gloryjie</groupId>
+            <artifactId>pay-app-api</artifactId>
+            <version>${pay-app-api.version}</version>
+        </dependency>
+    </dependencies>
+
 
 </project>

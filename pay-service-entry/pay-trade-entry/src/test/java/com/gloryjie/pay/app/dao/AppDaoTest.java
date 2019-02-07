@@ -11,6 +11,8 @@
  */
 package com.gloryjie.pay.app.dao;
 
+import com.gloryjie.pay.app.enums.AppStatus;
+import com.gloryjie.pay.app.enums.AppType;
 import com.gloryjie.pay.app.model.App;
 import com.gloryjie.pay.trade.PayTradeApplication;
 import org.junit.Assert;
@@ -48,18 +50,15 @@ public class AppDaoTest {
     public void aInsertTest(){
         App app = new App();
         app.setAppId(appId);
-        app.setType(0);
+        app.setType(AppType.MASTER);
         app.setName("测试");
         app.setDescription("测试");
-        app.setStatus(0);
+        app.setStatus(AppStatus.START);
         app.setUserId("123");
-        app.setPlatformApp(1);
         app.setNotifyPrivateKey("test");
         app.setNotifyPublicKey("test");
         app.setTradePublicKey("test");
         app.setLevel(0);
-        app.setVersion(0);
-        app.setLogicalDel(Boolean.FALSE);
         Assert.assertEquals(1, appDao.insert(app));
     }
 
