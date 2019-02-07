@@ -45,6 +45,29 @@
         where app_id = #{appId}
     </select>
 
+    <select id="getByName" resultMap="BaseResultMap">
+        select
+        <include refid="all_column"/>
+        from
+        <include refid="table"/>
+        where name = #{name}
+    </select>
+
+    <select id="getMaxAppId" resultType="java.lang.Integer">
+        select
+        MAX(app_id)
+        from
+        <include refid="table"/>
+    </select>
+
+    <select id="getMasterAppList" resultMap="BaseResultMap">
+        select
+        <include refid="all_column"/>
+        from
+        <include refid="table"/>
+        where type = 'MASTER'
+    </select>
+
     <insert id="insert" parameterType="com.gloryjie.pay.app.model.App">
         insert into <include refid="table"/>
         (<include refid="all_column"/>)

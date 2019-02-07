@@ -41,7 +41,7 @@ public class App {
     /**
      * 是否使用平台商户渠道配置，默认使用平台商户配置，子商户字段
      */
-    private Integer usePlatformConfig;
+    private Boolean usePlatformConfig;
 
     /**
      * 交易公钥
