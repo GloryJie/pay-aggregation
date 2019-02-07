@@ -11,6 +11,7 @@
  */
 package com.gloryjie.pay.notification.dto;
 
+import com.gloryjie.pay.base.annotation.IgnoreCovertProperty;
 import com.gloryjie.pay.notification.enums.EventType;
 import lombok.Data;
 
@@ -37,6 +38,9 @@ public class EventNotifyDto {
      * 事件类型
      */
     private EventType type;
+
+    @IgnoreCovertProperty
+    private String notifyUrl;
 
     /**
      * 事件发生时间

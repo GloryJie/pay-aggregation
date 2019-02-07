@@ -11,11 +11,15 @@
  */
 package com.gloryjie.pay.notification.service;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.gloryjie.pay.base.enums.MqDelayMsgLevel;
+import com.gloryjie.pay.base.util.BeanConverter;
 import com.gloryjie.pay.base.util.JsonUtil;
 import com.gloryjie.pay.base.util.idGenerator.IdFactory;
 import com.gloryjie.pay.notification.dao.EventNotifyDao;
 import com.gloryjie.pay.notification.dao.EventSubscriptionDao;
+import com.gloryjie.pay.notification.dto.EventNotifyDto;
 import com.gloryjie.pay.notification.enums.EventType;
 import com.gloryjie.pay.notification.enums.NotifyStatus;
 import com.gloryjie.pay.notification.model.EventNotify;
@@ -29,6 +33,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * @author Jie
@@ -89,6 +94,15 @@ public class EventNotifyServiceImpl implements EventNotifyService {
 
         // 发送内循环通知
         notifyMqProducer.sendEventNotifyMsg(eventNotify.getEventNo(), MqDelayMsgLevel.FIRST);
+    }
+
+    @Override
+    public PageInfo<EventNotifyDto> getRecord(Integer appId, Integer startPage, Integer pageSize) {
+        PageHelper.startPage(startPage, pageSize);
+        List<EventNotify> notifyList = eventNotifyDao.getByAppId(appId);
+        PageInfo pageInfo = PageInfo.of(notifyList);
+        pageInfo.setList(BeanConverter.batchCovert(notifyList, EventNotifyDto.class));
+        return pageInfo;
     }
 
     /**

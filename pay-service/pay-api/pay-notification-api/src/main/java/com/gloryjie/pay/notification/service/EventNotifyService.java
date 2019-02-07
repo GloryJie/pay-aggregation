@@ -11,6 +11,8 @@
  */
 package com.gloryjie.pay.notification.service;
 
+import com.github.pagehelper.PageInfo;
+import com.gloryjie.pay.notification.dto.EventNotifyDto;
 import com.gloryjie.pay.trade.dto.ChargeDto;
 import com.gloryjie.pay.trade.dto.RefundDto;
 
@@ -24,5 +26,5 @@ public interface EventNotifyService {
 
     void handleRefundSuccessEvent(RefundDto refundDto);
 
-
+    PageInfo<EventNotifyDto> getRecord(Integer appId, Integer startPage, Integer pageSize);
 }

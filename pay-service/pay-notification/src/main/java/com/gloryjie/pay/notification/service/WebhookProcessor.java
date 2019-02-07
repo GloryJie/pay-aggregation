@@ -61,7 +61,7 @@ public class WebhookProcessor {
 
         // 修改时间
         eventNotify.setTimeLastNotify(LocalDateTime.now());
-        EventNotifyDto eventNotifyDto = BeanConverter.covert(eventNotify, EventNotifyDto.class);
+        EventNotifyDto eventNotifyDto = BeanConverter.covertIgnore(eventNotify, EventNotifyDto.class);
         eventNotifyDto.setEventData(JsonUtil.parse(eventNotify.getEventData(), getEventDataType(eventNotify.getType())));
         eventNotifyDto.setCurrentTimeNotify(eventNotify.getTimeLastNotify());
 

@@ -11,8 +11,11 @@
  */
 package com.gloryjie.pay.notification.controller;
 
+import com.github.pagehelper.PageInfo;
+import com.gloryjie.pay.notification.dto.EventNotifyDto;
 import com.gloryjie.pay.notification.dto.EventSubscriptionDto;
 import com.gloryjie.pay.notification.enums.EventType;
+import com.gloryjie.pay.notification.service.EventNotifyService;
 import com.gloryjie.pay.notification.service.EventSubscriptionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -33,6 +36,9 @@ public class NotifyWebController {
     @Autowired
     private EventSubscriptionService subscriptionService;
 
+    @Autowired
+    private EventNotifyService eventNotifyService;
+
     @GetMapping("/{appId}/notification")
     public Map<EventType, EventSubscriptionDto> getAllSubscribeEvent(@PathVariable("appId") Integer appId) {
         List<EventSubscriptionDto> dtoList = subscriptionService.queryAllSubscribeEvent(appId);
@@ -50,5 +56,11 @@ public class NotifyWebController {
         return subscriptionService.cancelSubscribeEvent(appId, eventType);
     }
 
+    @GetMapping("/{appId}/notification/record")
+    public PageInfo<EventNotifyDto> getNotifyRecordList(@PathVariable("appId") Integer appId,
+                                                        @RequestParam(value = "startPage", required = false, defaultValue = "1") Integer startPage,
+                                                        @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
+        return eventNotifyService.getRecord(appId, startPage, pageSize);
+    }
 
 }

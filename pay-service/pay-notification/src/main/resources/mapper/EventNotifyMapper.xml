@@ -50,6 +50,14 @@
         where source_no = #{sourceNo}
     </select>
 
+    <select id="getByAppId" resultMap="BaseResultMap">
+        select
+        <include refid="all_column"/>
+        from
+        <include refid="table"/>
+        where app_id = #{appId} order by update_time desc
+    </select>
+
     <insert id="insert" parameterType="com.gloryjie.pay.notification.model.EventNotify">
         insert into
         <include refid="table"/>

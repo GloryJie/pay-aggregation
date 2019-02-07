@@ -14,6 +14,8 @@ package com.gloryjie.pay.notification.dao;
 import com.gloryjie.pay.notification.model.EventNotify;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * @author Jie
  * @since
@@ -28,5 +30,7 @@ public interface EventNotifyDao {
     EventNotify getBySourceNo(String sourceNo);
 
     int update(EventNotify record);
+
+    List<EventNotify> getByAppId(Integer appId);
 
 }
