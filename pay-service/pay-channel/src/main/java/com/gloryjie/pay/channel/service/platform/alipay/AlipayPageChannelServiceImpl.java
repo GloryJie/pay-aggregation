@@ -18,20 +18,14 @@ import com.alipay.api.domain.AlipayTradePagePayModel;
 import com.alipay.api.request.AlipayTradePagePayRequest;
 import com.gloryjie.pay.base.exception.error.ExternalException;
 import com.gloryjie.pay.base.util.AmountUtil;
-import com.gloryjie.pay.base.util.BeanConverter;
-import com.gloryjie.pay.channel.config.AlipayChannelConfig;
 import com.gloryjie.pay.channel.constant.ChannelConstant;
 import com.gloryjie.pay.channel.dto.ChannelPayDto;
 import com.gloryjie.pay.channel.dto.response.ChannelPayResponse;
 import com.gloryjie.pay.channel.enums.ChannelType;
 import com.gloryjie.pay.channel.error.ChannelError;
-import com.gloryjie.pay.channel.model.ChannelConfig;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author Jie
@@ -46,17 +40,14 @@ public class AlipayPageChannelServiceImpl extends BaseAlipayChannelService {
 
     @Override
     public ChannelPayResponse pay(ChannelPayDto payDto) {
-        ChannelConfig config = channelConfigDao.loadByAppIdAndChannel(payDto.getAppId(), payDto.getChannel());
-        Map<String,Object> payConfig = new HashMap<>(config.getChannelConfig());
-        AlipayChannelConfig alipayChannelConfig = BeanConverter.mapToBean(payConfig, AlipayChannelConfig.class);
-        AlipayClient client = getAlipayClient(alipayChannelConfig);
+
+        AlipayClient client = getAlipayClient(payDto.getAppId(), payDto.getChannel());
         AlipayTradePagePayRequest request = new AlipayTradePagePayRequest();
         // TODO: 2018/11/25 跳转地址需要修改为商户上送,并且需要设置异步通知地址
         if (payDto.getExtra() != null && StringUtils.isNotBlank(payDto.getExtra().get(ChannelConstant.Alipay.PAGE_EXTRA))) {
             request.setReturnUrl(payDto.getExtra().get(ChannelConstant.Alipay.PAGE_EXTRA));
         }
         request.setNotifyUrl(domain + "/platform/notify/alipay");
-//        http://jierong.nat300.top/notification/alipay
 
         AlipayTradePagePayModel model = new AlipayTradePagePayModel();
         model.setOutTradeNo(payDto.getChargeNo());

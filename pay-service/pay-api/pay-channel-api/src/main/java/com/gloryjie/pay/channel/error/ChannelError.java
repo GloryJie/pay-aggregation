@@ -32,7 +32,7 @@ public enum ChannelError implements BaseErrorEnum {
      * 渠道配置异常2xx
      */
     CHANNEL_CONFIG_EXISTS(HttpStatus.BAD_REQUEST,"201","渠道配置已存在"),
-    CHANNEL_CONFIG_NOT_EXISTS(HttpStatus.BAD_REQUEST,"202","渠道配置不存在")
+    CHANNEL_CONFIG_NOT_EXISTS(HttpStatus.BAD_REQUEST,"202","渠道未配置")
     ;
 
     private int code;

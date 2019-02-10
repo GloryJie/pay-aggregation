@@ -11,7 +11,9 @@
  */
 package com.gloryjie.pay.trade.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.gloryjie.pay.base.annotation.IgnoreCovertProperty;
+import com.gloryjie.pay.base.constant.DefaultConstant;
 import com.gloryjie.pay.channel.enums.ChannelType;
 import com.gloryjie.pay.trade.enums.ChargeStatus;
 import lombok.Data;
@@ -118,11 +120,13 @@ public class ChargeDto {
     /**
      * 支付单创建时间
      */
+    @JsonFormat(pattern = DefaultConstant.DATE_TIME_FORMAT)
     private LocalDateTime timeCreated;
 
     /**
      * 支付单支付完成时间
      */
+    @JsonFormat(pattern = DefaultConstant.DATE_TIME_FORMAT)
     private LocalDateTime timePaid;
 
 }
