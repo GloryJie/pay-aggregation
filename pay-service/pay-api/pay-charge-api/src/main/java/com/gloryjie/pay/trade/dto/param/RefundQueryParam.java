@@ -30,6 +30,8 @@ public class RefundQueryParam {
     @NotNull
     private Integer appId;
 
+    private String refundNo;
+
     private Integer startPage = 1;
 
     private Integer pageSize = 10;

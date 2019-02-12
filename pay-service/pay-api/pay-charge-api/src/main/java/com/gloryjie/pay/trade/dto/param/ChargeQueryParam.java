@@ -30,6 +30,8 @@ public class ChargeQueryParam {
     @NotNull
     private Integer appId;
 
+    private String chargeNo;
+
     private Integer startPage = 1;
 
     private Integer pageSize = 10;

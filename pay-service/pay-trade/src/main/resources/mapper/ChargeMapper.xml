@@ -79,6 +79,7 @@
         from
         <include refid="table"/>
         where app_id = #{appId}
+        <if test="chargeNo != null">AND charge_no = #{chargeNo}</if>
         <if test="orderNo != null">AND order_no = #{orderNo}</if>
         <if test="channel != null">AND channel = #{channel}</if>
         <if test="status != null">AND status = #{status}</if>
