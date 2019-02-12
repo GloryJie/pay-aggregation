@@ -9,6 +9,7 @@
         <result column="app_id" property="appId"/>
         <result column="channel" property="channel"/>
         <result column="amount" property="amount"/>
+        <result column="subject" property="subject"/>
         <result column="description" property="description"/>
         <result column="client_ip" property="clientIp"/>
         <result column="extra" property="extra"/>
@@ -32,13 +33,13 @@
 
 
     <sql id="all_column">
-        refund_no, charge_no, order_no, app_id, channel, amount, description, client_ip,
+        refund_no, charge_no, order_no, app_id, channel, amount, subject, description, client_ip,
         extra, user_hold, platform_trade_no, time_created, time_succeed, status, failure_code,
         failure_msg, currency, operator_id, version, create_time, update_time
     </sql>
 
     <sql id="all_value">
-        #{refundNo}, #{chargeNo}, #{orderNo}, #{appId}, #{channel}, #{amount}, #{description}, #{clientIp}, #{extra},
+        #{refundNo}, #{chargeNo}, #{orderNo}, #{appId}, #{channel}, #{amount}, #{subject}, #{description}, #{clientIp}, #{extra},
         #{userHold}, #{platformTradeNo}, #{timeCreated}, #{timeSucceed}, #{status}, #{failureCode},#{failureMsg},
         #{currency}, #{operatorId}, #{version}, now(), now()
     </sql>
@@ -97,6 +98,7 @@
             <if test="appId != null">app_id = #{appId},</if>
             <if test="channel != null">channel = #{channel},</if>
             <if test="amount != null">amount = #{amount},</if>
+            <if test="subject != null">subject = #{subject},</if>
             <if test="description != null">description = #{description},</if>
             <if test="clientIp != null">client_ip = #{clientIp},</if>
             <if test="extra != null">extra = #{extra},</if>

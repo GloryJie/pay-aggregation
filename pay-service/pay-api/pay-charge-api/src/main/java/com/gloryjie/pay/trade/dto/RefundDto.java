@@ -11,6 +11,8 @@
  */
 package com.gloryjie.pay.trade.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.gloryjie.pay.base.constant.DefaultConstant;
 import com.gloryjie.pay.channel.enums.ChannelType;
 import com.gloryjie.pay.trade.enums.RefundStatus;
 import lombok.Data;
@@ -54,6 +56,8 @@ public class RefundDto {
      */
     private Long amount;
 
+    private String subject;
+
     /**
      * 退款备注
      */
@@ -66,12 +70,14 @@ public class RefundDto {
     /**
      * 发起退款时间
      */
+    @JsonFormat(pattern = DefaultConstant.DATE_TIME_FORMAT)
     private LocalDateTime timeCreated;
 
 
     /**
      * 退款成功时间
      */
+    @JsonFormat(pattern = DefaultConstant.DATE_TIME_FORMAT)
     private LocalDateTime timeSucceed;
 
     /**

@@ -101,6 +101,7 @@ public class RefundBiz {
 
             Refund refund = BeanConverter.covert(refundParam, Refund.class);
             refund.setAmount(refundAmount);
+            refund.setSubject(charge.getSubject());
             refund.setRefundNo(IdFactory.generateStringId());
             refund.setCurrency(DefaultConstant.CURRENCY);
             refund.setVersion(0);

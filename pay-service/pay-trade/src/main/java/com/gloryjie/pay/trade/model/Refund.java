@@ -39,6 +39,11 @@ public class Refund {
     private Long amount;
 
     /**
+     * 退款商品的标题，冗余数据
+     */
+    private String subject;
+
+    /**
      * 退款备注
      */
     private String description;

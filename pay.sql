@@ -89,6 +89,7 @@ CREATE TABLE `t_refund` (
   `app_id` int(11) NOT NULL COMMENT '应用id',
   `channel` varchar(50) NOT NULL COMMENT '退款渠道',
   `amount` bigint NOT NULL COMMENT '退款金额',
+  `subject` varchar(256) NOT NULL COMMENT '商品标题，冗余数据',
   `description` varchar(300) DEFAULT NULL COMMENT '退款备注',
   `client_ip` varchar(50) DEFAULT NULL,
   `extra` varchar(256) DEFAULT NULL COMMENT '特定渠道需要的的额外附加参数',
