@@ -23,4 +23,6 @@ public interface ChannelConfigDao {
 
     List<ChannelConfig> getByAppId(Integer appId);
 
+    int delete(@Param("appId") Integer appId, @Param("channel") ChannelType channel);
+
 }

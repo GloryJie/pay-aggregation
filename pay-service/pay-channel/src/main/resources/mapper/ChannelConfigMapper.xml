@@ -28,6 +28,12 @@
     <sql id="all_value">
         #{id}, #{appId}, #{channel}, #{channelConfig}, #{startDate}, #{stopDate}, #{status}, #{logicalDel}, now(), now()
     </sql>
+    <delete id="delete">
+        delete from
+        <include refid="table"/>
+        where
+        app_id = #{appId} and channel = #{channel}
+    </delete>
 
     <select id="load" parameterType="integer" resultMap="BaseResultMap">
         select

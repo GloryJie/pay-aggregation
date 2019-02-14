@@ -11,6 +11,8 @@
  */
 package com.gloryjie.pay.channel.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.gloryjie.pay.base.constant.DefaultConstant;
 import com.gloryjie.pay.channel.enums.ChannelConfigStatus;
 import com.gloryjie.pay.channel.enums.ChannelType;
 import lombok.Data;
@@ -54,11 +56,13 @@ public class ChannelConfigDto {
     /**
      * 启用时间
      */
+    @JsonFormat(pattern = DefaultConstant.DATE_TIME_FORMAT)
     private LocalDateTime startDate;
 
     /**
      * 停用时间
      */
+    @JsonFormat(pattern = DefaultConstant.DATE_TIME_FORMAT)
     private LocalDateTime stopDate;
 
 }

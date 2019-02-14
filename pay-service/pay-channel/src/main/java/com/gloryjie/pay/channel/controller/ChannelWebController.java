@@ -50,4 +50,9 @@ public class ChannelWebController {
         configDto.setAppId(appId);
         return channelConfigService.updateChannelConfig(configDto);
     }
+
+    @DeleteMapping("/{appId}/channel/{channel}")
+    public Boolean deleteConfig(@PathVariable("appId") Integer appId, @PathVariable("channel") ChannelType channelType) {
+        return channelConfigService.deleteChannelConfig(appId, channelType);
+    }
 }

@@ -17,6 +17,7 @@ import com.gloryjie.pay.base.util.validator.ParamValidator;
 import com.gloryjie.pay.channel.dao.ChannelConfigDao;
 import com.gloryjie.pay.channel.dto.ChannelConfigDto;
 import com.gloryjie.pay.channel.enums.ChannelConfigStatus;
+import com.gloryjie.pay.channel.enums.ChannelType;
 import com.gloryjie.pay.channel.error.ChannelError;
 import com.gloryjie.pay.channel.model.ChannelConfig;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,7 +67,7 @@ public class ChannelConfigServiceImpl implements ChannelConfigService {
         // 入库
         channelConfigDao.insert(config);
 
-        return configDto;
+        return BeanConverter.covert(config, ChannelConfigDto.class);
     }
 
     @Override
@@ -92,6 +93,11 @@ public class ChannelConfigServiceImpl implements ChannelConfigService {
         channelConfigDao.update(config);
 
         return BeanConverter.covert(config, ChannelConfigDto.class);
+    }
+
+    @Override
+    public Boolean deleteChannelConfig(Integer appId, ChannelType channelType) {
+        return channelConfigDao.delete(appId, channelType) > 0;
     }
 
 

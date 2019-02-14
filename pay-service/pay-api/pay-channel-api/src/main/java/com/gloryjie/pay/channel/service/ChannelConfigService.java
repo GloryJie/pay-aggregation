@@ -12,6 +12,7 @@
 package com.gloryjie.pay.channel.service;
 
 import com.gloryjie.pay.channel.dto.ChannelConfigDto;
+import com.gloryjie.pay.channel.enums.ChannelType;
 
 import java.util.List;
 
@@ -28,4 +29,6 @@ public interface ChannelConfigService {
     ChannelConfigDto addNewChannelConfig(ChannelConfigDto configDto);
 
     ChannelConfigDto updateChannelConfig(ChannelConfigDto configDto);
+
+    Boolean deleteChannelConfig(Integer appId, ChannelType channelType);
 }

@@ -32,7 +32,8 @@ public enum ChannelType {
     ALIPAY_PAGE(1, "GATEWAY", "FAST_INSTANT_TRADE_PAY", "支付宝网页支付"),
     ALIPAY_WAP(2, "GATEWAY", "QUICK_WAP_WAY", "支付宝手机网站支付"),
     ALIPAY_SCAN_CODE(3, "GATEWAY", "", "支付宝扫码支付"),
-    ALIPAY_BAR_CODE(4, "NON_GATEWAY", "FACE_TO_FACE_PAYMENT", "支付宝条码支付");
+    ALIPAY_BAR_CODE(4, "NON_GATEWAY", "FACE_TO_FACE_PAYMENT", "支付宝条码支付"),
+    ALIPAY_APP(5,"GATEWAY","","支付宝app支付");
 
     /**
      * 10~19为支付宝, 20~29为微信, 30~39为银联
