@@ -63,7 +63,7 @@ public class EventNotifyServiceImpl implements EventNotifyService {
     public void handleChargeSuccessEvent(ChargeDto chargeDto) {
 
         EventSubscription subscription = checkTriggerEvent(chargeDto.getAppId(), chargeDto.getChargeNo(),
-                EventType.REFUND_CHANGE_EVENT, chargeDto);
+                EventType.CHARGE_CHANGE_EVENT, chargeDto);
         if (subscription == null) {
             return;
         }

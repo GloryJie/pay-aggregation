@@ -11,8 +11,11 @@
  */
 package com.gloryjie.pay.notification.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.gloryjie.pay.base.annotation.IgnoreCovertProperty;
+import com.gloryjie.pay.base.constant.DefaultConstant;
 import com.gloryjie.pay.notification.enums.EventType;
+import com.gloryjie.pay.notification.enums.NotifyStatus;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -30,6 +33,12 @@ public class EventNotifyDto {
     private String eventNo;
 
     /**
+     * 事件源号，如chargeNo
+     */
+    @IgnoreCovertProperty
+    private String sourceNo;
+
+    /**
      * 事件所属应用id
      */
     private Integer appId;
@@ -40,16 +49,21 @@ public class EventNotifyDto {
     private EventType type;
 
     @IgnoreCovertProperty
+    private NotifyStatus notifyStatus;
+
+    @IgnoreCovertProperty
     private String notifyUrl;
 
     /**
      * 事件发生时间
      */
+    @JsonFormat(pattern = DefaultConstant.DATE_TIME_FORMAT)
     private LocalDateTime timeOccur;
 
     /**
      * 当前通知发起的时间
      */
+    @JsonFormat(pattern = DefaultConstant.DATE_TIME_FORMAT)
     private LocalDateTime currentTimeNotify;
 
     /**
@@ -66,5 +80,18 @@ public class EventNotifyDto {
      * 携带的签名
      */
     private String sign;
+
+    /**
+     * 上次响应
+     */
+    @IgnoreCovertProperty
+    private String lastReply;
+
+    /**
+     * 上次通知时间
+     */
+    @IgnoreCovertProperty
+    @JsonFormat(pattern = DefaultConstant.DATE_TIME_FORMAT)
+    private LocalDateTime timeLastNotify;
 
 }

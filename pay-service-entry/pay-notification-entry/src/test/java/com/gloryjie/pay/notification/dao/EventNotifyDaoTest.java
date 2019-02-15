@@ -69,6 +69,7 @@ public class EventNotifyDaoTest {
         eventNotify.setType(EventType.CHARGE_CHANGE_EVENT);
         eventNotify.setTimeOccur(LocalDateTime.now());
         eventNotify.setNotifyTime(1);
+        eventNotify.setNotifyUrl("http://www.xxxx.co");
         eventNotify.setNotifyInterval("[1,2,3,4,5]");
         eventNotify.setEventData("data");
         eventNotify.setLastReply("success");
