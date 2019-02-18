@@ -3,20 +3,21 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>pay</artifactId>
+        <artifactId>pay-service-entry</artifactId>
         <groupId>com.gloryjie</groupId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>pay-service-entry</artifactId>
-    <packaging>pom</packaging>
-    <modules>
-        <module>pay-trade-entry</module>
-        <module>pay-notification-entry</module>
-        <module>pay-gateway-entry</module>
-        <module>pay-server-register</module>
-    </modules>
+    <artifactId>pay-server-register</artifactId>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-eureka-server</artifactId>
+        </dependency>
+
+    </dependencies>
 
 
 </project>

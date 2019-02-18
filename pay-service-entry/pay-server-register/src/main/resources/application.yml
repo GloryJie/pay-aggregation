@@ -1,0 +1,16 @@
+server:
+  port: 10000
+spring:
+  application:
+    name: server-register
+eureka:
+  instance:
+    hostname: localhost
+  client:
+    # 不注册自己
+    register-with-eureka: false
+    # 不拉取服务注册列表
+    fetch-registry: false
+    service-url:
+      defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka
+

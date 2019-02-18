@@ -23,3 +23,17 @@ rocketmq:
 # mybatis pageHelper配置
 pagehelper:
   reasonable: true
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:10000/eureka
+    register-with-eureka: true
+    fetch-registry: true
+
+#eureka:
+#  client:
+#    service-url:
+#      defaultZone: http://localhost:10000/eureka
+#    fetch-registry: true
+#    register-with-eureka: true
