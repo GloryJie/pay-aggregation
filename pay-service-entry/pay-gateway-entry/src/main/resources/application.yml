@@ -11,6 +11,15 @@ spring:
       discovery:
         locator:
           enabled: true
+      routes:
+      - id: trade_service
+        uri: lb://TRADE-SERVICE
+        predicates:
+        - Path=/api/v1/charge/**, /web/trade/**, /web/app/{appId}/channel/**, /platform/notify/alipay, /web/app, /web/app/master, /web/app/{appId}
+      - id: notify_service
+        uri: lb://NOTIFY-SERVICE
+        predicates:
+        - Path=/web/app/{appId}/notification/**
 server:
   port: 12000
 
