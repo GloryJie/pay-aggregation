@@ -19,6 +19,8 @@ logging:
     com.gloryjie.pay: debug
 server:
   port: 10020
+  servlet:
+    context-path: /pay/notification
 domain: "http://jierong.nat300.top"
 rocketmq:
   namesrv: '127.0.0.1:9876'

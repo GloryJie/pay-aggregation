@@ -18,6 +18,8 @@ logging:
     com.gloryjie.pay: debug
 server:
   port: 10010
+  servlet:
+    context-path: /pay/trade
 domain: "http://jierong.nat300.top"
 rocketmq:
   namesrv: '127.0.0.1:9876'

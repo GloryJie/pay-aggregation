@@ -27,7 +27,7 @@ import javax.validation.Valid;
  * @since
  */
 @RestController
-@RequestMapping("/web/trade")
+@RequestMapping("/web")
 public class ChargeWebController {
 
     @Autowired

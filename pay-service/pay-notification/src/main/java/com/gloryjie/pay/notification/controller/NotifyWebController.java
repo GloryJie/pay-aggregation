@@ -39,24 +39,24 @@ public class NotifyWebController {
     @Autowired
     private EventNotifyService eventNotifyService;
 
-    @GetMapping("/{appId}/notification")
+    @GetMapping("/{appId}/subscription")
     public Map<EventType, EventSubscriptionDto> getAllSubscribeEvent(@PathVariable("appId") Integer appId) {
         List<EventSubscriptionDto> dtoList = subscriptionService.queryAllSubscribeEvent(appId);
         return dtoList.stream().collect(Collectors.toMap(EventSubscriptionDto::getEventType, item -> item));
     }
 
-    @PostMapping("/{appId}/notification")
+    @PostMapping("/{appId}/subscription")
     public EventSubscriptionDto addEvent(@PathVariable("appId") Integer appId, @Valid @RequestBody EventSubscriptionDto dto) {
         dto.setAppId(appId);
         return subscriptionService.subscribeEvent(dto);
     }
 
-    @DeleteMapping("/{appId}/notification/{eventType}")
+    @DeleteMapping("/{appId}/subscription/{eventType}")
     public Boolean cancelEvent(@PathVariable("appId") Integer appId, @PathVariable("eventType") EventType eventType) {
         return subscriptionService.cancelSubscribeEvent(appId, eventType);
     }
 
-    @GetMapping("/{appId}/notification/record")
+    @GetMapping("/{appId}/record")
     public PageInfo<EventNotifyDto> getNotifyRecordList(@PathVariable("appId") Integer appId,
                                                         @RequestParam(value = "startPage", required = false, defaultValue = "1") Integer startPage,
                                                         @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize) {

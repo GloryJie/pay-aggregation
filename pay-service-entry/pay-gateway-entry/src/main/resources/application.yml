@@ -6,23 +6,22 @@ eureka:
 spring:
   application:
     name: 'cloud-gateway'
-  cloud:
-    gateway:
-      discovery:
-        locator:
-          enabled: true
-      routes:
-      - id: trade_service
-        uri: lb://TRADE-SERVICE
-        predicates:
-        - Path=/api/v1/charge/**, /web/trade/**, /web/app/{appId}/channel/**, /platform/notify/alipay, /web/app, /web/app/master, /web/app/{appId}
-      - id: notify_service
-        uri: lb://NOTIFY-SERVICE
-        predicates:
-        - Path=/web/app/{appId}/notification/**
 server:
   port: 12000
-
-logging:
-  level:
-    org.springframework.cloud.gateway: debug
+zuul:
+  ignored-services: '*'
+  routes:
+    trade-service:
+      serviceId: 'trade-service'
+      path: /pay/trade/**
+      stripPrefix: false
+    notify-service:
+      serviceId: 'notify-service'
+      path: /pay/notification/**
+      stripPrefix: false
+  ignore-local-service: false
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
