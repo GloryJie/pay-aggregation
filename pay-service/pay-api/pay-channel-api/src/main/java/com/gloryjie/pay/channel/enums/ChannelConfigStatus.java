@@ -24,8 +24,8 @@ public enum ChannelConfigStatus {
     /**
      * 渠道配置状态
      */
-    STOP_USING(0,"未启用"),
-    START_USING(1,"启用");
+    STOP_USING(0, "未启用"),
+    START_USING(1, "启用");
 
     private int code;
 
@@ -34,6 +34,14 @@ public enum ChannelConfigStatus {
     ChannelConfigStatus(int code, String desc) {
         this.code = code;
         this.desc = desc;
+    }
+
+    public boolean isStart() {
+        return this == ChannelConfigStatus.START_USING;
+    }
+
+    public boolean isStop() {
+        return this == ChannelConfigStatus.STOP_USING;
     }
 
 }

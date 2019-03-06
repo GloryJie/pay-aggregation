@@ -42,7 +42,6 @@ import com.gloryjie.pay.channel.dto.ChannelRefundQueryDto;
 import com.gloryjie.pay.channel.dto.response.ChannelRefundResponse;
 import com.gloryjie.pay.channel.dto.response.ChannelResponse;
 import com.gloryjie.pay.channel.enums.AlipayStatus;
-import com.gloryjie.pay.channel.enums.ChannelConfigStatus;
 import com.gloryjie.pay.channel.enums.ChannelType;
 import com.gloryjie.pay.channel.error.ChannelError;
 import com.gloryjie.pay.channel.model.ChannelConfig;
@@ -88,8 +87,8 @@ public abstract class BaseAlipayChannelService implements PayChannelService {
     // TODO: 2018/11/27  AlipayClient为线程安全,可以缓存起来进行优化
     protected AlipayClient getAlipayClient(Integer appId, ChannelType channelType) {
         ChannelConfig config = channelConfigDao.loadByAppIdAndChannel(appId, channelType);
-        if (config == null || ChannelConfigStatus.START_USING == config.getStatus()) {
-            throw BusinessException.create(ChannelError.CHANNEL_CONFIG_NOT_EXISTS);
+        if (config == null || config.getStatus().isStop()) {
+            throw BusinessException.create(ChannelError.CHANNEL_CONFIG_NOT_EXISTS, "或已停用");
         }
         Map<String, Object> payConfig = new HashMap<>(config.getChannelConfig());
         AlipayChannelConfig alipayChannelConfig = BeanConverter.mapToBean(payConfig, AlipayChannelConfig.class);
@@ -145,7 +144,7 @@ public abstract class BaseAlipayChannelService implements PayChannelService {
 
     @Override
     public ChannelResponse refund(ChannelRefundDto refundDto) {
-        AlipayClient client = getAlipayClient(refundDto.getAppId(),refundDto.getChannel());
+        AlipayClient client = getAlipayClient(refundDto.getAppId(), refundDto.getChannel());
         AlipayTradeRefundRequest request = new AlipayTradeRefundRequest();
         AlipayTradeRefundModel model = new AlipayTradeRefundModel();
         model.setOutTradeNo(refundDto.getChargeNo());
@@ -171,7 +170,7 @@ public abstract class BaseAlipayChannelService implements PayChannelService {
 
     @Override
     public ChannelResponse queryRefund(ChannelRefundQueryDto queryDto) {
-        AlipayClient client = getAlipayClient(queryDto.getAppId(),queryDto.getChannel());
+        AlipayClient client = getAlipayClient(queryDto.getAppId(), queryDto.getChannel());
         AlipayTradeFastpayRefundQueryRequest request = new AlipayTradeFastpayRefundQueryRequest();
         AlipayTradeFastpayRefundQueryModel model = new AlipayTradeFastpayRefundQueryModel();
         model.setOutTradeNo(queryDto.getChargeNo());
