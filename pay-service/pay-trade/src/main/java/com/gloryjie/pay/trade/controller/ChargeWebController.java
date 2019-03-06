@@ -12,6 +12,7 @@
 package com.gloryjie.pay.trade.controller;
 
 import com.github.pagehelper.PageInfo;
+import com.gloryjie.pay.base.response.Response;
 import com.gloryjie.pay.trade.dto.ChargeDto;
 import com.gloryjie.pay.trade.dto.RefundDto;
 import com.gloryjie.pay.trade.dto.param.ChargeQueryParam;
@@ -40,8 +41,8 @@ public class ChargeWebController {
      * @return
      */
     @GetMapping("/charge/list")
-    public PageInfo<ChargeDto> getChargeList(@Valid @ModelAttribute ChargeQueryParam queryParam) {
-        return chargeService.queryPaymentList(queryParam);
+    public Response<PageInfo<ChargeDto>> getChargeList(@Valid @ModelAttribute ChargeQueryParam queryParam) {
+        return Response.success(chargeService.queryPaymentList(queryParam));
     }
 
     /**
@@ -50,8 +51,8 @@ public class ChargeWebController {
      * @return
      */
     @RequestMapping("/refund/list")
-    public PageInfo<RefundDto> getRefundList(@Valid @ModelAttribute RefundQueryParam queryParam) {
-        return chargeService.queryRefundList(queryParam);
+    public Response<PageInfo<RefundDto>> getRefundList(@Valid @ModelAttribute RefundQueryParam queryParam) {
+        return Response.success(chargeService.queryRefundList(queryParam));
     }
 
 

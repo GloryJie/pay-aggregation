@@ -24,6 +24,7 @@ import java.util.Map;
 @RequestMapping("/platform/notify/")
 public class PlatformNotifyController {
 
+    // TODO: 2019/3/6 交易平台的通知是否应该放在Trade模块
     @PostMapping("/alipay")
     public String alipayNotify(@RequestParam Map<String,String> param){
         System.out.println(param);

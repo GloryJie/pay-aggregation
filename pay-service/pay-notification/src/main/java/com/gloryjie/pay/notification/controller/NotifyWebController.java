@@ -12,6 +12,7 @@
 package com.gloryjie.pay.notification.controller;
 
 import com.github.pagehelper.PageInfo;
+import com.gloryjie.pay.base.response.Response;
 import com.gloryjie.pay.notification.dto.EventNotifyDto;
 import com.gloryjie.pay.notification.dto.EventSubscriptionDto;
 import com.gloryjie.pay.notification.enums.EventType;
@@ -40,27 +41,27 @@ public class NotifyWebController {
     private EventNotifyService eventNotifyService;
 
     @GetMapping("/{appId}/subscription")
-    public Map<EventType, EventSubscriptionDto> getAllSubscribeEvent(@PathVariable("appId") Integer appId) {
+    public Response<Map<EventType, EventSubscriptionDto>> getAllSubscribeEvent(@PathVariable("appId") Integer appId) {
         List<EventSubscriptionDto> dtoList = subscriptionService.queryAllSubscribeEvent(appId);
-        return dtoList.stream().collect(Collectors.toMap(EventSubscriptionDto::getEventType, item -> item));
+        return Response.success(dtoList.stream().collect(Collectors.toMap(EventSubscriptionDto::getEventType, item -> item)));
     }
 
     @PostMapping("/{appId}/subscription")
-    public EventSubscriptionDto addEvent(@PathVariable("appId") Integer appId, @Valid @RequestBody EventSubscriptionDto dto) {
+    public Response<EventSubscriptionDto> addEvent(@PathVariable("appId") Integer appId, @Valid @RequestBody EventSubscriptionDto dto) {
         dto.setAppId(appId);
-        return subscriptionService.subscribeEvent(dto);
+        return Response.success(subscriptionService.subscribeEvent(dto));
     }
 
     @DeleteMapping("/{appId}/subscription/{eventType}")
-    public Boolean cancelEvent(@PathVariable("appId") Integer appId, @PathVariable("eventType") EventType eventType) {
-        return subscriptionService.cancelSubscribeEvent(appId, eventType);
+    public Response<Boolean> cancelEvent(@PathVariable("appId") Integer appId, @PathVariable("eventType") EventType eventType) {
+        return Response.success(subscriptionService.cancelSubscribeEvent(appId, eventType));
     }
 
     @GetMapping("/{appId}/record")
-    public PageInfo<EventNotifyDto> getNotifyRecordList(@PathVariable("appId") Integer appId,
+    public Response<PageInfo<EventNotifyDto>> getNotifyRecordList(@PathVariable("appId") Integer appId,
                                                         @RequestParam(value = "startPage", required = false, defaultValue = "1") Integer startPage,
                                                         @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
-        return eventNotifyService.getRecord(appId, startPage, pageSize);
+        return Response.success(eventNotifyService.getRecord(appId, startPage, pageSize));
     }
 
 }

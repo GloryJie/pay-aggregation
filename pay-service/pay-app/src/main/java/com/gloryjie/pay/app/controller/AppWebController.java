@@ -15,6 +15,7 @@ import com.gloryjie.pay.app.dto.AppCreateDto;
 import com.gloryjie.pay.app.dto.AppDto;
 import com.gloryjie.pay.app.dto.AppUpdateParam;
 import com.gloryjie.pay.app.service.AppService;
+import com.gloryjie.pay.base.response.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,19 +34,19 @@ public class AppWebController {
     private AppService appService;
 
     @GetMapping("/app/master")
-    public List<AppDto> getMasterApp() {
-        return appService.queryMasterAppList();
+    public Response<List<AppDto>> getMasterApp() {
+        return Response.success(appService.queryMasterAppList());
     }
 
     @PostMapping("/app")
-    public AppDto createMasterApp(@Valid @RequestBody AppCreateDto createDto) {
-        return appService.createMasterApp(createDto.getName(), createDto.getDescription());
+    public Response<AppDto> createMasterApp(@Valid @RequestBody AppCreateDto createDto) {
+        return Response.success(appService.createMasterApp(createDto.getName(), createDto.getDescription()));
     }
 
     @PutMapping("/app/{appId}")
-    public Boolean updateAppInfo(@PathVariable("appId") Integer appId, @RequestBody AppUpdateParam updateParam) {
+    public Response<Boolean> updateAppInfo(@PathVariable("appId") Integer appId, @RequestBody AppUpdateParam updateParam) {
         updateParam.setAppId(appId);
-        return appService.updateAppInfo(updateParam);
+        return Response.success(appService.updateAppInfo(updateParam));
     }
 
 }

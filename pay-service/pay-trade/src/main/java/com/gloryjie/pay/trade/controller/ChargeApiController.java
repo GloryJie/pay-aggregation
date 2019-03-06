@@ -11,6 +11,7 @@
  */
 package com.gloryjie.pay.trade.controller;
 
+import com.gloryjie.pay.base.response.Response;
 import com.gloryjie.pay.channel.dto.param.ChargeCreateParam;
 import com.gloryjie.pay.trade.api.ChargeControllerApi;
 import com.gloryjie.pay.trade.dto.ChargeDto;
@@ -42,8 +43,8 @@ public class ChargeApiController implements ChargeControllerApi {
      * @return
      */
     @PostMapping("/charge")
-    public ChargeDto createCharge(@RequestBody @Valid ChargeCreateParam createParam) {
-        return chargeService.pay(createParam);
+    public Response<ChargeDto> createCharge(@RequestBody @Valid ChargeCreateParam createParam) {
+        return Response.success(chargeService.pay(createParam));
     }
 
     /**
@@ -54,8 +55,8 @@ public class ChargeApiController implements ChargeControllerApi {
      * @return
      */
     @GetMapping("/charge/{chargeNo}")
-    public ChargeDto queryCharge(@RequestHeader("appId") Integer appId, @PathVariable("chargeNo") String chargeNo) {
-        return chargeService.queryPayment(appId, chargeNo);
+    public Response<ChargeDto> queryCharge(@RequestHeader("appId") Integer appId, @PathVariable("chargeNo") String chargeNo) {
+        return Response.success(chargeService.queryPayment(appId, chargeNo));
     }
 
     /**
@@ -66,9 +67,9 @@ public class ChargeApiController implements ChargeControllerApi {
      * @return
      */
     @PostMapping("/charge/{chargeNo}/refund")
-    public RefundDto refundCharge(@PathVariable("chargeNo") String chargeNo, @Validated @RequestBody RefundParam refundParam) {
+    public Response<RefundDto> refundCharge(@PathVariable("chargeNo") String chargeNo, @Validated @RequestBody RefundParam refundParam) {
         refundParam.setChargeNo(chargeNo);
-        return chargeService.refund(refundParam);
+        return Response.success(chargeService.refund(refundParam));
     }
 
     /**
@@ -80,8 +81,8 @@ public class ChargeApiController implements ChargeControllerApi {
      * @return
      */
     @GetMapping("/charge/{chargeNo}/refund/{refundNo}")
-    public RefundDto querySingleRefund(@RequestHeader("appId") Integer appId, @PathVariable("chargeNo") String chargeNo, @PathVariable("refundNo") String refundNo) {
-        return chargeService.queryRefund(appId, chargeNo, refundNo).stream().findAny().orElse(new RefundDto());
+    public Response<RefundDto> querySingleRefund(@RequestHeader("appId") Integer appId, @PathVariable("chargeNo") String chargeNo, @PathVariable("refundNo") String refundNo) {
+        return Response.success(chargeService.queryRefund(appId, chargeNo, refundNo).stream().findAny().orElse(new RefundDto()));
     }
 
     /**
@@ -92,8 +93,8 @@ public class ChargeApiController implements ChargeControllerApi {
      * @return
      */
     @GetMapping("/charge/{chargeNo}/refund")
-    public List<RefundDto> queryChargeRefund(@RequestHeader("appId") Integer appId, @PathVariable("chargeNo") String chargeNo) {
-        return chargeService.queryRefund(appId, chargeNo, null);
+    public Response<List<RefundDto>> queryChargeRefund(@RequestHeader("appId") Integer appId, @PathVariable("chargeNo") String chargeNo) {
+        return Response.success(chargeService.queryRefund(appId, chargeNo, null));
     }
 
 }

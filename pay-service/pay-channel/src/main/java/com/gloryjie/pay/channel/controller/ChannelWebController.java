@@ -11,6 +11,7 @@
  */
 package com.gloryjie.pay.channel.controller;
 
+import com.gloryjie.pay.base.response.Response;
 import com.gloryjie.pay.channel.dto.ChannelConfigDto;
 import com.gloryjie.pay.channel.enums.ChannelType;
 import com.gloryjie.pay.channel.service.ChannelConfigService;
@@ -34,25 +35,25 @@ public class ChannelWebController {
     private ChannelConfigService channelConfigService;
 
     @GetMapping("/{appId}/channel")
-    public Map<ChannelType, ChannelConfigDto> getAlreadyConfigChannel(@PathVariable("appId") Integer appId) {
+    public Response<Map<ChannelType, ChannelConfigDto>> getAlreadyConfigChannel(@PathVariable("appId") Integer appId) {
         List<ChannelConfigDto> configDtoList = channelConfigService.getChannelConfig(appId);
-        return configDtoList.stream().collect(Collectors.toMap(ChannelConfigDto::getChannel, item -> item));
+        return Response.success(configDtoList.stream().collect(Collectors.toMap(ChannelConfigDto::getChannel, item -> item)));
     }
 
     @PostMapping("/{appId}/channel")
-    public ChannelConfigDto addNewConfig(@PathVariable("appId") Integer appId, @Valid @RequestBody ChannelConfigDto configDto) {
+    public Response<ChannelConfigDto> addNewConfig(@PathVariable("appId") Integer appId, @Valid @RequestBody ChannelConfigDto configDto) {
         configDto.setAppId(appId);
-        return channelConfigService.addNewChannelConfig(configDto);
+        return Response.success(channelConfigService.addNewChannelConfig(configDto));
     }
 
     @PutMapping("/{appId}/channel")
-    public ChannelConfigDto updateConfig(@PathVariable("appId") Integer appId, @Valid @RequestBody ChannelConfigDto configDto) {
+    public Response<ChannelConfigDto> updateConfig(@PathVariable("appId") Integer appId, @Valid @RequestBody ChannelConfigDto configDto) {
         configDto.setAppId(appId);
-        return channelConfigService.updateChannelConfig(configDto);
+        return Response.success(channelConfigService.updateChannelConfig(configDto));
     }
 
     @DeleteMapping("/{appId}/channel/{channel}")
-    public Boolean deleteConfig(@PathVariable("appId") Integer appId, @PathVariable("channel") ChannelType channelType) {
-        return channelConfigService.deleteChannelConfig(appId, channelType);
+    public Response<Boolean> deleteConfig(@PathVariable("appId") Integer appId, @PathVariable("channel") ChannelType channelType) {
+        return Response.success(channelConfigService.deleteChannelConfig(appId, channelType));
     }
 }
