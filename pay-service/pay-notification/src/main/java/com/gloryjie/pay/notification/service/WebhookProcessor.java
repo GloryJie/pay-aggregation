@@ -27,6 +27,7 @@ import com.gloryjie.pay.trade.dto.RefundDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
@@ -70,7 +71,7 @@ public class WebhookProcessor {
         try {
             log.info("ready to notify appId={}, url={}, eventNo={}", eventNotify.getAppId(), eventNotify.getNotifyTime(), eventNo);
             responseResult = restTemplate.postForObject(url, eventNotifyDto, String.class);
-        } catch (Exception e) {
+        } catch (RestClientException e) {
             log.info("notify eventNo={} to appId={}, url={} fail", eventNo, eventNotify.getAppId(), url,e);
             responseResult = e.getMessage();
         }

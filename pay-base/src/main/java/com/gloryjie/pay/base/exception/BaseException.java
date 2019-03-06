@@ -21,6 +21,8 @@ import lombok.Getter;
 @Getter
 public class BaseException extends RuntimeException implements ErrorInterface {
 
+  private BaseErrorEnum errorEnum;
+
   private String status;
 
   private String message;
@@ -42,17 +44,21 @@ public class BaseException extends RuntimeException implements ErrorInterface {
 
   public BaseException(BaseErrorEnum error) {
     this(error.getStatus(), error.getMessage());
+    this.errorEnum = error;
   }
 
   public BaseException(BaseErrorEnum error, Throwable t) {
     this(error.getStatus(),error.getMessage(), t);
+    this.errorEnum = error;
   }
 
   public BaseException(BaseErrorEnum error, String detailMsg) {
     this(error.getStatus(), error.getMessage() + ":" + detailMsg);
+    this.errorEnum = error;
   }
 
   public BaseException(BaseErrorEnum error, String detailMsg, Throwable t) {
     this(error.getStatus(), detailMsg, t);
+    this.errorEnum = error;
   }
 }
