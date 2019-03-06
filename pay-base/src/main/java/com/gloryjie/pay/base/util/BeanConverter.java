@@ -156,7 +156,7 @@ public class BeanConverter {
             beanMap.putAll(src);
             return object;
         } catch (Exception e) {
-            log.error("map to bean error map={}, bean={}", src, tClass.getSimpleName());
+            log.error("map to bean error map={}, bean={}", src, tClass.getSimpleName(), e);
             throw SystemException.create(CommonErrorEnum.INTERNAL_SYSTEM_ERROR);
         }
     }

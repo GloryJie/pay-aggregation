@@ -64,4 +64,14 @@ public class DefaultConstant {
 
   public static final String NOTIFY_SUCCESS_RESPONSE = "success";
 
+  public interface REQUEST_METHOD{
+    String GET = "GET";
+
+    String POST = "POST";
+
+    String PUT = "PUT";
+
+    String DELETE = "DELETE";
+  }
+
 }

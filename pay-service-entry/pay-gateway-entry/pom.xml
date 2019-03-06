@@ -11,8 +11,18 @@
 
     <artifactId>pay-gateway-entry</artifactId>
 
+    <properties>
+        <pay-base.version>0.0.1-SNAPSHOT</pay-base.version>
+    </properties>
+
 
     <dependencies>
+
+        <dependency>
+            <groupId>com.gloryjie</groupId>
+            <artifactId>pay-base</artifactId>
+            <version>${pay-base.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>org.springframework.cloud</groupId>
