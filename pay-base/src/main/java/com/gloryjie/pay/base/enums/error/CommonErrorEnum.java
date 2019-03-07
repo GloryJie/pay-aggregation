@@ -27,7 +27,7 @@ public enum CommonErrorEnum implements BaseErrorEnum {
      */
     INTERNAL_SYSTEM_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "500", "系统内部异常"),
     SYSTEM_BUSY_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "501", "系统繁忙"),
-    ILLEGAL_ARGUMENT_ERROR(HttpStatus.INTERNAL_SERVER_ERROR,"502","参数异常"),
+    ILLEGAL_ARGUMENT_ERROR(HttpStatus.BAD_REQUEST,"502","参数异常"),
     SIGNATURE_NOT_PASS_ERROR(HttpStatus.BAD_REQUEST,"503","签名未通过")
     ;
 

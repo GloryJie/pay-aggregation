@@ -17,6 +17,7 @@ import com.gloryjie.pay.app.service.api.AppFeignApi;
 import com.gloryjie.pay.base.constant.DefaultConstant;
 import com.gloryjie.pay.base.enums.error.CommonErrorEnum;
 import com.gloryjie.pay.base.exception.BaseException;
+import com.gloryjie.pay.base.exception.ErrorInterface;
 import com.gloryjie.pay.base.exception.error.ExternalException;
 import com.gloryjie.pay.base.exception.error.SystemException;
 import com.gloryjie.pay.base.response.Response;
@@ -24,7 +25,6 @@ import com.gloryjie.pay.base.util.JsonUtil;
 import com.gloryjie.pay.base.util.cipher.Rsa;
 import com.gloryjie.pay.base.util.validator.ParamValidator;
 import com.gloryjie.pay.gateway.model.UniformRequestParam;
-import com.netflix.discovery.converters.Auto;
 import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
 import com.netflix.zuul.exception.ZuulException;
@@ -93,58 +93,22 @@ public class SignCheckFilter extends ZuulFilter {
     @Override
     public Object run() throws ZuulException {
         RequestContext context = RequestContext.getCurrentContext();
-        HttpServletRequest request = context.getRequest();
-        UniformRequestParam uniformRequestParam = null;
-        boolean checkResult = false;
-        try {
-            uniformRequestParam = getUniformRequestParam(context);
-            ParamValidator.validate(uniformRequestParam);
 
-            // TODO: 2019/3/6 时间窗口、随机字符串重复、签名验证
-            String sign = request.getHeader(SIGN_HEADER);
-            if (StringUtils.isBlank(sign)) {
-                alterResponseWithErrorMsg(context, Response.failure(SystemException.create(CommonErrorEnum.ILLEGAL_ARGUMENT_ERROR, "签名参数为空")));
-            }
+        // 1. 获取统一参数
+        UniformRequestParam uniformRequestParam = getUniformRequestParam(context);
 
-            if (!signCheckTrigger) {
-                checkResult = true;
-            } else {
-                // TODO: 2019/3/6 通过app服务获取公钥进行延签
-                AppDto appDto = appFeignApi.getAppInfo(uniformRequestParam.getAppId());
-                if (appDto == null){
-                    alterResponseWithErrorMsg(context,Response.failure(ExternalException.create(AppError.APP_NOT_EXISTS)));
-                    return null;
-                }else if (StringUtils.isBlank(appDto.getTradePublicKey())){
-                    alterResponseWithErrorMsg(context,Response.failure(ExternalException.create(AppError.APP_TRADE_PUBLIC_LEY_NOT_EXISTS)));
-                    return null;
-                }
-                String signStr = uniformRequestParam.toSignString();
-                byte[] signStrData = signStr.getBytes(StandardCharsets.UTF_8);
-                checkResult = Rsa.verifySign(signStrData, appDto.getTradePublicKey(), sign);
-                if (!checkResult) {
-                    alterResponseWithErrorMsg(context, Response.failure(ExternalException.create(CommonErrorEnum.SIGNATURE_NOT_PASS_ERROR)));
-                }
-            }
-
-        } catch (BaseException e) {
-            // 可能出现的错误为json转换出错，参数校验出错
-            alterResponseWithErrorMsg(context, Response.failure(e));
-        } catch (NoSuchAlgorithmException | SignatureException | InvalidKeyException | InvalidKeySpecException e) {
-            log.warn("SignCheckFilter verify sign fail, appId={}", uniformRequestParam.getAppId(), e);
-            // 延签错误
-            Response response = Response.failure(ExternalException.create(CommonErrorEnum.SIGNATURE_NOT_PASS_ERROR, e.getMessage()));
-            alterResponseWithErrorMsg(context, response);
-        } catch (Exception e) {
-            // 其他未知错误返回系统内部错误
-            log.error("SignCheckFilter unknown exception happen ", e);
-            alterResponseWithErrorMsg(context, Response.failure(SystemException.create(CommonErrorEnum.INTERNAL_SYSTEM_ERROR)));
+        // 2. 检查参数合法性
+        if (!checkUniformParam(context, uniformRequestParam)) {
+            return null;
         }
+        // 3. 签名验证
+        boolean verifyResult = verifySign(context, uniformRequestParam);
 
-
-        // 检查通过，则修改请求体数据，只保留业务数据
-        if (checkResult) {
+        // 4. 验证修改请求体数据，只保留业务数据
+        if (verifyResult) {
             // 将appId放进请求头
             context.addZuulRequestHeader(APP_ID_HEADER, uniformRequestParam.getAppId().toString());
+            HttpServletRequest request = context.getRequest();
             if (DefaultConstant.REQUEST_METHOD.POST.equalsIgnoreCase(request.getMethod()) && uniformRequestParam.getBizData() != null) {
                 String newBody = JsonUtil.toJson(uniformRequestParam.getBizData());
                 MyHttpServletRequestWrapper wrapper = new MyHttpServletRequestWrapper(request, newBody);
@@ -156,12 +120,71 @@ public class SignCheckFilter extends ZuulFilter {
     }
 
     /**
+     * 签名验证
+     * @param context
+     * @param param
+     * @return
+     */
+    private boolean verifySign(RequestContext context, UniformRequestParam param) {
+        String sign = context.getRequest().getHeader(SIGN_HEADER);
+        if (StringUtils.isBlank(sign)) {
+            alterResponseWithErrorMsg(context, SystemException.create(CommonErrorEnum.ILLEGAL_ARGUMENT_ERROR, "签名参数为空"));
+            return false;
+        }
+        // 获取公钥
+        AppDto appDto = appFeignApi.getAppInfo(param.getAppId());
+        if (appDto == null || StringUtils.isBlank(appDto.getTradePublicKey())) {
+            alterResponseWithErrorMsg(context, ExternalException.create(AppError.APP_NOT_EXISTS, "或公钥未配置"));
+            return false;
+        }
+        byte[] signStrData = param.toSignString().getBytes(StandardCharsets.UTF_8);
+        try {
+            if (!Rsa.verifySign(signStrData, appDto.getTradePublicKey(), sign)) {
+                alterResponseWithErrorMsg(context, ExternalException.create(CommonErrorEnum.SIGNATURE_NOT_PASS_ERROR));
+                return false;
+            }
+        } catch (Exception e) {
+            log.error("SignCheckFilter verify sign error", e);
+            alterResponseWithErrorMsg(context, ExternalException.create(CommonErrorEnum.SIGNATURE_NOT_PASS_ERROR, e.getMessage()));
+        }
+
+        return true;
+
+    }
+
+
+    /**
+     * 检查必填参数的合法性
+     *
+     * @param context
+     * @param param
+     * @return
+     */
+    private boolean checkUniformParam(RequestContext context, UniformRequestParam param) {
+        if (param == null) {
+            alterResponseWithErrorMsg(context, ExternalException.create(CommonErrorEnum.ILLEGAL_ARGUMENT_ERROR));
+            return false;
+        }
+        try {
+            // 必填项检查
+            ParamValidator.validate(param);
+
+            // TODO: 2019/3/6 时间窗口、随机字符串检查
+
+            return true;
+        } catch (BaseException e) {
+            alterResponseWithErrorMsg(context, e);
+        }
+        return false;
+    }
+
+    /**
      * 过滤不通过，直接返回错误信息
      *
      * @param context
-     * @param response
      */
-    private void alterResponseWithErrorMsg(RequestContext context, Response response) {
+    private void alterResponseWithErrorMsg(RequestContext context, ErrorInterface error) {
+        Response response = Response.failure(error);
         context.getResponse().setCharacterEncoding(DefaultConstant.CHARSET);
         context.getResponse().setContentType("application/json;charset=UTF-8");
         context.setSendZuulResponse(false);
@@ -169,21 +192,21 @@ public class SignCheckFilter extends ZuulFilter {
         context.setResponseBody(JsonUtil.toJson(response));
     }
 
+    /**
+     * 获取统一格式的参数
+     *
+     * @param context
+     * @return
+     */
     private UniformRequestParam getUniformRequestParam(RequestContext context) {
         HttpServletRequest request = context.getRequest();
-        String method = request.getMethod();
-        String requestBody;
         UniformRequestParam uniformRequestParam = null;
         try {
-            if (DefaultConstant.REQUEST_METHOD.POST.equalsIgnoreCase(method)) {
-                requestBody = getRequestBody(request);
-                if (StringUtils.isBlank(requestBody)) {
-                    // 不对当前请求进行路由
-                    Response responseContent = Response.failure(ExternalException.create(CommonErrorEnum.ILLEGAL_ARGUMENT_ERROR, "请求体为空"));
-                    alterResponseWithErrorMsg(context, responseContent);
-                    return null;
+            if (DefaultConstant.REQUEST_METHOD.POST.equalsIgnoreCase(request.getMethod())) {
+                String requestBody = getRequestBody(request);
+                if (StringUtils.isNotBlank(requestBody)) {
+                    uniformRequestParam = JsonUtil.parse(requestBody, UniformRequestParam.class);
                 }
-                uniformRequestParam = JsonUtil.parse(requestBody, UniformRequestParam.class);
             } else {
                 Map<String, String[]> getParam = request.getParameterMap();
                 Map<String, Object> queryParam = new HashMap<>(8);
@@ -194,16 +217,23 @@ public class SignCheckFilter extends ZuulFilter {
             }
         } catch (IOException e) {
             log.error("read request body content from InputStream fail", e);
-            alterResponseWithErrorMsg(context, Response.failure(SystemException.create(CommonErrorEnum.INTERNAL_SYSTEM_ERROR)));
+        } catch (BaseException e) {
+            log.warn("SignCheckFilter transform json to UniformRequestParam fail", e);
         }
+
         if (uniformRequestParam != null) {
             uniformRequestParam.setUri(request.getServletPath());
-            return uniformRequestParam;
         }
-        return new UniformRequestParam();
+        return uniformRequestParam;
     }
 
-
+    /**
+     * 从Request实例中获取请求体
+     *
+     * @param request
+     * @return
+     * @throws IOException
+     */
     private String getRequestBody(HttpServletRequest request) throws IOException {
         // 此处不能关闭InputStream，否则报错
         InputStream is = request.getInputStream();
