@@ -95,4 +95,10 @@ public class AppServiceImpl implements AppService {
         App app = BeanConverter.covert(updateParam, App.class);
         return appDao.update(app) > 0;
     }
+
+    @Override
+    public AppDto getSingleAppInfo(Integer appId) {
+        App app = appDao.load(appId);
+        return app == null ? null : BeanConverter.covert(app, AppDto.class);
+    }
 }

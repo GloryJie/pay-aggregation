@@ -25,7 +25,9 @@ public enum  AppError implements BaseErrorEnum {
     /**
      * 应用异常1xx
      */
-    SAME_APP_NAME_ALREADY_EXISTS(HttpStatus.BAD_REQUEST,"101","同名应用已存在")
+    SAME_APP_NAME_ALREADY_EXISTS(HttpStatus.BAD_REQUEST,"101","同名应用已存在"),
+    APP_NOT_EXISTS(HttpStatus.BAD_REQUEST,"102","应用不存在"),
+    APP_TRADE_PUBLIC_LEY_NOT_EXISTS(HttpStatus.BAD_REQUEST,"102","应用交易公钥未配置")
     ;
 
     private int code;

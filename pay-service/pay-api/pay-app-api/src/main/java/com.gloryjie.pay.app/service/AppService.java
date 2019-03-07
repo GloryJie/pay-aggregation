@@ -36,5 +36,17 @@ public interface AppService {
      */
     List<AppDto> queryMasterAppList();
 
+    /**
+     * 更新应用信息
+     * @param updateParam
+     * @return
+     */
     Boolean updateAppInfo(AppUpdateParam updateParam);
+
+    /**
+     * 根据appId来获取应用信息
+     * @param appId
+     * @return
+     */
+    AppDto getSingleAppInfo(Integer appId);
 }

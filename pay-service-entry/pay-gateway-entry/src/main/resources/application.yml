@@ -14,7 +14,7 @@ zuul:
     trade-service:
       serviceId: 'trade-service'
       path: /pay/trade/**
-      stripPrefix: false
+#      stripPrefix: false
     notify-service:
       serviceId: 'notify-service'
       path: /pay/notification/**

@@ -11,6 +11,9 @@
  */
 package com.gloryjie.pay.gateway.filter;
 
+import com.gloryjie.pay.app.dto.AppDto;
+import com.gloryjie.pay.app.error.AppError;
+import com.gloryjie.pay.app.service.api.AppFeignApi;
 import com.gloryjie.pay.base.constant.DefaultConstant;
 import com.gloryjie.pay.base.enums.error.CommonErrorEnum;
 import com.gloryjie.pay.base.exception.BaseException;
@@ -21,6 +24,7 @@ import com.gloryjie.pay.base.util.JsonUtil;
 import com.gloryjie.pay.base.util.cipher.Rsa;
 import com.gloryjie.pay.base.util.validator.ParamValidator;
 import com.gloryjie.pay.gateway.model.UniformRequestParam;
+import com.netflix.discovery.converters.Auto;
 import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
 import com.netflix.zuul.exception.ZuulException;
@@ -28,6 +32,7 @@ import com.netflix.zuul.http.HttpServletRequestWrapper;
 import com.netflix.zuul.http.ServletInputStreamWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.netflix.zuul.filters.support.FilterConstants;
 import org.springframework.stereotype.Component;
@@ -63,6 +68,9 @@ public class SignCheckFilter extends ZuulFilter {
 
     @Value("${trigger.signCheck:true}")
     private boolean signCheckTrigger;
+
+    @Autowired
+    private AppFeignApi appFeignApi;
 
 
     @Override
@@ -102,11 +110,17 @@ public class SignCheckFilter extends ZuulFilter {
                 checkResult = true;
             } else {
                 // TODO: 2019/3/6 通过app服务获取公钥进行延签
-                String preparePublicKey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCAp99zRfykQx6LZvFVHzmSYzxhlz8EH0oECKIXJV/MNroZlClviM1eavn41FUjFH7s+V+vtTZriYAt98ff+jaXonC1G6Ip+aGmPh+ghKi3OtVc4wT4PxDTtIAQHScOF+V45yA9BN4lOD5sPLvFYWesrwGH0KbjeogTJtBiWBniwQIDAQAB";
-
+                AppDto appDto = appFeignApi.getAppInfo(uniformRequestParam.getAppId());
+                if (appDto == null){
+                    alterResponseWithErrorMsg(context,Response.failure(ExternalException.create(AppError.APP_NOT_EXISTS)));
+                    return null;
+                }else if (StringUtils.isBlank(appDto.getTradePublicKey())){
+                    alterResponseWithErrorMsg(context,Response.failure(ExternalException.create(AppError.APP_TRADE_PUBLIC_LEY_NOT_EXISTS)));
+                    return null;
+                }
                 String signStr = uniformRequestParam.toSignString();
                 byte[] signStrData = signStr.getBytes(StandardCharsets.UTF_8);
-                checkResult = Rsa.verifySign(signStrData, preparePublicKey, sign);
+                checkResult = Rsa.verifySign(signStrData, appDto.getTradePublicKey(), sign);
                 if (!checkResult) {
                     alterResponseWithErrorMsg(context, Response.failure(ExternalException.create(CommonErrorEnum.SIGNATURE_NOT_PASS_ERROR)));
                 }
