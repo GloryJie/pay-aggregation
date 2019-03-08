@@ -101,8 +101,11 @@ public class SignCheckFilter extends ZuulFilter {
         if (!checkUniformParam(context, uniformRequestParam)) {
             return null;
         }
-        // 3. 签名验证
-        boolean verifyResult = verifySign(context, uniformRequestParam);
+        boolean verifyResult = true;
+        if (signCheckTrigger){
+            // 3. 签名验证
+            verifyResult = verifySign(context, uniformRequestParam);
+        }
 
         // 4. 验证修改请求体数据，只保留业务数据
         if (verifyResult) {
