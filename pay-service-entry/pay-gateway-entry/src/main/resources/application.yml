@@ -27,4 +27,5 @@ management:
         include: '*'
 
 trigger:
-  signCheck: true
+  # api接口签名开关
+  signCheck: false

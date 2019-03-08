@@ -14,9 +14,10 @@ package com.gloryjie.pay.channel.dto.param;
 import com.gloryjie.pay.channel.enums.ChannelType;
 import lombok.Data;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.math.BigDecimal;
 import java.util.Map;
 
 /**
@@ -75,8 +76,10 @@ public class ChargeCreateParam {
      */
     private String userHold;
     /**
-     * 支付单单失效时间，单位分钟, 默认120m
+     * 支付单单失效时间，单位分钟, 默认120m，最大1440，即一天
      */
+    @Max(1440)
+    @Min(1)
     private Long timeExpire;
     /**
      * 是否是生产模式
@@ -91,5 +94,5 @@ public class ChargeCreateParam {
     /**
      * 渠道额外参数
      */
-    private Map<String,String> extra;
+    private Map<String, String> extra;
 }

@@ -16,8 +16,6 @@ import com.github.pagehelper.PageInfo;
 import com.gloryjie.pay.base.enums.MqDelayMsgLevel;
 import com.gloryjie.pay.base.exception.error.BusinessException;
 import com.gloryjie.pay.base.util.BeanConverter;
-import com.gloryjie.pay.channel.dto.ChannelPayQueryDto;
-import com.gloryjie.pay.channel.dto.ChannelPayQueryResponse;
 import com.gloryjie.pay.channel.dto.param.ChargeCreateParam;
 import com.gloryjie.pay.channel.enums.ChannelType;
 import com.gloryjie.pay.channel.service.ChannelGatewayService;
@@ -26,12 +24,10 @@ import com.gloryjie.pay.trade.biz.RefundBiz;
 import com.gloryjie.pay.trade.dao.ChargeDao;
 import com.gloryjie.pay.trade.dao.RefundDao;
 import com.gloryjie.pay.trade.dto.ChargeDto;
-import com.gloryjie.pay.trade.dto.RefreshChargeDto;
 import com.gloryjie.pay.trade.dto.RefundDto;
 import com.gloryjie.pay.trade.dto.param.ChargeQueryParam;
 import com.gloryjie.pay.trade.dto.param.RefundParam;
 import com.gloryjie.pay.trade.dto.param.RefundQueryParam;
-import com.gloryjie.pay.trade.enums.ChannelStatusToChargeStatus;
 import com.gloryjie.pay.trade.enums.ChargeStatus;
 import com.gloryjie.pay.trade.error.TradeError;
 import com.gloryjie.pay.trade.model.Charge;
@@ -95,15 +91,13 @@ public class ChargeServiceImpl implements ChargeService {
     public ChargeDto queryPayment(Integer appId, String chargeNo) {
         Charge charge = chargeDao.getByAppIdAndChargeNo(appId, chargeNo);
         if (charge == null) {
-            return new ChargeDto();
+            return null;
         }
         ChargeDto chargeDto;
         // 若当前为待支付状态,则交由渠道进行查询
         if (ChargeStatus.WAIT_PAY.equals(charge.getStatus())) {
-            // TODO: 2019/1/13 渠道查询需要限制,避免流量穿透
-            ChannelPayQueryResponse queryResponse = channelGatewayService.queryPayment(BeanConverter.covert(charge, ChannelPayQueryDto.class));
-            RefreshChargeDto refreshChargeDto = generateRefreshChargeDto(charge, queryResponse);
-            charge = chargeBiz.refreshCharge(refreshChargeDto, charge);
+            // TODO: 2019/3/8 对外服务需要进行查询限制，避免流量穿透至支付平台
+            charge = chargeBiz.queryChannel(charge);
         }
         chargeDto = BeanConverter.covert(charge, ChargeDto.class);
         // 若非待支付状态则不返回支付凭证
@@ -145,7 +139,7 @@ public class ChargeServiceImpl implements ChargeService {
         PageHelper.startPage(queryParam.getStartPage(), queryParam.getPageSize());
         List<Charge> chargeList = chargeDao.getByQueryParam(queryParam);
         PageInfo pageInfo = PageInfo.of(chargeList);
-        pageInfo.setList(BeanConverter.batchCovertIgnore(chargeList,ChargeDto.class));
+        pageInfo.setList(BeanConverter.batchCovertIgnore(chargeList, ChargeDto.class));
         return pageInfo;
     }
 
@@ -154,7 +148,7 @@ public class ChargeServiceImpl implements ChargeService {
         PageHelper.startPage(queryParam.getStartPage(), queryParam.getPageSize());
         List<Refund> refundList = refundDao.getByQueryParam(queryParam);
         PageInfo pageInfo = PageInfo.of(refundList);
-        pageInfo.setList(BeanConverter.batchCovertIgnore(refundList,RefundDto.class));
+        pageInfo.setList(BeanConverter.batchCovertIgnore(refundList, RefundDto.class));
         return pageInfo;
     }
 
@@ -180,28 +174,5 @@ public class ChargeServiceImpl implements ChargeService {
         return existCharge;
     }
 
-    private RefreshChargeDto generateRefreshChargeDto(Charge charge, ChannelPayQueryResponse queryResponse) {
-        RefreshChargeDto refreshChargeDto = new RefreshChargeDto();
-        refreshChargeDto.setChargeNo(charge.getChargeNo());
-        refreshChargeDto.setAppId(charge.getAppId());
-        refreshChargeDto.setChannel(charge.getChannel());
-
-        if (queryResponse.isSuccess()) {
-            refreshChargeDto.setAmount(queryResponse.getAmount());
-            refreshChargeDto.setActualAmount(queryResponse.getActualAmount());
-            refreshChargeDto.setTimePaid(queryResponse.getTimePaid());
-            refreshChargeDto.setPlatformTradeNo(queryResponse.getPlatformTradeNo());
-        } else {
-            refreshChargeDto.setAmount(charge.getAmount());
-            refreshChargeDto.setFailureCode(queryResponse.getSubCode());
-            refreshChargeDto.setFailureMsg(queryResponse.getSubMsg());
-        }
-
-        // 渠道状态转换为系统定义状态
-        ChargeStatus status = ChannelStatusToChargeStatus.switchStatus(charge.getChannel(), queryResponse.getStatus());
-        refreshChargeDto.setStatus(status);
-
-        return refreshChargeDto;
-    }
 
 }

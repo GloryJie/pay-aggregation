@@ -19,6 +19,8 @@ import com.gloryjie.pay.base.exception.error.SystemException;
 import com.gloryjie.pay.base.util.BeanConverter;
 import com.gloryjie.pay.base.util.idGenerator.IdFactory;
 import com.gloryjie.pay.channel.dto.ChannelPayDto;
+import com.gloryjie.pay.channel.dto.ChannelPayQueryDto;
+import com.gloryjie.pay.channel.dto.ChannelPayQueryResponse;
 import com.gloryjie.pay.channel.dto.param.ChargeCreateParam;
 import com.gloryjie.pay.channel.dto.response.ChannelPayResponse;
 import com.gloryjie.pay.channel.error.ChannelError;
@@ -26,10 +28,12 @@ import com.gloryjie.pay.channel.service.ChannelGatewayService;
 import com.gloryjie.pay.trade.dao.ChargeDao;
 import com.gloryjie.pay.trade.dto.ChargeDto;
 import com.gloryjie.pay.trade.dto.RefreshChargeDto;
+import com.gloryjie.pay.trade.enums.ChannelStatusToChargeStatus;
 import com.gloryjie.pay.trade.enums.ChargeStatus;
 import com.gloryjie.pay.trade.error.TradeError;
 import com.gloryjie.pay.trade.model.Charge;
 import com.gloryjie.pay.trade.mq.TradeMqProducer;
+import com.gloryjie.pay.trade.task.ChargeQueryExecutors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -58,6 +62,9 @@ public class ChargeBiz {
 
     @Autowired
     private TradeMqProducer mqProducer;
+
+    @Autowired
+    private ChargeQueryExecutors chargeQueryExecutors;
 
     /**
      * 创建支付单并分发渠道支付
@@ -88,6 +95,9 @@ public class ChargeBiz {
         }
         // 入库
         chargeDao.insert(charge);
+
+        // 轮询查询支付状态
+        chargeQueryExecutors.executeQueryTask(charge.getChargeNo(), charge.getChannel(), charge.getTimeExpire());
 
         return charge;
     }
@@ -122,7 +132,7 @@ public class ChargeBiz {
 
         // 状态不变则直接返回
         if (refreshChargeDto.getStatus() == charge.getStatus()) {
-            boolean compareResult = charge.getTimeCreated().plusMinutes(charge.getTimeExpire()).isAfter(LocalDateTime.now());
+            boolean compareResult = charge.getTimeCreated().plusMinutes(charge.getTimeExpire()).isBefore(LocalDateTime.now());
             // 时间超过，则主动关单
             if (ChargeStatus.WAIT_PAY == charge.getStatus() && compareResult) {
                 charge.setStatus(ChargeStatus.CLOSED);
@@ -161,6 +171,19 @@ public class ChargeBiz {
 
 
     /**
+     * 从渠道查询支付状态, 并根据查询结果刷新支付单
+     *
+     * @param charge
+     * @return
+     */
+    public Charge queryChannel(Charge charge) {
+        ChannelPayQueryResponse queryResponse = channelGatewayService.queryPayment(BeanConverter.covert(charge, ChannelPayQueryDto.class));
+        RefreshChargeDto refreshChargeDto = generateRefreshChargeDto(charge, queryResponse);
+        return refreshCharge(refreshChargeDto, charge);
+    }
+
+
+    /**
      * 检查支付单状态变化的可行性
      *
      * @param oldStatus
@@ -180,6 +203,12 @@ public class ChargeBiz {
         return false;
     }
 
+    /**
+     * 生成并初始化支付单数据
+     *
+     * @param createParam
+     * @return
+     */
     private Charge generateCharge(ChargeCreateParam createParam) {
         Charge charge = BeanConverter.covert(createParam, Charge.class);
         charge.setChargeNo(IdFactory.generateStringId());
@@ -188,5 +217,36 @@ public class ChargeBiz {
         charge.setStatus(ChargeStatus.WAIT_PAY);
         charge.setTimeCreated(LocalDateTime.now());
         return charge;
+    }
+
+    /**
+     * 生成刷新支付单所需要的数据
+     *
+     * @param charge
+     * @param queryResponse
+     * @return
+     */
+    private RefreshChargeDto generateRefreshChargeDto(Charge charge, ChannelPayQueryResponse queryResponse) {
+        RefreshChargeDto refreshChargeDto = new RefreshChargeDto();
+        refreshChargeDto.setChargeNo(charge.getChargeNo());
+        refreshChargeDto.setAppId(charge.getAppId());
+        refreshChargeDto.setChannel(charge.getChannel());
+
+        if (queryResponse.isSuccess()) {
+            refreshChargeDto.setAmount(queryResponse.getAmount());
+            refreshChargeDto.setActualAmount(queryResponse.getActualAmount());
+            refreshChargeDto.setTimePaid(queryResponse.getTimePaid());
+            refreshChargeDto.setPlatformTradeNo(queryResponse.getPlatformTradeNo());
+        } else {
+            refreshChargeDto.setAmount(charge.getAmount());
+            refreshChargeDto.setFailureCode(queryResponse.getSubCode());
+            refreshChargeDto.setFailureMsg(queryResponse.getSubMsg());
+        }
+
+        // 渠道状态转换为系统定义状态
+        ChargeStatus status = ChannelStatusToChargeStatus.switchStatus(charge.getChannel(), queryResponse.getStatus());
+        refreshChargeDto.setStatus(status);
+
+        return refreshChargeDto;
     }
 }
