@@ -163,7 +163,7 @@ public class ChargeBiz {
 
         // TODO: 2019/1/13 若状态为成功,需要异步记录流水
         if (ChargeStatus.SUCCESS == charge.getStatus()) {
-            mqProducer.sendChargeSuccessMsg(BeanConverter.covert(charge, ChargeDto.class));
+            mqProducer.sendChargeSuccessMsg(BeanConverter.covertIgnore(charge, ChargeDto.class));
         }
 
         return charge;

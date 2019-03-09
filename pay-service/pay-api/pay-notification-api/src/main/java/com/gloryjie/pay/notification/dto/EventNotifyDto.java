@@ -19,6 +19,7 @@ import com.gloryjie.pay.notification.enums.NotifyStatus;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 
 /**
  * @author Jie
@@ -74,7 +75,7 @@ public class EventNotifyDto {
     /**
      * 事件携带的数据
      */
-    private Object eventData;
+    private Map<String,Object> eventData;
 
     /**
      * 携带的签名

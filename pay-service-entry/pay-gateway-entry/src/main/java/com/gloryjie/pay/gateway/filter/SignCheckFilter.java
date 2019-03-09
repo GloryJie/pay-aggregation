@@ -21,7 +21,9 @@ import com.gloryjie.pay.base.exception.ErrorInterface;
 import com.gloryjie.pay.base.exception.error.ExternalException;
 import com.gloryjie.pay.base.exception.error.SystemException;
 import com.gloryjie.pay.base.response.Response;
+import com.gloryjie.pay.base.util.BeanConverter;
 import com.gloryjie.pay.base.util.JsonUtil;
+import com.gloryjie.pay.base.util.SignUtil;
 import com.gloryjie.pay.base.util.cipher.Rsa;
 import com.gloryjie.pay.base.util.validator.ParamValidator;
 import com.gloryjie.pay.gateway.model.UniformRequestParam;
@@ -41,10 +43,6 @@ import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.SignatureException;
-import java.security.spec.InvalidKeySpecException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -140,7 +138,7 @@ public class SignCheckFilter extends ZuulFilter {
             alterResponseWithErrorMsg(context, ExternalException.create(AppError.APP_NOT_EXISTS, "或公钥未配置"));
             return false;
         }
-        byte[] signStrData = param.toSignString().getBytes(StandardCharsets.UTF_8);
+        byte[] signStrData = SignUtil.toSignStr(BeanConverter.beanToMap(param)).getBytes(StandardCharsets.UTF_8);
         try {
             if (!Rsa.verifySign(signStrData, appDto.getTradePublicKey(), sign)) {
                 alterResponseWithErrorMsg(context, ExternalException.create(CommonErrorEnum.SIGNATURE_NOT_PASS_ERROR));

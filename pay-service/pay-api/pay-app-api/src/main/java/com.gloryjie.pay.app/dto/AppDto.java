@@ -61,4 +61,9 @@ public class AppDto {
      */
     private String notifyPublicKey;
 
+    /**
+     * 通知私钥
+     */
+    private String notifyPrivateKey;
+
 }

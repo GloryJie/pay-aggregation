@@ -15,6 +15,7 @@ import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.ComponentScan;
 
 /**
@@ -25,6 +26,7 @@ import org.springframework.context.annotation.ComponentScan;
 @EnableDiscoveryClient
 @ComponentScan("com.gloryjie.pay.*")
 @MapperScan(basePackages = "com.gloryjie.pay.*.dao")
+@EnableFeignClients(basePackages = "com.gloryjie.pay")
 public class PayNotificationApplication {
 
     public static void main(String[] args) {

@@ -11,6 +11,8 @@
  */
 package com.gloryjie.pay.notification.error;
 
+import com.gloryjie.pay.base.constant.HttpStatus;
+import com.gloryjie.pay.base.enums.base.BaseErrorEnum;
 import lombok.Getter;
 
 /**
@@ -18,11 +20,11 @@ import lombok.Getter;
  * @since
  */
 @Getter
-public enum NotificationError {
+public enum NotificationError implements BaseErrorEnum {
     /**
      * 事件订阅错误
      */
-
+    SIGN_FAIL(HttpStatus.INTERNAL_SERVER_ERROR,"301","通知签名失败")
     ;
 
     private int code;

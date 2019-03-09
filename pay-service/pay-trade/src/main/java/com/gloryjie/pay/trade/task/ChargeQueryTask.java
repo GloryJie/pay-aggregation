@@ -54,18 +54,18 @@ public class ChargeQueryTask implements Runnable {
 
     @Override
     public void run() {
-
         Charge charge = chargeDao.load(chargeNo);
         if (charge == null || ChargeStatus.WAIT_PAY != charge.getStatus()) {
             return;
         }
+        log.info("execute query chargeNo={} channel={} task, times={}", charge.getChargeNo(), charge.getChannel().name(), intervalStrategy.times());
 
         charge = chargeBiz.queryChannel(charge);
 
         // 若当前状态仍为待支付，提交给线程池
         if (ChargeStatus.WAIT_PAY == charge.getStatus() || intervalStrategy.times() > maxTimes) {
             int nextTime = intervalStrategy.nextInterval();
-            log.info("query chargeNo={} channel={} task will execute {} {} later", charge.getChargeNo(),charge.getChannel().name(), nextTime,intervalStrategy.getTimeUnit().name());
+            log.info("query chargeNo={} channel={} task will execute {} {} later", charge.getChargeNo(), charge.getChannel().name(), nextTime, intervalStrategy.getTimeUnit().name());
             executor.schedule(new ChargeQueryTask(this.chargeNo, maxTimes, chargeDao, chargeBiz, intervalStrategy, executor),
                     nextTime, intervalStrategy.getTimeUnit());
         }

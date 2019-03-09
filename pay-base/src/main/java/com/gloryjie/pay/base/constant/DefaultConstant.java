@@ -74,4 +74,8 @@ public class DefaultConstant {
     String DELETE = "DELETE";
   }
 
+  public static final String CONTENT_TYPE = "application/json;charset=UTF-8";
+
+  public static final String PAY_SIGN_KEY = "Pay-Sign";
+
 }

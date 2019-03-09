@@ -77,7 +77,7 @@ public class EventNotifyConsumer implements MessageListenerConcurrently {
             }
             return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
         } catch (Exception e) {
-            log.error("consume event notify msg fail, eventNo={}", eventNo);
+            log.error("consume event notify msg fail, eventNo={}", eventNo, e);
         }
         return ConsumeConcurrentlyStatus.RECONSUME_LATER;
     }

@@ -21,4 +21,6 @@ public class NotifyConstant {
      * 最大通知次数
      */
     public static final int MAX_NOTIFY_TIME = 8;
+
+    public static final int LAST_REPLY_MAX_LENGTH = 1024;
 }

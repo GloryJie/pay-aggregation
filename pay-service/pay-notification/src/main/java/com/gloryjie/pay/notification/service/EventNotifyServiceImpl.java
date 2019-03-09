@@ -124,9 +124,9 @@ public class EventNotifyServiceImpl implements EventNotifyService {
         }
 
         // 检查是否存在，避免重复消费
-        EventNotify eventNotify = eventNotifyDao.getByEventNo(sourceNo);
+        EventNotify eventNotify = eventNotifyDao.getBySourceNo(sourceNo);
         if (eventNotify != null) {
-            log.warn("appId={} eventNo={} sourceNo={} already exists", eventNotify.getAppId(), eventNotify.getEventNo(), eventNotify.getSourceNo());
+            log.warn("appId={} sourceNo={} notify event already exists", eventNotify.getAppId(), eventNotify.getSourceNo());
             return null;
         }
         return subscription;
