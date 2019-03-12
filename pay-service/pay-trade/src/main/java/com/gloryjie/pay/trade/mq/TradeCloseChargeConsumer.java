@@ -39,13 +39,13 @@ import java.util.List;
 @Component
 public class TradeCloseChargeConsumer implements MessageListenerConcurrently {
 
-    @Value("${rocketmq.trade.closeChargeGroup:CID_CLOSE_CHARGE}")
+    @Value("${pay.rocketmq.trade.closeChargeConsumer}")
     private String closeChargeGroup;
 
-    @Value("${rocketmq.trade.topic:TRADE_CORE}")
+    @Value("${pay.rocketmq.trade.topic}")
     private String tradeMqTopic;
 
-    @Value("${rocketMq.namesrv:localhost:9876}")
+    @Value("${pay.rocketmq.namesrv}")
     private String nameSrv;
 
     @Autowired

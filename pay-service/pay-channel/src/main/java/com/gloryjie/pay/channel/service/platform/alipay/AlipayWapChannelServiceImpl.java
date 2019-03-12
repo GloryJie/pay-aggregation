@@ -38,6 +38,7 @@ public class AlipayWapChannelServiceImpl extends BaseAlipayChannelService {
         AlipayClient client = getAlipayClient(payDto.getAppId(), payDto.getChannel());
 
         AlipayTradeWapPayRequest request = new AlipayTradeWapPayRequest();
+        request.setNotifyUrl(host + notifyUri);
 
         AlipayTradeWapPayModel model = new AlipayTradeWapPayModel();
         model.setOutTradeNo(payDto.getChargeNo());

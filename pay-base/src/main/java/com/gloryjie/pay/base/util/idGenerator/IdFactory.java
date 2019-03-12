@@ -33,12 +33,12 @@ public class IdFactory {
 
     // TODO: 2018/11/17 目前机器数较少,所以为配置方式, 后期可使用zk自动分配
 
-    @Value("${IdFactory.workerId:0}")
+    @Value("${pay.IdFactory.workerId:0}")
     public void setWorkerId(long workerId) {
         IdFactory.workerId = workerId;
     }
 
-    @Value("${IdFactory.dataCenterId:0}")
+    @Value("${pay.IdFactory.dataCenterId:0}")
     public void setDataCenterId(long dataCenterId) {
         IdFactory.dataCenterId = dataCenterId;
     }

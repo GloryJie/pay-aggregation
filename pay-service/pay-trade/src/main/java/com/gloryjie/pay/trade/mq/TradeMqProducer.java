@@ -43,7 +43,7 @@ import java.io.UnsupportedEncodingException;
 @Component
 public class TradeMqProducer {
 
-    @Value("${rocketmq.trade.topic:TRADE_CORE}")
+    @Value("${pay.rocketmq.trade.topic}")
     private String tradeMqTopic;
 
     @Autowired

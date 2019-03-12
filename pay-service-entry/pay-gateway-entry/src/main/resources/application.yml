@@ -26,6 +26,6 @@ management:
       exposure:
         include: '*'
 
-trigger:
-  # api接口签名开关
-  signCheck: false
+pay:
+  trigger:
+    signCheck: false

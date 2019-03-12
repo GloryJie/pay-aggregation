@@ -27,7 +27,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 /**
@@ -40,13 +39,13 @@ import java.util.List;
 @Component
 public class TradeRefundConsumer implements MessageListenerConcurrently {
 
-    @Value("${rocketmq.trade.refundConsumerGroup:CID_REFUND}")
-    private String refundConsumerGroup;
+    @Value("${pay.rocketmq.trade.asyncRefundConsumer}")
+    private String asyncRefundConsumer;
 
-    @Value("${rocketmq.trade.topic:TRADE_CORE}")
+    @Value("${pay.rocketmq.trade.topic}")
     private String tradeMqTopic;
 
-    @Value("${rocketMq.namesrv:localhost:9876}")
+    @Value("${pay.rocketmq.namesrv}")
     private String nameSrv;
 
     @Autowired
@@ -56,7 +55,7 @@ public class TradeRefundConsumer implements MessageListenerConcurrently {
     @PostConstruct
     public void initConsumer() {
         try {
-            DefaultMQPushConsumer consumer = new DefaultMQPushConsumer(refundConsumerGroup);
+            DefaultMQPushConsumer consumer = new DefaultMQPushConsumer(asyncRefundConsumer);
             consumer.setNamesrvAddr(nameSrv);
             consumer.subscribe(tradeMqTopic, MqTagEnum.TRADE_ASYNC_REFUND.name());
             // 从最新的开始消费

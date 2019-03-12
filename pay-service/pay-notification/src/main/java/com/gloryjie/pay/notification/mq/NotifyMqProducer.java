@@ -38,7 +38,7 @@ import java.io.UnsupportedEncodingException;
 @Component
 public class NotifyMqProducer {
 
-    @Value("${rocketmq.notify.topic:PAY_EVENT}")
+    @Value("${pay.rocketmq.notify.topic}")
     private String eventMqTopic;
 
     @Autowired

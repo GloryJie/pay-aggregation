@@ -31,11 +31,11 @@ import java.util.Map;
 @Slf4j
 public class Rsa {
 
-    private static String SIGN_ALGORITHM = "SHA256withRSA";
+    private static final String SIGN_ALGORITHM = "SHA256withRSA";
 
-    private static String KEY_ALGORITHM = "RSA";
+    private static final String KEY_ALGORITHM = "RSA";
 
-    private static int KEY_SIZE = 2048;
+    private static final int KEY_SIZE = 2048;
 
     public static final String PUBLIC_KEY = "publicKey";
 

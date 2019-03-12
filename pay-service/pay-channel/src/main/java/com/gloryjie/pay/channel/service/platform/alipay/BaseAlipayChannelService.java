@@ -63,6 +63,8 @@ import java.util.Map;
 @Slf4j
 public abstract class BaseAlipayChannelService implements PayChannelService {
 
+    // TODO: 2019/3/11 渠道参数需要抽取出来
+
     protected static final String ALIPAY_SIGN_TYPE = "RSA2";
 
     protected static final String ALIPAY_FORMAT = "json";
@@ -80,8 +82,14 @@ public abstract class BaseAlipayChannelService implements PayChannelService {
     protected ChannelConfigDao channelConfigDao;
 
 
-    @Value("${alipay.sandboxMode:true}")
+    @Value("${pay.channel.alipay.sandboxMode:false}")
     protected boolean sandboxMode;
+
+    @Value("${pay.host}")
+    protected String host;
+
+    @Value("${pay.channel.alipay.notifyUri:/platform/notify/alipay}")
+    protected String notifyUri;
 
 
     // TODO: 2018/11/27  AlipayClient为线程安全,可以缓存起来进行优化
@@ -195,10 +203,11 @@ public abstract class BaseAlipayChannelService implements PayChannelService {
     @Override
     public boolean verifySign(Map<String, String> param, String publicKey, String signType) {
         try {
+            // TODO: 2019/3/11 singType不能写死为RSA2
             // 默认使用RSA2的方式
             return AlipaySignature.rsaCheckV1(param, publicKey, DefaultConstant.CHARSET, "RSA2");
         } catch (AlipayApiException e) {
-            log.error("verify alipay notify fail", e);
+            log.warn("verify alipay notify fail", e);
         }
         return false;
     }

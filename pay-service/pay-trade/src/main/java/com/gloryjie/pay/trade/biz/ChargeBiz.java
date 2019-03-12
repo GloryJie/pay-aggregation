@@ -51,7 +51,7 @@ import java.time.LocalDateTime;
 @Component
 public class ChargeBiz {
 
-    @Value("${pay.charge.defaultExpireTime:120}")
+    @Value("${pay.trade.defaultExpireTime:120}")
     private Long defaultExpireTime;
 
     @Autowired
@@ -118,6 +118,7 @@ public class ChargeBiz {
         if (chargeDao.update(charge) <= 0) {
             mqProducer.sendTimingCloseMsg(charge.getChargeNo(), MqDelayMsgLevel.FIRST);
         }
+        log.info("timing close charge={} success", chargeNo);
     }
 
 

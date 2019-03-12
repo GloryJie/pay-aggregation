@@ -116,7 +116,7 @@ public class RefundBiz {
         // 异步退款
         if (!tradeMqProducer.sendRefundMsg(targetRefund.getRefundNo())) {
             // 发送消息失败则告知系统繁忙
-            log.warn("send refund msg to mq fail,appId={} orderNo={},chargeNo={}", refundParam.getAppId(), refundParam.getOrderNo(), refundParam.getChargeNo());
+            log.error("send refund msg to mq fail,appId={} orderNo={},chargeNo={}", refundParam.getAppId(), refundParam.getOrderNo(), refundParam.getChargeNo());
             throw SystemException.create(CommonErrorEnum.SYSTEM_BUSY_ERROR);
         }
         return targetRefund;

@@ -28,10 +28,10 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class RocketMqConfig {
 
-    @Value("${rocketmq.trade.producer:PID_TRADE}")
+    @Value("${pay.rocketmq.trade.producer}")
     private String tradeProducerGroup;
 
-    @Value("${rocketmq.namesrv:localhost:9876}")
+    @Value("${pay.rocketmq.namesrv}")
     private String nameSrv;
 
     @Bean

@@ -63,7 +63,7 @@ public class ChargeQueryTask implements Runnable {
         charge = chargeBiz.queryChannel(charge);
 
         // 若当前状态仍为待支付，提交给线程池
-        if (ChargeStatus.WAIT_PAY == charge.getStatus() || intervalStrategy.times() > maxTimes) {
+        if ( intervalStrategy.times() < maxTimes && ChargeStatus.WAIT_PAY == charge.getStatus()) {
             int nextTime = intervalStrategy.nextInterval();
             log.info("query chargeNo={} channel={} task will execute {} {} later", charge.getChargeNo(), charge.getChannel().name(), nextTime, intervalStrategy.getTimeUnit().name());
             executor.schedule(new ChargeQueryTask(this.chargeNo, maxTimes, chargeDao, chargeBiz, intervalStrategy, executor),

@@ -13,6 +13,7 @@ package com.gloryjie.pay.channel.enums;
 
 import com.gloryjie.pay.base.exception.error.BusinessException;
 import com.gloryjie.pay.channel.config.AlipayChannelConfig;
+import com.gloryjie.pay.channel.constant.ChannelConstant;
 import com.gloryjie.pay.channel.error.ChannelError;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
@@ -74,7 +75,8 @@ public enum ChannelType {
         switch (this) {
             case ALIPAY_PAGE:
             case ALIPAY_WAP:
-                if (extra != null && StringUtils.isBlank(extra.get("returnUrl"))) {
+                // TODO: 2019/3/11 redirectUrl地址是否需要进行url格式匹配
+                if (extra != null && StringUtils.isBlank(extra.get(ChannelConstant.Alipay.WAP_PAGE_EXTRA))) {
                     checkResult = false;
                 }
                 break;

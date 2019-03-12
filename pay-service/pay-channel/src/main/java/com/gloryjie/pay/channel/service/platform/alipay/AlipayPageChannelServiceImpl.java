@@ -24,7 +24,6 @@ import com.gloryjie.pay.channel.dto.response.ChannelPayResponse;
 import com.gloryjie.pay.channel.enums.ChannelType;
 import com.gloryjie.pay.channel.error.ChannelError;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 /**
@@ -34,8 +33,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class AlipayPageChannelServiceImpl extends BaseAlipayChannelService {
 
-    @Value("${domain}")
-    private String domain;
 
 
     @Override
@@ -43,11 +40,10 @@ public class AlipayPageChannelServiceImpl extends BaseAlipayChannelService {
 
         AlipayClient client = getAlipayClient(payDto.getAppId(), payDto.getChannel());
         AlipayTradePagePayRequest request = new AlipayTradePagePayRequest();
-        // TODO: 2018/11/25 跳转地址需要修改为商户上送,并且需要设置异步通知地址
-        if (payDto.getExtra() != null && StringUtils.isNotBlank(payDto.getExtra().get(ChannelConstant.Alipay.PAGE_EXTRA))) {
-            request.setReturnUrl(payDto.getExtra().get(ChannelConstant.Alipay.PAGE_EXTRA));
+        if (payDto.getExtra() != null && StringUtils.isNotBlank(payDto.getExtra().get(ChannelConstant.Alipay.WAP_PAGE_EXTRA))) {
+            request.setReturnUrl(payDto.getExtra().get(ChannelConstant.Alipay.WAP_PAGE_EXTRA));
         }
-        request.setNotifyUrl(domain + "/platform/notify/alipay");
+        request.setNotifyUrl(host + notifyUri);
 
         AlipayTradePagePayModel model = new AlipayTradePagePayModel();
         model.setOutTradeNo(payDto.getChargeNo());

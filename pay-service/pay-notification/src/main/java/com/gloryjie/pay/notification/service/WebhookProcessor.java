@@ -135,7 +135,7 @@ public class WebhookProcessor {
 
         // 更新状态
         if (DefaultConstant.NOTIFY_SUCCESS_RESPONSE.equals(responseResult)) {
-            log.info("notify appId={}, url={}, eventNo={}, time={} success", eventNotify.getAppId(), eventNotify.getNotifyTime(), eventNotify.getEventNo(), eventNotify.getNotifyTime());
+            log.info("notify appId={}, url={}, eventNo={}, time={} success", eventNotify.getAppId(), eventNotify.getNotifyUrl(), eventNotify.getEventNo(), eventNotify.getNotifyTime());
             eventNotify.setNotifyStatus(NotifyStatus.SUCCESS);
         } else {
             if (eventNotify.getNotifyTime() >= NotifyConstant.MAX_NOTIFY_TIME) {

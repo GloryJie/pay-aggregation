@@ -64,7 +64,7 @@ public class SignCheckFilter extends ZuulFilter {
 
     public static final int STREAM_BUFFER_SIZE = 1024;
 
-    @Value("${trigger.signCheck:true}")
+    @Value("${pay.trigger.signCheck:true}")
     private boolean signCheckTrigger;
 
     @Autowired

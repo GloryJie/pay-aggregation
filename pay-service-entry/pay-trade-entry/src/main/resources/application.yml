@@ -13,14 +13,13 @@ spring:
 mybatis:
   mapper-locations: classpath*:/mapper/*.xml
   config-location: classpath:mybatis-config.xml
-logging:
-  level:
-    com.gloryjie.pay: debug
+#logging:
+#  level:
+#    com.gloryjie.pay: debug
 server:
   port: 10010
 #  servlet:
 #    context-path: /pay/trade
-domain: "http://jierong.nat300.top"
 rocketmq:
   namesrv: '127.0.0.1:9876'
 
@@ -34,3 +33,38 @@ eureka:
       defaultZone: http://localhost:10000/eureka
     register-with-eureka: true
     fetch-registry: true
+
+# 业务配置
+pay:
+  host: "http://jierong.nat300.top"
+  idFactory:
+    workerId: 0
+    dataCenterId: 0
+  trigger:
+    signCheck: false
+  channel:
+    # 渠道配置
+    alipay:
+      sandboxMode: true
+      notifyUri: "/platform/notify/alipay"
+  trade:
+    # 支付单默认的过期时间，120M
+    defaultExpireTime: 120
+  rocketmq:
+    nameSrv: "localhost:9876"
+    trade:
+      topic: "TRADE_CORE"
+      producer: "PID_TRADE"
+      # 异步退款
+      asyncRefundConsumer: "CID_REFUND"
+      # 定时关单
+      closeChargeConsumer: "CID_CLOSE_CHARGE"
+    notify:
+      topic: "PAY_EVENT"
+      producer: "PID_NOTIFY"
+      interval: 0s,1m,4m,10m,1h,2h,6h,15h
+      # 事件通知
+      eventNotifyConsumer: "CID_EVENT_NOTIFY"
+      # 监听事件变化
+      tradeEventListenConsumer: "CID_TRADE_EVENT_LISTEN"
+

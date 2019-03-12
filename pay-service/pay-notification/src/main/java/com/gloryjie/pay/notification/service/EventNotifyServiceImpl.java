@@ -52,7 +52,7 @@ public class EventNotifyServiceImpl implements EventNotifyService {
     @Autowired
     private EventSubscriptionDao subscriptionDao;
 
-    @Value("${event.notifyInterval}")
+    @Value("${pay.rocketmq.notify.interval}")
     private String[] notifyInterval;
 
     /**

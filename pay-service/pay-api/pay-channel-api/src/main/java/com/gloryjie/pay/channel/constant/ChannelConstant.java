@@ -11,7 +11,6 @@
  */
 package com.gloryjie.pay.channel.constant;
 
-import com.alipay.api.domain.PubChannelDTO;
 
 /**
  * @author Jie
@@ -23,6 +22,6 @@ public class ChannelConstant {
     public interface Alipay {
         String TRADE_NOT_EXISTS_STATUS = "ACQ.TRADE_NOT_EXIST";
 
-        String PAGE_EXTRA = "redirectUrl";
+        String WAP_PAGE_EXTRA = "redirectUrl";
     }
 }

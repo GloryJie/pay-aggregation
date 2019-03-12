@@ -37,13 +37,13 @@ import java.util.List;
 @Component
 public class EventNotifyConsumer implements MessageListenerConcurrently {
 
-    @Value("${rocketmq.trade.closeChargeGroup:CID_EVENT_NOTIFY}")
+    @Value("${pay.rocketmq.notify.eventNotifyConsumer}")
     private String eventNotifyGroup;
 
-    @Value("${rocketmq.notify.topic:PAY_EVENT}")
+    @Value("${pay.rocketmq.notify.topic}")
     private String eventMqTopic;
 
-    @Value("${rocketMq.namesrv:localhost:9876}")
+    @Value("${pay.rocketmq.namesrv}")
     private String nameSrv;
 
     @Autowired
