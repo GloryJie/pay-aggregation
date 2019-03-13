@@ -1,19 +1,19 @@
 /* ------------------------------------------------------------------
  *   Product:      pay
  *   Module Name:  COMMON
- *   Package Name: com.gloryjie.pay.trade.controller
- *   Date Created: 2019/2/9
+ *   Package Name: com.gloryjie.pay.user.controller
+ *   Date Created: 2019/3/13
  * ------------------------------------------------------------------
  * Modification History
  * DATE            Name           Contact
  * ------------------------------------------------------------------
- * 2019/2/9      Jie            GloryJie@163.com
+ * 2019/3/13      Jie            GloryJie@163.com
  */
-package com.gloryjie.pay.notification.controller;
+package com.gloryjie.pay.user.controller;
 
+import com.gloryjie.pay.base.response.Response;
 import com.gloryjie.pay.base.util.JsonUtil;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -24,19 +24,11 @@ import java.util.Map;
  * @since
  */
 @RestController
-@RequestMapping("/web")
-public class TempController {
+@RequestMapping("/web/user")
+public class UserWebController {
 
-    @PostMapping("/login")
-    public Map login() {
-        String json = "{\n" +
-                "    \"token\": \"admin\"\n" +
-                "}";
-        return JsonUtil.parse(json, Map.class);
-    }
-
-    @GetMapping("/get_info")
-    public Map getInfo() {
+    @GetMapping("/info")
+    public Response<Map> getInfo() {
         String json = "{\n" +
                 "    \"name\": \"admin\",\n" +
                 "    \"user_id\": \"2\",\n" +
@@ -46,7 +38,6 @@ public class TempController {
                 "    \"token\": \"admin\",\n" +
                 "    \"avator\": \"https://avatars0.githubusercontent.com/u/20942571?s=460&v=4\"\n" +
                 "}";
-        return JsonUtil.parse(json, Map.class);
+        return Response.success(JsonUtil.parse(json, Map.class));
     }
-
 }

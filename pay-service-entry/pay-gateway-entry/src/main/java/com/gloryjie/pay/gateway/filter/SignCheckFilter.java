@@ -54,7 +54,7 @@ import java.util.Map;
  */
 @Slf4j
 @Component
-public class SignCheckFilter extends ZuulFilter {
+public class SignCheckFilter extends BaseFilter {
 
     private static final String API_FLAG = "api";
 
@@ -179,19 +179,6 @@ public class SignCheckFilter extends ZuulFilter {
         return false;
     }
 
-    /**
-     * 过滤不通过，直接返回错误信息
-     *
-     * @param context
-     */
-    private void alterResponseWithErrorMsg(RequestContext context, ErrorInterface error) {
-        Response response = Response.failure(error);
-        context.getResponse().setCharacterEncoding(DefaultConstant.CHARSET);
-        context.getResponse().setContentType("application/json;charset=UTF-8");
-        context.setSendZuulResponse(false);
-        context.setResponseStatusCode(Integer.valueOf(response.getStatus().substring(0, 3)));
-        context.setResponseBody(JsonUtil.toJson(response));
-    }
 
     /**
      * 获取统一格式的参数

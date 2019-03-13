@@ -41,7 +41,7 @@ public class AppUpdateParam {
      * 应用描述
      */
     @Size(min = 4, max = 128)
-    @Pattern(regexp = "^[a-z0-9A-Z\\u4e00-\\u9fa5]+$",message = "描述只能是中英文或数字")
+    @Pattern(regexp = "^[a-z0-9A-Z\\u4e00-\\u9fa5]+$",message = "描述只能是中英文或数字，不得包含空格")
     private String description;
 
     /**

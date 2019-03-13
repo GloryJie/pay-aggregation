@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.PathVariable;
  * @author Jie
  * @since 0.1
  */
-@FeignClient(name = "trade-service")
+@FeignClient(name = "auth-service")
 public interface AppFeignApi {
 
     /**
@@ -29,7 +29,7 @@ public interface AppFeignApi {
      * @param appId
      * @return
      */
-    @GetMapping(value = "/pay/trade/app-service/{appId}/info")
+    @GetMapping(value = "/pay/auth/web/{appId}/info")
     AppDto getAppInfo(@PathVariable("appId") Integer appId);
 
 }

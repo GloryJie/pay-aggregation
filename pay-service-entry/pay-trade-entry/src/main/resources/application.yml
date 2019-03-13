@@ -17,7 +17,7 @@ mybatis:
 #  level:
 #    com.gloryjie.pay: debug
 server:
-  port: 10010
+  port: 10030
 #  servlet:
 #    context-path: /pay/trade
 rocketmq:

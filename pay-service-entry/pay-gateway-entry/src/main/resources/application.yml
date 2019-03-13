@@ -19,7 +19,12 @@ zuul:
       serviceId: 'notify-service'
       path: /pay/notification/**
       stripPrefix: false
+    auth-service:
+      serviceId: 'auth-service'
+      path: /pay/auth/**
+#      stripPrefix: true
   ignore-local-service: false
+  sensitive-headers: Cookie,Set-Cookie
 management:
   endpoints:
     web:
@@ -29,3 +34,4 @@ management:
 pay:
   trigger:
     signCheck: false
+    token-check: false
