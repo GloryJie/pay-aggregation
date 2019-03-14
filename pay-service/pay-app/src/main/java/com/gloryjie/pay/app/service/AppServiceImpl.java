@@ -20,11 +20,13 @@ import com.gloryjie.pay.app.error.AppError;
 import com.gloryjie.pay.app.model.App;
 import com.gloryjie.pay.base.exception.error.BusinessException;
 import com.gloryjie.pay.base.util.BeanConverter;
+import com.gloryjie.pay.base.util.cipher.Rsa;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Jie
@@ -69,9 +71,10 @@ public class AppServiceImpl implements AppService {
         app.setType(AppType.MASTER);
         app.setStatus(AppStatus.START);
         app.setUsePlatformConfig(false);
-        // TODO: 2019/2/7 需要生成一对公私钥对
-        app.setNotifyPrivateKey("privateKey");
-        app.setNotifyPublicKey("publicKey");
+
+        Map<String, String> keyPair = Rsa.generateRsaKeyPair();
+        app.setNotifyPrivateKey(keyPair.get(Rsa.PRIVATE_KEY));
+        app.setNotifyPublicKey(keyPair.get(Rsa.PUBLIC_KEY));
         app.setLevel(1);
 
         appDao.insert(app);

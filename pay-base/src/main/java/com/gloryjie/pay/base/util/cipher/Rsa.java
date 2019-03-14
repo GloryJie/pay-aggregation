@@ -102,8 +102,14 @@ public class Rsa {
      * @return
      * @throws NoSuchAlgorithmException
      */
-    public static Map<String, String> generateRsaKeyPair() throws NoSuchAlgorithmException {
-        KeyPairGenerator generator = KeyPairGenerator.getInstance(KEY_ALGORITHM);
+    public static Map<String, String> generateRsaKeyPair() {
+        KeyPairGenerator generator = null;
+        try {
+            generator = KeyPairGenerator.getInstance(KEY_ALGORITHM);
+        } catch (NoSuchAlgorithmException e) {
+            // 当前异常不会发生
+            e.printStackTrace();
+        }
         generator.initialize(KEY_SIZE);
         KeyPair keyPair = generator.generateKeyPair();
         PublicKey publicKey = keyPair.getPublic();

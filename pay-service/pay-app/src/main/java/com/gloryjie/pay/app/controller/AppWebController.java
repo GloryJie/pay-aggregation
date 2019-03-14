@@ -38,6 +38,15 @@ public class AppWebController {
         return Response.success(appService.queryMasterAppList());
     }
 
+    @GetMapping("/app/{appId}/info")
+    public Response<AppDto> getAppInfo(@PathVariable("appId") Integer appId) {
+        AppDto appDto = appService.getSingleAppInfo(appId);
+        if (appDto != null){
+            appDto.setNotifyPrivateKey(null);
+        }
+        return Response.success(appDto);
+    }
+
     @PostMapping("/app")
     public Response<AppDto> createMasterApp(@Valid @RequestBody AppCreateDto createDto) {
         return Response.success(appService.createMasterApp(createDto.getName(), createDto.getDescription()));

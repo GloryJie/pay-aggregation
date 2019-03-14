@@ -29,7 +29,7 @@ public interface AppFeignApi {
      * @param appId
      * @return
      */
-    @GetMapping(value = "/pay/auth/web/{appId}/info")
+    @GetMapping(value = "/feign-api/{appId}/info")
     AppDto getAppInfo(@PathVariable("appId") Integer appId);
 
 }

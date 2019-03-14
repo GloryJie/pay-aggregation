@@ -33,5 +33,5 @@ management:
 
 pay:
   trigger:
-    signCheck: false
-    token-check: false
+    signCheck: true
+    token-check: true

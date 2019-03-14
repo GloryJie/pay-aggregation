@@ -28,6 +28,9 @@ public class OauthResourceConfig extends ResourceServerConfigurerAdapter {
 
     @Override
     public void configure(HttpSecurity http) throws Exception {
-        super.configure(http);
+        http.csrf().disable()
+                .authorizeRequests()
+                .antMatchers("/feign-api/**").permitAll()
+                .antMatchers("/web/**").authenticated();
     }
 }
