@@ -84,6 +84,7 @@
         <if test="channel != null">AND channel = #{channel}</if>
         <if test="status != null">AND status = #{status}</if>
         <if test="startDate != null and endDate != null">AND (time_created BETWEEN #{startDate} AND #{endDate})</if>
+        order by create_time desc
     </select>
 
     <insert id="insert" parameterType="com.gloryjie.pay.trade.model.Charge">

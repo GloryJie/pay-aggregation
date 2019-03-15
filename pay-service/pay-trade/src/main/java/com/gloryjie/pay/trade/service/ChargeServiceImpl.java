@@ -116,9 +116,6 @@ public class ChargeServiceImpl implements ChargeService {
         }
         // 异步退款
         Refund refund = refundBiz.asyncRefund(charge, refundParam);
-        // 更新支付单状态
-        charge.setStatus(ChargeStatus.EXISTS_REFUND);
-        chargeDao.update(charge);
 
         return BeanConverter.covert(refund, RefundDto.class);
     }

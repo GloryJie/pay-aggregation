@@ -48,7 +48,7 @@ public class GlobalExceptionHandler {
         FieldError fieldError = e.getBindingResult().getFieldError();
         String fieldErrMsg = "";
         if (fieldError != null) {
-            fieldErrMsg = fieldError.getDefaultMessage();
+            fieldErrMsg = fieldError.getField() + fieldError.getDefaultMessage();
         }
         e.getBindingResult().getFieldError().getDefaultMessage();
         Response responseResult = Response.failure(ExternalException.create(CommonErrorEnum.ILLEGAL_ARGUMENT_ERROR, fieldErrMsg));

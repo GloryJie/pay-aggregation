@@ -24,8 +24,10 @@ import com.gloryjie.pay.trade.dao.RefundDao;
 import com.gloryjie.pay.trade.dto.RefreshRefundDto;
 import com.gloryjie.pay.trade.dto.RefundDto;
 import com.gloryjie.pay.trade.dto.param.RefundParam;
+import com.gloryjie.pay.trade.enums.ChargeStatus;
 import com.gloryjie.pay.trade.enums.RefundStatus;
 import com.gloryjie.pay.trade.error.TradeError;
+import com.gloryjie.pay.trade.manager.TradeManager;
 import com.gloryjie.pay.trade.model.Charge;
 import com.gloryjie.pay.trade.model.Refund;
 import com.gloryjie.pay.trade.mq.TradeMqProducer;
@@ -35,6 +37,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -56,7 +59,10 @@ public class RefundBiz {
     @Autowired
     private ChannelGatewayService channelGatewayService;
 
-    @Transactional(rollbackFor = Exception.class)
+    @Autowired
+    private TradeManager tradeManager;
+
+
     public Refund asyncRefund(Charge charge, RefundParam refundParam) {
         List<Refund> refundList = refundDao.getByAppIdAndChargeNo(refundParam.getAppId(), refundParam.getChargeNo());
         /*
@@ -65,9 +71,9 @@ public class RefundBiz {
          * 2. 无退款金额，则进行全部退款
          * 3. 有退款金额，则进行部分退款
          */
-        Refund targetRefund = null;
 
         if (StringUtils.isNotBlank(refundParam.getRefundNo())) {
+            Refund targetRefund = null;
             /*1. 有退款单号，则进行重新退款*/
             for (Refund refund : refundList) {
                 targetRefund = refundParam.getRefundNo().equals(refund.getRefundNo()) ? refund : null;
@@ -75,9 +81,9 @@ public class RefundBiz {
             if (targetRefund == null || RefundStatus.FAILURE != targetRefund.getStatus()) {
                 throw BusinessException.create(TradeError.REFUND_STATUS_NOT_SUPPORT, "已退款或处理中");
             }
-            // 状态更新
             targetRefund.setStatus(RefundStatus.PROCESSING);
-            refundDao.update(targetRefund);
+            // 重新退款事务
+            return tradeManager.reRefundTransactional(targetRefund);
         } else {
             Long refundAmount;
             if (refundParam.getAmount() == null) {
@@ -86,9 +92,10 @@ public class RefundBiz {
                     throw BusinessException.create(TradeError.REFUND_EXISTS, "不允许全部退款");
                 }
                 refundAmount = charge.getActualAmount();
+                charge.setStatus(ChargeStatus.REFUND_COMPLETED);
             } else {
                 /*3. 有退款金额，则进行部分退款*/
-                Long existsRefundAmount = 0L;
+                long existsRefundAmount = 0L;
                 for (Refund refund : refundList) {
                     existsRefundAmount += refund.getAmount();
                 }
@@ -96,6 +103,8 @@ public class RefundBiz {
                 if (existsRefundAmount + refundParam.getAmount() > charge.getActualAmount()) {
                     throw BusinessException.create(TradeError.REFUND_AMOUNT_OUT_RANGE);
                 }
+                ChargeStatus chargeStatus = (existsRefundAmount + refundParam.getAmount()) == charge.getActualAmount() ? ChargeStatus.REFUND_COMPLETED : ChargeStatus.EXISTS_REFUND;
+                charge.setStatus(chargeStatus);
                 refundAmount = refundParam.getAmount();
             }
 
@@ -105,21 +114,12 @@ public class RefundBiz {
             refund.setRefundNo(IdFactory.generateStringId());
             refund.setCurrency(DefaultConstant.CURRENCY);
             refund.setVersion(0);
+            refund.setTimeCreated(LocalDateTime.now());
             refund.setChannel(charge.getChannel());
             refund.setStatus(RefundStatus.PROCESSING);
 
-            refundDao.insert(refund);
-
-            targetRefund = refund;
+            return tradeManager.refundTransactional(refund, charge);
         }
-
-        // 异步退款
-        if (!tradeMqProducer.sendRefundMsg(targetRefund.getRefundNo())) {
-            // 发送消息失败则告知系统繁忙
-            log.error("send refund msg to mq fail,appId={} orderNo={},chargeNo={}", refundParam.getAppId(), refundParam.getOrderNo(), refundParam.getChargeNo());
-            throw SystemException.create(CommonErrorEnum.SYSTEM_BUSY_ERROR);
-        }
-        return targetRefund;
     }
 
     /**

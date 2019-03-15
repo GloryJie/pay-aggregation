@@ -13,10 +13,12 @@ package com.gloryjie.pay.trade.dto.param;
 
 import lombok.Data;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 /**
  * 发起退款所需要的参数
+ *
  * @author Jie
  * @since 0.1
  */
@@ -33,6 +35,7 @@ public class RefundParam {
 
     private String refundNo;
 
+    @Min(1)
     private Long amount;
 
     private String description;
