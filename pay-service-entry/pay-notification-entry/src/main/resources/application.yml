@@ -19,8 +19,6 @@ logging:
     com.gloryjie.pay: debug
 server:
   port: 10020
-  servlet:
-    context-path: /pay/notification
 eureka:
   client:
     service-url:

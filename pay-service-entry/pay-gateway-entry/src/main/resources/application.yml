@@ -10,21 +10,11 @@ server:
   port: 12000
 zuul:
   ignored-services: '*'
-  routes:
-    trade-service:
-      serviceId: 'trade-service'
-      path: /pay/trade/**
-#      stripPrefix: false
-    notify-service:
-      serviceId: 'notify-service'
-      path: /pay/notification/**
-      stripPrefix: false
-    auth-service:
-      serviceId: 'auth-service'
-      path: /pay/auth/**
-#      stripPrefix: true
-  ignore-local-service: false
   sensitive-headers: Cookie,Set-Cookie
+  routes:
+    trade-service: /pay/trade/**
+    notify-service: /pay/notification/**
+    auth-service: /pay/auth/**
 management:
   endpoints:
     web:
