@@ -64,7 +64,7 @@ public class JsonUtil {
         try {
             return object instanceof String ? (String) object : OBJECT_MAPPER.writeValueAsString(object);
         } catch (JsonProcessingException e) {
-            log.error("serialize object={} to json fail", object, e);
+            log.warn("serialize object={} to json fail", object);
             throw SystemException.create(CommonErrorEnum.INTERNAL_SYSTEM_ERROR, e);
         }
     }
@@ -82,8 +82,7 @@ public class JsonUtil {
         try {
             return clazz.equals(String.class) ? (T) src : OBJECT_MAPPER.readValue(src, clazz);
         } catch (Exception e) {
-            log.error("deserialization src={} to object={} fail", src,
-                    clazz.getSimpleName(), e);
+            log.warn("deserialization to object={} fail", clazz.getSimpleName());
             throw SystemException.create(CommonErrorEnum.INTERNAL_SYSTEM_ERROR, e);
         }
     }
@@ -100,7 +99,7 @@ public class JsonUtil {
         try {
             return typeReference.getType().equals(String.class) ? (T) src : OBJECT_MAPPER.readValue(src, typeReference);
         } catch (Exception e) {
-            log.error("deserialization src={} to object={} fail", src, typeReference.getType().getTypeName(), e);
+            log.warn("deserialization to object={} fail", typeReference.getType().getTypeName());
             throw SystemException.create(CommonErrorEnum.INTERNAL_SYSTEM_ERROR, e);
         }
     }
@@ -118,7 +117,7 @@ public class JsonUtil {
             JavaType javaType = OBJECT_MAPPER.getTypeFactory().constructParametricType(collections, elementClass);
             return OBJECT_MAPPER.readValue(src, javaType);
         } catch (IOException e) {
-            log.error("deserialization src={} to complex collection={} element={} fail", src, collections.getSimpleName(), elementClass, e);
+            log.warn("deserialization to complex collection={} element={} fail", collections.getSimpleName(), elementClass);
             throw SystemException.create(CommonErrorEnum.INTERNAL_SYSTEM_ERROR, e);
         }
     }
