@@ -11,6 +11,8 @@
  */
 package com.gloryjie.pay.base.util.cipher;
 
+import com.gloryjie.pay.base.enums.error.CommonErrorEnum;
+import com.gloryjie.pay.base.exception.error.SystemException;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
@@ -99,6 +101,7 @@ public class Rsa {
 
     /**
      * 生成公私钥对
+     *
      * @return
      * @throws NoSuchAlgorithmException
      */
@@ -108,7 +111,8 @@ public class Rsa {
             generator = KeyPairGenerator.getInstance(KEY_ALGORITHM);
         } catch (NoSuchAlgorithmException e) {
             // 当前异常不会发生
-            e.printStackTrace();
+            log.error("generate Rsa KeyPair fail", e);
+            throw SystemException.create(CommonErrorEnum.INTERNAL_SYSTEM_ERROR);
         }
         generator.initialize(KEY_SIZE);
         KeyPair keyPair = generator.generateKeyPair();

@@ -13,6 +13,7 @@ package com.gloryjie.pay.gateway.filter;
 
 import com.gloryjie.pay.base.enums.error.CommonErrorEnum;
 import com.gloryjie.pay.base.exception.error.ExternalException;
+import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
 import com.netflix.zuul.exception.ZuulException;
 import org.apache.commons.lang3.StringUtils;
@@ -29,7 +30,7 @@ import javax.servlet.http.HttpServletRequest;
  * @since
  */
 @Component
-public class AuthorizeTokenCheckFilter extends BaseFilter {
+public class AuthorizeTokenCheckFilter extends ZuulFilter {
 
     private static final String AUTH_WEB_FLAG = "web";
 
@@ -67,7 +68,7 @@ public class AuthorizeTokenCheckFilter extends BaseFilter {
         String token = request.getHeader(AUTH_HEADER);
         // TODO: 2019/3/13 还需要验证token的合法性，后续使用JWT自检
         if (StringUtils.isBlank(token) || !token.contains(TOKEN_PREFIX)) {
-            alterResponseWithErrorMsg(context, ExternalException.create(CommonErrorEnum.NOT_LOGIN_ERROR));
+            throw ExternalException.create(CommonErrorEnum.NOT_LOGIN_ERROR);
         }
         return null;
     }

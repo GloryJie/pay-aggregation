@@ -16,11 +16,8 @@ import com.gloryjie.pay.app.error.AppError;
 import com.gloryjie.pay.app.service.api.AppFeignApi;
 import com.gloryjie.pay.base.constant.DefaultConstant;
 import com.gloryjie.pay.base.enums.error.CommonErrorEnum;
-import com.gloryjie.pay.base.exception.BaseException;
-import com.gloryjie.pay.base.exception.ErrorInterface;
 import com.gloryjie.pay.base.exception.error.ExternalException;
 import com.gloryjie.pay.base.exception.error.SystemException;
-import com.gloryjie.pay.base.response.Response;
 import com.gloryjie.pay.base.util.BeanConverter;
 import com.gloryjie.pay.base.util.JsonUtil;
 import com.gloryjie.pay.base.util.SignUtil;
@@ -43,6 +40,10 @@ import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SignatureException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -54,7 +55,7 @@ import java.util.Map;
  */
 @Slf4j
 @Component
-public class SignCheckFilter extends BaseFilter {
+public class SignCheckFilter extends ZuulFilter {
 
     private static final String API_FLAG = "api";
 
@@ -96,25 +97,20 @@ public class SignCheckFilter extends BaseFilter {
         UniformRequestParam uniformRequestParam = getUniformRequestParam(context);
 
         // 2. 检查参数合法性
-        if (!checkUniformParam(context, uniformRequestParam)) {
-            return null;
-        }
-        boolean verifyResult = true;
-        if (signCheckTrigger){
+        checkUniformParam(uniformRequestParam);
+
+        if (signCheckTrigger) {
             // 3. 签名验证
-            verifyResult = verifySign(context, uniformRequestParam);
+            verifySign(context, uniformRequestParam);
         }
 
-        // 4. 验证修改请求体数据，只保留业务数据
-        if (verifyResult) {
-            // 将appId放进请求头
-            context.addZuulRequestHeader(APP_ID_HEADER, uniformRequestParam.getAppId().toString());
-            HttpServletRequest request = context.getRequest();
-            if (DefaultConstant.REQUEST_METHOD.POST.equalsIgnoreCase(request.getMethod()) && uniformRequestParam.getBizData() != null) {
-                String newBody = JsonUtil.toJson(uniformRequestParam.getBizData());
-                MyHttpServletRequestWrapper wrapper = new MyHttpServletRequestWrapper(request, newBody);
-                context.setRequest(wrapper);
-            }
+        // 4. 验证修改请求体数据，只保留业务数据, 并将验证过的appId放进请求头
+        context.addZuulRequestHeader(APP_ID_HEADER, uniformRequestParam.getAppId().toString());
+        HttpServletRequest request = context.getRequest();
+        if (DefaultConstant.REQUEST_METHOD.POST.equalsIgnoreCase(request.getMethod()) && uniformRequestParam.getBizData() != null) {
+            String newBody = JsonUtil.toJson(uniformRequestParam.getBizData());
+            MyHttpServletRequestWrapper wrapper = new MyHttpServletRequestWrapper(request, newBody);
+            context.setRequest(wrapper);
         }
 
         return null;
@@ -122,61 +118,46 @@ public class SignCheckFilter extends BaseFilter {
 
     /**
      * 签名验证
+     *
      * @param context
      * @param param
      * @return
      */
-    private boolean verifySign(RequestContext context, UniformRequestParam param) {
+    private void verifySign(RequestContext context, UniformRequestParam param) {
         String sign = context.getRequest().getHeader(SIGN_HEADER);
         if (StringUtils.isBlank(sign)) {
-            alterResponseWithErrorMsg(context, SystemException.create(CommonErrorEnum.ILLEGAL_ARGUMENT_ERROR, "签名参数为空"));
-            return false;
+            throw SystemException.create(CommonErrorEnum.ILLEGAL_ARGUMENT_ERROR, "签名参数为空");
         }
         // 获取公钥
         AppDto appDto = appFeignApi.getAppInfo(param.getAppId());
         if (appDto == null || StringUtils.isBlank(appDto.getTradePublicKey())) {
-            alterResponseWithErrorMsg(context, ExternalException.create(AppError.APP_NOT_EXISTS, "或公钥未配置"));
-            return false;
+            throw ExternalException.create(AppError.APP_NOT_EXISTS, "或公钥未配置");
         }
         byte[] signStrData = SignUtil.toSignStr(BeanConverter.beanToMap(param)).getBytes(StandardCharsets.UTF_8);
+        boolean verifyResult = false;
         try {
-            if (!Rsa.verifySign(signStrData, appDto.getTradePublicKey(), sign)) {
-                alterResponseWithErrorMsg(context, ExternalException.create(CommonErrorEnum.SIGNATURE_NOT_PASS_ERROR));
-                return false;
-            }
-        } catch (Exception e) {
-            log.error("SignCheckFilter verify sign error", e);
-            alterResponseWithErrorMsg(context, ExternalException.create(CommonErrorEnum.SIGNATURE_NOT_PASS_ERROR, e.getMessage()));
+            verifyResult = Rsa.verifySign(signStrData, appDto.getTradePublicKey(), sign);
+        } catch (IllegalArgumentException | NoSuchAlgorithmException | InvalidKeySpecException | InvalidKeyException | SignatureException e) {
+            log.warn("SignCheckFilter verify sign error", e);
+            throw ExternalException.create(CommonErrorEnum.SIGNATURE_NOT_PASS_ERROR, e.getMessage());
         }
-
-        return true;
-
+        if (!verifyResult) {
+            log.info("appId={} request={} sign not through", param.getAppId(), param.getUri());
+            throw ExternalException.create(CommonErrorEnum.SIGNATURE_NOT_PASS_ERROR);
+        }
     }
 
 
     /**
      * 检查必填参数的合法性
      *
-     * @param context
      * @param param
      * @return
      */
-    private boolean checkUniformParam(RequestContext context, UniformRequestParam param) {
-        if (param == null) {
-            alterResponseWithErrorMsg(context, ExternalException.create(CommonErrorEnum.ILLEGAL_ARGUMENT_ERROR));
-            return false;
-        }
-        try {
-            // 必填项检查
-            ParamValidator.validate(param);
-
-            // TODO: 2019/3/6 时间窗口、随机字符串检查
-
-            return true;
-        } catch (BaseException e) {
-            alterResponseWithErrorMsg(context, e);
-        }
-        return false;
+    private void checkUniformParam(UniformRequestParam param) {
+        // 必填项检查
+        ParamValidator.validate(param);
+        // TODO: 2019/3/6 时间窗口、随机字符串检查
     }
 
 
@@ -201,18 +182,19 @@ public class SignCheckFilter extends BaseFilter {
                 for (Map.Entry<String, String[]> entry : getParam.entrySet()) {
                     queryParam.put(entry.getKey(), entry.getValue()[0]);
                 }
+                // TODO: 2019/3/17 当前需要数据转换需要优化
                 uniformRequestParam = JsonUtil.parse(JsonUtil.toJson(queryParam), UniformRequestParam.class);
             }
+            uniformRequestParam.setUri(request.getServletPath());
+            return uniformRequestParam;
         } catch (IOException e) {
             log.error("read request body content from InputStream fail", e);
-        } catch (BaseException e) {
-            log.warn("SignCheckFilter transform json to UniformRequestParam fail", e);
+            throw SystemException.create(CommonErrorEnum.INTERNAL_SYSTEM_ERROR);
+        } catch (Exception e) {
+            // 能出现异常的此处只有json序列化了
+            log.warn("SignCheckFilter transform json to UniformRequestParam fail");
+            throw SystemException.create(CommonErrorEnum.ILLEGAL_ARGUMENT_ERROR, "请求体不合法");
         }
-
-        if (uniformRequestParam != null) {
-            uniformRequestParam.setUri(request.getServletPath());
-        }
-        return uniformRequestParam;
     }
 
     /**

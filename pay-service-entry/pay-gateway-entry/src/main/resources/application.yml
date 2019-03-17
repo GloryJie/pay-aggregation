@@ -15,6 +15,10 @@ zuul:
     trade-service: /pay/trade/**
     notify-service: /pay/notification/**
     auth-service: /pay/auth/**
+  # 禁用默认的错误过滤器
+  SendErrorFilter:
+    error:
+      disable: true
 management:
   endpoints:
     web:
@@ -23,5 +27,5 @@ management:
 
 pay:
   trigger:
-    signCheck: false
+    signCheck: true
     token-check: true
