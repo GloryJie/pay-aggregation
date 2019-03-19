@@ -30,16 +30,18 @@ public enum ChannelType {
     /**
      * 支付渠道
      */
-    ALIPAY_PAGE(1, "GATEWAY", "FAST_INSTANT_TRADE_PAY", "支付宝网页支付"),
-    ALIPAY_WAP(2, "GATEWAY", "QUICK_WAP_WAY", "支付宝手机网站支付"),
-    ALIPAY_SCAN_CODE(3, "GATEWAY", "", "支付宝扫码支付"),
-    ALIPAY_BAR_CODE(4, "NON_GATEWAY", "FACE_TO_FACE_PAYMENT", "支付宝条码支付"),
-    ALIPAY_APP(5,"GATEWAY","","支付宝app支付");
+    ALIPAY_PAGE(1, PlatformType.ALIPAY, "GATEWAY", "FAST_INSTANT_TRADE_PAY", "支付宝网页支付"),
+    ALIPAY_WAP(2, PlatformType.ALIPAY, "GATEWAY", "QUICK_WAP_WAY", "支付宝手机网站支付"),
+    ALIPAY_SCAN_CODE(3, PlatformType.ALIPAY, "GATEWAY", "", "支付宝扫码支付"),
+    ALIPAY_BAR_CODE(4, PlatformType.ALIPAY, "NON_GATEWAY", "FACE_TO_FACE_PAYMENT", "支付宝条码支付"),
+    ALIPAY_APP(5, PlatformType.ALIPAY, "GATEWAY", "", "支付宝app支付");
 
     /**
      * 10~19为支付宝, 20~29为微信, 30~39为银联
      */
     private int code;
+
+    private PlatformType platformType;
     /**
      * 支付类型,网关以及非网关
      */
@@ -53,13 +55,13 @@ public enum ChannelType {
      */
     private String desc;
 
-    ChannelType(int code, String type, String productCode, String desc) {
+    ChannelType(int code, PlatformType platformType, String type, String productCode, String desc) {
         this.code = code;
+        this.platformType = platformType;
         this.type = type;
         this.productCode = productCode;
         this.desc = desc;
     }
-
 
     public boolean isGateway() {
         return this.type.equals("GATEWAY");
@@ -88,20 +90,8 @@ public enum ChannelType {
         }
     }
 
-    public boolean isAlipay(){
-        return this.code < 20;
-    }
-
-    public boolean isWxPay(){
-        return this.code < 30 && this.code >= 20;
-    }
-
-    public boolean isUnionPay(){
-        return this.code < 40 && this.code >= 30;
-    }
-
     public Class getConfigClass() {
-        if (isAlipay()){
+        if (PlatformType.ALIPAY == this.getPlatformType()) {
             return AlipayChannelConfig.class;
         }
         return Map.class;

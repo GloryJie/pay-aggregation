@@ -26,8 +26,10 @@ import com.alipay.api.request.AlipayTradeRefundRequest;
 import com.alipay.api.response.AlipayTradeQueryResponse;
 import com.alipay.api.response.AlipayTradeRefundResponse;
 import com.gloryjie.pay.base.constant.DefaultConstant;
+import com.gloryjie.pay.base.enums.error.CommonErrorEnum;
 import com.gloryjie.pay.base.exception.error.BusinessException;
 import com.gloryjie.pay.base.exception.error.ExternalException;
+import com.gloryjie.pay.base.exception.error.SystemException;
 import com.gloryjie.pay.base.util.AmountUtil;
 import com.gloryjie.pay.base.util.BeanConverter;
 import com.gloryjie.pay.base.util.DateTimeUtil;
@@ -81,14 +83,13 @@ public abstract class BaseAlipayChannelService implements PayChannelService {
     @Autowired
     protected ChannelConfigDao channelConfigDao;
 
-
     @Value("${pay.channel.alipay.sandboxMode:false}")
     protected boolean sandboxMode;
 
     @Value("${pay.host}")
     protected String host;
 
-    @Value("${pay.channel.alipay.notifyUri:/platform/notify/alipay}")
+    @Value("${pay.channel.alipay.notifyUri:/pay/trade/platform/notify/alipay}")
     protected String notifyUri;
 
 
@@ -196,18 +197,36 @@ public abstract class BaseAlipayChannelService implements PayChannelService {
     }
 
     @Override
-    public boolean handleAsync(Map<String, String> param) {
-        return false;
+    public ChannelPayQueryResponse handleAsyncNotify(Integer appId, Map<String, String> param) {
+        ChannelConfig config = channelConfigDao.loadByAppIdAndChannel(appId, getChannelType());
+        if (config == null) {
+            throw SystemException.create(ChannelError.CHANNEL_CONFIG_NOT_EXISTS);
+        }
+        AlipayChannelConfig alipayConfig = BeanConverter.mapToBean(new HashMap<>(config.getChannelConfig()), AlipayChannelConfig.class);
+        if (!alipayConfig.getMerchantId().equals(param.get("app_id"))) {
+            throw ExternalException.create(ChannelError.PLATFORM_NOTIFY_SIGN_NOT_THROUGH);
+        }
+        // 签名验证
+        boolean result = this.verifySign(param, alipayConfig.getMerchantPublicKey());
+        if (!result) {
+            throw ExternalException.create(ChannelError.PLATFORM_NOTIFY_SIGN_NOT_THROUGH);
+        }
+        ChannelPayQueryResponse response = new ChannelPayQueryResponse();
+        response.setSuccess(true);
+        response.setPlatformTradeNo(param.get("trade_no"));
+        response.setStatus(param.get("trade_status"));
+        response.setAmount(AmountUtil.strToAmount(param.get("total_amount")));
+        response.setActualAmount(AmountUtil.strToAmount(param.get("buyer_pay_amount")));
+        response.setTimePaid(DateTimeUtil.parse(param.get("gmt_payment")));
+        return response;
     }
 
     @Override
-    public boolean verifySign(Map<String, String> param, String publicKey, String signType) {
+    public boolean verifySign(Map<String, String> param, String publicKey) {
         try {
-            // TODO: 2019/3/11 singType不能写死为RSA2
-            // 默认使用RSA2的方式
-            return AlipaySignature.rsaCheckV1(param, publicKey, DefaultConstant.CHARSET, "RSA2");
+            return AlipaySignature.rsaCheckV1(param, publicKey, DefaultConstant.CHARSET, param.get("sign_type"));
         } catch (AlipayApiException e) {
-            log.warn("verify alipay notify fail", e);
+            log.warn("verify platform=ALIPAY notify sign fail", e);
         }
         return false;
     }

@@ -33,6 +33,11 @@ import org.springframework.stereotype.Service;
 public class AlipayBarCodeChannelServiceImpl extends BaseAlipayChannelService {
 
     @Override
+    public ChannelType getChannelType() {
+        return ChannelType.ALIPAY_BAR_CODE;
+    }
+
+    @Override
     public ChannelPayResponse pay(ChannelPayDto payDto) {
         AlipayClient client = getAlipayClient(payDto.getAppId(),payDto.getChannel());
 

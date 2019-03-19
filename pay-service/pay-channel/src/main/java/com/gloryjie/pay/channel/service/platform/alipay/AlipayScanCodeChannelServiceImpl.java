@@ -20,6 +20,7 @@ import com.gloryjie.pay.base.exception.error.ExternalException;
 import com.gloryjie.pay.base.util.AmountUtil;
 import com.gloryjie.pay.channel.dto.ChannelPayDto;
 import com.gloryjie.pay.channel.dto.response.ChannelPayResponse;
+import com.gloryjie.pay.channel.enums.ChannelType;
 import com.gloryjie.pay.channel.error.ChannelError;
 import org.springframework.stereotype.Service;
 
@@ -31,6 +32,11 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class AlipayScanCodeChannelServiceImpl extends BaseAlipayChannelService {
+
+    @Override
+    public ChannelType getChannelType() {
+        return ChannelType.ALIPAY_SCAN_CODE;
+    }
 
     @Override
     public ChannelPayResponse pay(ChannelPayDto payDto) {

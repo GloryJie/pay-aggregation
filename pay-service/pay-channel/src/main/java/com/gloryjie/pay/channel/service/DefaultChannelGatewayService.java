@@ -64,6 +64,11 @@ public class DefaultChannelGatewayService implements ChannelGatewayService {
     }
 
     @Override
+    public ChannelPayQueryResponse handleAsyncNotify(Integer appId, ChannelType channelType, Map<String, String> param) {
+        return channelMap.get(channelType).handleAsyncNotify(appId, param);
+    }
+
+    @Override
     public ChannelResponse refund(ChannelRefundDto refundDto) {
         return channelMap.get(refundDto.getChannel()).refund(refundDto);
     }

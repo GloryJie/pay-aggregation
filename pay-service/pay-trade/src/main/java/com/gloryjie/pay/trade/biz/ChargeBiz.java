@@ -227,7 +227,7 @@ public class ChargeBiz {
      * @param queryResponse
      * @return
      */
-    private RefreshChargeDto generateRefreshChargeDto(Charge charge, ChannelPayQueryResponse queryResponse) {
+    public RefreshChargeDto generateRefreshChargeDto(Charge charge, ChannelPayQueryResponse queryResponse) {
         RefreshChargeDto refreshChargeDto = new RefreshChargeDto();
         refreshChargeDto.setChargeNo(charge.getChargeNo());
         refreshChargeDto.setAppId(charge.getAppId());

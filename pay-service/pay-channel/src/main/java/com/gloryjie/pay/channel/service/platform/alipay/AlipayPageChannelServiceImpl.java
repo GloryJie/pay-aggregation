@@ -33,7 +33,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class AlipayPageChannelServiceImpl extends BaseAlipayChannelService {
 
-
+    @Override
+    public ChannelType getChannelType() {
+        return ChannelType.ALIPAY_PAGE;
+    }
 
     @Override
     public ChannelPayResponse pay(ChannelPayDto payDto) {

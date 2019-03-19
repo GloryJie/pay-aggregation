@@ -46,7 +46,7 @@ pay:
     # 渠道配置
     alipay:
       sandboxMode: true
-      notifyUri: "/platform/notify/alipay"
+      notifyUri: "/pay/trade/platform/notify/alipay"
   trade:
     # 支付单默认的过期时间，120M
     defaultExpireTime: 120

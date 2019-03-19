@@ -16,14 +16,18 @@ import com.github.pagehelper.PageInfo;
 import com.gloryjie.pay.base.enums.MqDelayMsgLevel;
 import com.gloryjie.pay.base.exception.error.BusinessException;
 import com.gloryjie.pay.base.util.BeanConverter;
+import com.gloryjie.pay.channel.dto.ChannelPayQueryResponse;
 import com.gloryjie.pay.channel.dto.param.ChargeCreateParam;
 import com.gloryjie.pay.channel.enums.ChannelType;
+import com.gloryjie.pay.channel.enums.PlatformType;
 import com.gloryjie.pay.channel.service.ChannelGatewayService;
 import com.gloryjie.pay.trade.biz.ChargeBiz;
 import com.gloryjie.pay.trade.biz.RefundBiz;
 import com.gloryjie.pay.trade.dao.ChargeDao;
 import com.gloryjie.pay.trade.dao.RefundDao;
 import com.gloryjie.pay.trade.dto.ChargeDto;
+import com.gloryjie.pay.trade.dto.RefreshChargeDto;
+import com.gloryjie.pay.trade.dto.RefreshRefundDto;
 import com.gloryjie.pay.trade.dto.RefundDto;
 import com.gloryjie.pay.trade.dto.param.ChargeQueryParam;
 import com.gloryjie.pay.trade.dto.param.RefundParam;
@@ -41,6 +45,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Jie
@@ -132,6 +137,31 @@ public class ChargeServiceImpl implements ChargeService {
     }
 
     @Override
+    public boolean handleChargeAsyncNotify(PlatformType platformType, Map<String, String> param) {
+        // 业务检查
+        String chargeNo = getChargeNofromNotifyParam(platformType, param);
+        if (StringUtils.isBlank(chargeNo)) {
+            return false;
+        }
+        Charge charge = chargeDao.load(chargeNo);
+        if (charge == null) {
+            log.warn("platform={} async notify, chargeNo={} not exist ", platformType.name(), chargeNo);
+            return false;
+        }
+        log.info("ready to handle platform={} async notify, chargeNo={}", platformType.name(), chargeNo);
+        if (ChargeStatus.SUCCESS == charge.getStatus()) {
+            log.info("chargeNo={} status already SUCCESS,ignore platform={} async notify ", chargeNo, platformType.name());
+            return true;
+        }
+        // 交给渠道网关处理
+        ChannelPayQueryResponse response = channelGatewayService.handleAsyncNotify(charge.getAppId(), charge.getChannel(), param);
+        RefreshChargeDto refreshChargeDto = chargeBiz.generateRefreshChargeDto(charge, response);
+        charge = chargeBiz.refreshCharge(refreshChargeDto, charge);
+        log.info("handle platform={} async notify, chargeNo={} completed chargeStatus={}", platformType.name(), chargeNo, charge.getStatus().name());
+        return ChargeStatus.SUCCESS == charge.getStatus();
+    }
+
+    @Override
     public PageInfo<ChargeDto> queryPaymentList(ChargeQueryParam queryParam) {
         PageHelper.startPage(queryParam.getStartPage(), queryParam.getPageSize());
         List<Charge> chargeList = chargeDao.getByQueryParam(queryParam);
@@ -169,6 +199,22 @@ public class ChargeServiceImpl implements ChargeService {
 
         }
         return existCharge;
+    }
+
+    /**
+     * 从异步参数中获取chargeNo
+     *
+     * @param platformType
+     * @param param
+     * @return
+     */
+    private String getChargeNofromNotifyParam(PlatformType platformType, Map<String, String> param) {
+        switch (platformType) {
+            case ALIPAY:
+                return param.get("out_trade_no");
+            default:
+                return "";
+        }
     }
 
 

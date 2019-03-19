@@ -14,6 +14,9 @@ package com.gloryjie.pay.channel.service;
 import com.gloryjie.pay.channel.dto.*;
 import com.gloryjie.pay.channel.dto.response.ChannelPayResponse;
 import com.gloryjie.pay.channel.dto.response.ChannelResponse;
+import com.gloryjie.pay.channel.enums.ChannelType;
+
+import java.util.Map;
 
 
 /**
@@ -48,4 +51,14 @@ public interface ChannelGatewayService {
      * @param queryDto
      */
     <T extends ChannelResponse> T queryRefund(ChannelRefundQueryDto queryDto);
+
+    /**
+     * 处理异步通知，
+     * @param appId
+     * @param channelType
+     * @param param
+     * @return
+     */
+    ChannelPayQueryResponse handleAsyncNotify(Integer appId, ChannelType channelType, Map<String,String> param);
+
 }

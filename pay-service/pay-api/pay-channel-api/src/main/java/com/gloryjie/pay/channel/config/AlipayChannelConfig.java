@@ -39,4 +39,10 @@ public class AlipayChannelConfig {
      */
     @NotNull
     private String merchantPublicKey;
+
+    /**
+     * 签名类型
+     */
+    @NotNull
+    private String type;
 }
