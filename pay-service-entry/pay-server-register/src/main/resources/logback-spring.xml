@@ -7,7 +7,7 @@
     <springProperty scope="context" name="LOG_LEVEL" source="logging.level"/>
     <springProperty scope="context" name="LOG_PATTERN" source="logging.pattern.console"/>
     <springProperty scope="context" name="LOG_FILE_PATH" source="logging.path"/>
-    <property name="APP_NAME" value="pay-gateway"/>
+    <property name="APP_NAME" value="pay-server-register"/>
 
     <!--控制台输出-->
     <appender name="CONSOLE_APPENDER" class="ch.qos.logback.core.ConsoleAppender">
@@ -31,9 +31,6 @@
         </encoder>
     </appender>
 
-    <!--mongo 存储格式化日志-->
-    <appender name="MONGO_APPENDER" class="com.gloryjie.pay.gateway.log.MongoAsyncAppender">
-    </appender>
 
     <!--AsyncAppender 只会是第一个appender-ref起作用-->
     <!--异步输出到文件-->
@@ -42,18 +39,6 @@
         <queueSize>1024</queueSize>
         <appender-ref ref="FILE_APPENDER"/>
     </appender>
-
-    <!--异步输出到mongo-->
-    <appender name="MONGO_ASYNC" class="ch.qos.logback.classic.AsyncAppender">
-        <discardingThreshold>0</discardingThreshold>
-        <queueSize>512</queueSize>
-        <appender-ref ref="MONGO_APPENDER"/>
-    </appender>
-
-    <!--用于记录api请求日志，以及平台异步通知的logger-->
-    <logger name="HttpLogger" level="INFO" additivity="false">
-        <appender-ref ref="MONGO_ASYNC"/>
-    </logger>
 
     <!--基本日志为控制台以及文件输出-->
     <root level="${LOG_LEVEL:-info}">

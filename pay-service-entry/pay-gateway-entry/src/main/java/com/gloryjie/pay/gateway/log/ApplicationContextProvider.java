@@ -11,29 +11,26 @@
  */
 package com.gloryjie.pay.gateway.log;
 
-import ch.qos.logback.classic.spi.ILoggingEvent;
-import ch.qos.logback.core.UnsynchronizedAppenderBase;
-import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 
-
 /**
- * 输出日志进MongoDB
- *
  * @author Jie
  * @since
  */
 @Component
-public class MongoAsyncAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
+public class ApplicationContextProvider implements ApplicationContextAware {
 
+    private static ApplicationContext context;
 
     @Override
-    protected void append(ILoggingEvent loggingEvent) {
-        MongoTemplate mongoTemplate = ApplicationContextProvider.getBean(MongoTemplate.class);
-        Object[] data = loggingEvent.getArgumentArray();
-        for (Object datum : data) {
-            mongoTemplate.insert(datum);
-        }
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        context = applicationContext;
     }
 
+    public static <T> T getBean(Class<T> type){
+        return context.getBean(type);
+    }
 }

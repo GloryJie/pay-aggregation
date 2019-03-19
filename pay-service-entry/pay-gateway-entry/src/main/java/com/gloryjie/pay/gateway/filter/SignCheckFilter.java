@@ -57,13 +57,20 @@ import java.util.Map;
 @Component
 public class SignCheckFilter extends ZuulFilter {
 
-    private static final String API_FLAG = "api";
+    public static final String API_FLAG = "api";
 
     public static final String APP_ID_HEADER = "app-id";
 
     public static final String SIGN_HEADER = "Pay-Sign";
 
     public static final int STREAM_BUFFER_SIZE = 1024;
+
+    public static final String ORIGINAL_REQ_BODY = "signCheckFilter.originalBody";
+
+    public static final String SIGN_CHECK_RESULT = "signCheckFilter.checkResult";
+
+    public static final String REQ_TIMESTAMP = "signCheckFilter.reqTimestamp";
+
 
     @Value("${pay.trigger.signCheck:true}")
     private boolean signCheckTrigger;
@@ -92,6 +99,7 @@ public class SignCheckFilter extends ZuulFilter {
     @Override
     public Object run() throws ZuulException {
         RequestContext context = RequestContext.getCurrentContext();
+        context.set(REQ_TIMESTAMP, System.currentTimeMillis());
 
         // 1. 获取统一参数
         UniformRequestParam uniformRequestParam = getUniformRequestParam(context);
@@ -112,6 +120,8 @@ public class SignCheckFilter extends ZuulFilter {
             MyHttpServletRequestWrapper wrapper = new MyHttpServletRequestWrapper(request, newBody);
             context.setRequest(wrapper);
         }
+
+        context.set(SIGN_CHECK_RESULT, true);
 
         return null;
     }
@@ -169,14 +179,14 @@ public class SignCheckFilter extends ZuulFilter {
      */
     private UniformRequestParam getUniformRequestParam(RequestContext context) {
         HttpServletRequest request = context.getRequest();
-        UniformRequestParam uniformRequestParam = null;
+        UniformRequestParam uniformRequestParam;
         try {
             if (DefaultConstant.REQUEST_METHOD.POST.equalsIgnoreCase(request.getMethod())) {
                 String requestBody = getRequestBody(request);
-                if (StringUtils.isNotBlank(requestBody)) {
-                    uniformRequestParam = JsonUtil.parse(requestBody, UniformRequestParam.class);
-                }
+                context.set(ORIGINAL_REQ_BODY, requestBody);
+                uniformRequestParam = JsonUtil.parse(requestBody, UniformRequestParam.class);
             } else {
+                context.set(ORIGINAL_REQ_BODY, "N/A");
                 Map<String, String[]> getParam = request.getParameterMap();
                 Map<String, Object> queryParam = new HashMap<>(8);
                 for (Map.Entry<String, String[]> entry : getParam.entrySet()) {
