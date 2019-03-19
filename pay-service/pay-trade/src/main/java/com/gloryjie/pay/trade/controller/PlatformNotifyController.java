@@ -16,6 +16,7 @@ import com.gloryjie.pay.trade.service.ChargeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
 /**
@@ -40,8 +41,9 @@ public class PlatformNotifyController {
      * @return
      */
     @PostMapping("/alipay")
-    public String asyncNotify(@RequestParam Map<String, String> param) {
+    public String asyncNotify(@RequestParam Map<String, String> param, HttpServletResponse response) {
         boolean result = chargeService.handleChargeAsyncNotify(PlatformType.ALIPAY, param);
+        response.addHeader("appId", param.get("appId"));
         return result ? ALIPAY_SUCCESS_RESPONSE : UNIFORM_HANDLE_FAIL_FLAG;
     }
 

@@ -158,6 +158,7 @@ public class ChargeServiceImpl implements ChargeService {
         RefreshChargeDto refreshChargeDto = chargeBiz.generateRefreshChargeDto(charge, response);
         charge = chargeBiz.refreshCharge(refreshChargeDto, charge);
         log.info("handle platform={} async notify, chargeNo={} completed chargeStatus={}", platformType.name(), chargeNo, charge.getStatus().name());
+        param.put("appId", charge.getAppId().toString());
         return ChargeStatus.SUCCESS == charge.getStatus();
     }
 
