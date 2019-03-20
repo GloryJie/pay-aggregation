@@ -54,8 +54,11 @@ public class ChargeBiz {
     @Value("${pay.trade.defaultExpireTime:120}")
     private Long defaultExpireTime;
 
-    @Value("${pay.trigger.initiativeQuery:false")
+    @Value("${pay.trigger.initiativeQuery:false}")
     private boolean initiativeQueryTrigger;
+
+    @Value("${pay.trigger.queryBeforeClose:true}")
+    private boolean queryBeforeCloseTrigger;
 
     @Autowired
     private ChannelGatewayService channelGatewayService;
@@ -100,7 +103,7 @@ public class ChargeBiz {
         chargeDao.insert(charge);
 
         // 轮询查询支付状态
-        if (initiativeQueryTrigger){
+        if (initiativeQueryTrigger) {
             chargeQueryExecutors.executeQueryTask(charge.getChargeNo(), charge.getChannel(), charge.getTimeExpire());
         }
 
@@ -115,15 +118,23 @@ public class ChargeBiz {
      */
     public void closeCharge(String chargeNo) {
         Charge charge = chargeDao.load(chargeNo);
-        if (charge == null || ChargeStatus.WAIT_PAY != charge.getStatus()) {
+        if (charge == null) {
             return;
         }
-        charge.setStatus(ChargeStatus.CLOSED);
-        // 若更新失败，则再次异步关单
-        if (chargeDao.update(charge) <= 0) {
-            mqProducer.sendTimingCloseMsg(charge.getChargeNo(), MqDelayMsgLevel.FIRST);
+        // 关闭订单前若为待支付，先进行一次主动查询
+        if (ChargeStatus.WAIT_PAY == charge.getStatus()) {
+            if (queryBeforeCloseTrigger) {
+                // queryChannel内也会进行订单关闭
+                charge = this.queryChannel(charge);
+            }
+            // 若状态仍为待支付，则关闭订单
+            if (ChargeStatus.WAIT_PAY == charge.getStatus()) {
+                // 查询过后仍为待支付，则进行关闭
+                charge.setStatus(ChargeStatus.CLOSED);
+                chargeDao.update(charge);
+            }
+            log.info("timing close charge={} success", chargeNo);
         }
-        log.info("timing close charge={} success", chargeNo);
     }
 
 

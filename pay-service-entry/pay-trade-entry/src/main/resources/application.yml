@@ -4,7 +4,7 @@ spring:
       username: root
       password: 123456
       driver-class-name: com.mysql.cj.jdbc.Driver
-      url: "jdbc:mysql://localhost:3306/pay?useUnicode=true&characterEncoding=UTF8&serverTimezone=GMT%2B8 "
+      url: "jdbc:mysql://localhost:3306/pay?useUnicode=true&characterEncoding=UTF8&serverTimezone=GMT%2B8"
   jackson:
     default-property-inclusion: non_null
     time-zone: GMT+8
@@ -13,15 +13,8 @@ spring:
 mybatis:
   mapper-locations: classpath*:/mapper/*.xml
   config-location: classpath:mybatis-config.xml
-#logging:
-#  level:
-#    com.gloryjie.pay: debug
 server:
   port: 10030
-#  servlet:
-#    context-path: /pay/trade
-rocketmq:
-  namesrv: '127.0.0.1:9876'
 
 # mybatis pageHelper配置
 pagehelper:
@@ -44,6 +37,8 @@ pay:
     signCheck: false
     # 主动轮询状态
     initiativeQuery: true
+    # 关闭订单前先主动查询一次
+    queryBeforeClose: true
   channel:
     # 渠道配置
     alipay:
