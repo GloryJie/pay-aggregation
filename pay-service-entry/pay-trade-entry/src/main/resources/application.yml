@@ -42,6 +42,8 @@ pay:
     dataCenterId: 0
   trigger:
     signCheck: false
+    # 主动轮询状态
+    initiativeQuery: true
   channel:
     # 渠道配置
     alipay:

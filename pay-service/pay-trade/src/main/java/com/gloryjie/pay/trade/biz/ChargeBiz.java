@@ -54,6 +54,9 @@ public class ChargeBiz {
     @Value("${pay.trade.defaultExpireTime:120}")
     private Long defaultExpireTime;
 
+    @Value("${pay.trigger.initiativeQuery:false")
+    private boolean initiativeQueryTrigger;
+
     @Autowired
     private ChannelGatewayService channelGatewayService;
 
@@ -97,7 +100,9 @@ public class ChargeBiz {
         chargeDao.insert(charge);
 
         // 轮询查询支付状态
-        chargeQueryExecutors.executeQueryTask(charge.getChargeNo(), charge.getChannel(), charge.getTimeExpire());
+        if (initiativeQueryTrigger){
+            chargeQueryExecutors.executeQueryTask(charge.getChargeNo(), charge.getChannel(), charge.getTimeExpire());
+        }
 
         return charge;
     }
