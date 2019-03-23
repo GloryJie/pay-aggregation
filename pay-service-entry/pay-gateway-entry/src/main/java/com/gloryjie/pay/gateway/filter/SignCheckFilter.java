@@ -69,7 +69,6 @@ public class SignCheckFilter extends ZuulFilter {
 
     public static final String SIGN_CHECK_RESULT = "signCheckFilter.checkResult";
 
-    public static final String REQ_TIMESTAMP = "signCheckFilter.reqTimestamp";
 
 
     @Value("${pay.trigger.signCheck:true}")
@@ -99,7 +98,6 @@ public class SignCheckFilter extends ZuulFilter {
     @Override
     public Object run() throws ZuulException {
         RequestContext context = RequestContext.getCurrentContext();
-        context.set(REQ_TIMESTAMP, System.currentTimeMillis());
 
         // 1. 获取统一参数
         UniformRequestParam uniformRequestParam = getUniformRequestParam(context);

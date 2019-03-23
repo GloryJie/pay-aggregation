@@ -8,7 +8,7 @@ spring:
     name: 'cloud-gateway'
   data:
     mongodb:
-      uri: mongodb://localhost:32768/apiLog
+      uri: mongodb://localhost:32768/http_log
 server:
   port: 12000
 zuul:
@@ -32,7 +32,7 @@ management:
 pay:
   trigger:
     signCheck: false
-    token-check: true
+    token-check: false
 
 logging:
   pattern:

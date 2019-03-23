@@ -31,9 +31,12 @@ public class MongoAsyncAppender extends UnsynchronizedAppenderBase<ILoggingEvent
     protected void append(ILoggingEvent loggingEvent) {
         MongoTemplate mongoTemplate = ApplicationContextProvider.getBean(MongoTemplate.class);
         Object[] data = loggingEvent.getArgumentArray();
-        for (Object datum : data) {
-            mongoTemplate.insert(datum);
+        if (data == null || data.length < 1) {
+            return;
         }
+        String collectionName = loggingEvent.getMessage();
+        mongoTemplate.insert(data[0], collectionName);
+
     }
 
 }
