@@ -15,14 +15,11 @@ import com.gloryjie.pay.channel.dto.*;
 import com.gloryjie.pay.channel.dto.response.ChannelPayResponse;
 import com.gloryjie.pay.channel.dto.response.ChannelResponse;
 import com.gloryjie.pay.channel.enums.ChannelType;
-import com.gloryjie.pay.channel.service.platform.alipay.AlipayBarCodeChannelServiceImpl;
-import com.gloryjie.pay.channel.service.platform.alipay.AlipayPageChannelServiceImpl;
-import com.gloryjie.pay.channel.service.platform.alipay.AlipayScanCodeChannelServiceImpl;
-import com.gloryjie.pay.channel.service.platform.alipay.AlipayWapChannelServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -34,29 +31,9 @@ import java.util.concurrent.ConcurrentHashMap;
  * @since
  */
 @Service
-public class DefaultChannelGatewayService implements ChannelGatewayService {
+public class DefaultChannelGatewayService implements ChannelGatewayService, ApplicationContextAware {
 
     Map<ChannelType, PayChannelService> channelMap = new ConcurrentHashMap<>();
-
-    @Autowired
-    private AlipayPageChannelServiceImpl alipayPageChannelService;
-
-    @Autowired
-    private AlipayBarCodeChannelServiceImpl alipayBarCodeChannelService;
-
-    @Autowired
-    private AlipayWapChannelServiceImpl alipayWapChannelService;
-
-    @Autowired
-    private AlipayScanCodeChannelServiceImpl alipayScanCodeChannelService;
-
-    @PostConstruct
-    public void initChannel() {
-        channelMap.put(ChannelType.ALIPAY_PAGE, alipayPageChannelService);
-        channelMap.put(ChannelType.ALIPAY_WAP, alipayWapChannelService);
-        channelMap.put(ChannelType.ALIPAY_SCAN_CODE, alipayScanCodeChannelService);
-        channelMap.put(ChannelType.ALIPAY_BAR_CODE, alipayBarCodeChannelService);
-    }
 
     @Override
     public ChannelPayResponse pay(ChannelPayDto payDto) {
@@ -81,5 +58,11 @@ public class DefaultChannelGatewayService implements ChannelGatewayService {
     @Override
     public ChannelResponse queryRefund(ChannelRefundQueryDto queryDto) {
         return channelMap.get(queryDto.getChannel()).queryRefund(queryDto);
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        Map<String, PayChannelService> beanMap = applicationContext.getBeansOfType(PayChannelService.class);
+        beanMap.values().forEach(item -> channelMap.put(item.getChannelType(), item));
     }
 }
