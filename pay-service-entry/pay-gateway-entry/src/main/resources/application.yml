@@ -9,6 +9,26 @@ spring:
   data:
     mongodb:
       uri: mongodb://localhost:32768/http_log
+
+# ribbon超时时间设置
+ribbon:
+  ConnectTimeout: 1000
+  ReadTimeout: 1000
+  # 对当前实例的重试次数
+  maxAutoRetries: 1
+  # 切换实例的重试次数
+  maxAutoRetriesNextServer: 3
+  # 对所有操作请求都进行重试
+  okToRetryOnAllOperations: true
+# hystrix的超时时间设置
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 3000
+
 server:
   port: 12000
 zuul:
@@ -22,12 +42,12 @@ zuul:
   SendErrorFilter:
     error:
       disable: true
+  retryable: true
 management:
   endpoints:
     web:
       exposure:
         include: '*'
-
 
 pay:
   trigger:
