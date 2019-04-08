@@ -20,6 +20,7 @@ target/
 
 ### log ###
 /LOG_FILE_PATH_IS_UNDEFINED
+/*/LOG_FILE_PATH_IS_UNDEFINED
 
 ### NetBeans ###
 /nbproject/private/

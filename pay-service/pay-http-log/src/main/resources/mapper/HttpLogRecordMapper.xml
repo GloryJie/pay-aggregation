@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.gloryjie.pay.log.http.dao.HttpLogRecordDao">
+
+    <resultMap id="BaseResultMap" type="com.gloryjie.pay.log.http.model.HttpLogRecord">
+        <id column="id" property="id"/>
+        <result column="type" property="type"/>
+        <result column="app_id" property="appId"/>
+        <result column="platform" property="platform"/>
+        <result column="live_mode" property="liveMode"/>
+        <result column="req_timestamp" property="reqTimestamp"/>
+        <result column="req_client_ip" property="reqClientIp"/>
+        <result column="req_uri" property="reqUri"/>
+        <result column="req_body" property="reqBody"/>
+        <result column="req_method" property="reqMethod"/>
+        <result column="req_header" property="reqHeader"/>
+        <result column="resp_milli" property="respMilli"/>
+        <result column="resp_http_status" property="respHttpStatus"/>
+        <result column="resp_header" property="respHeader"/>
+        <result column="resp_body" property="respBody"/>
+        <result column="resp_timestamp" property="respTimestamp"/>
+    </resultMap>
+
+    <sql id="table">
+        t_http_log
+    </sql>
+
+    <sql id="all_column">
+        id, type, app_id, platform, live_mode, req_timestamp, req_client_ip, req_uri, req_body,
+        req_method, req_header, resp_milli, resp_http_status, resp_header, resp_body, resp_timestamp
+    </sql>
+
+    <sql id="all_value">
+        #{id}, #{type}, #{appId}, #{platform}, #{liveMode}, #{reqTimestamp}, #{reqClientIp}, #{reqUri}, #{reqBody},
+        #{reqMethod}, #{reqHeader}, #{respMilli}, #{respHttpStatus}, #{respHeader}, #{respBody}, #{respTimestamp}
+    </sql>
+
+    <insert id="insert" parameterType="com.gloryjie.pay.log.http.model.HttpLogRecord">
+        insert into
+        <include refid="table"/>
+        (<include refid="all_column"/>)
+        values
+        (<include refid="all_value"/>)
+    </insert>
+
+    <select id="listByParam" parameterType="com.gloryjie.pay.log.http.model.param.LogQueryParam"
+            resultMap="BaseResultMap">
+        select
+        <include refid="all_column"/>
+        from
+        <include refid="table"/>
+        where
+        app_id = #{appId} AND type = #{type}
+        <if test="startTime != null and endTime != null">AND (req_timestamp BETWEEN #{startTime} AND #{endTime})</if>
+        limit #{pageSize} offset #{offset}
+    </select>
+
+    <select id="countByParam" parameterType="com.gloryjie.pay.log.http.model.param.LogQueryParam"
+            resultType="java.lang.Long">
+        select
+        COUNT(*)
+        from
+        <include refid="table"/>
+        where
+        app_id = #{appId} AND type = #{type}
+        <if test="startTime != null and endTime != null">AND (req_timestamp BETWEEN #{startTime} AND #{endTime})</if>
+    </select>
+
+    <delete id="deleteBeforeTime" parameterType="long">
+        delete from
+        <include refid="table"/>
+        where
+        req_timestamp &lt; #{time}
+    </delete>
+
+
+</mapper>

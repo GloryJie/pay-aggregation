@@ -9,11 +9,13 @@
  * ------------------------------------------------------------------
  * 2019/3/18      Jie            GloryJie@163.com
  */
-package com.gloryjie.pay.gateway.log;
+package com.gloryjie.pay.log.http.appender;
 
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.UnsynchronizedAppenderBase;
-import org.springframework.data.mongodb.core.MongoTemplate;
+import com.gloryjie.pay.log.http.model.HttpLogRecord;
+import com.gloryjie.pay.log.http.service.HttpLogService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 
@@ -23,20 +25,24 @@ import org.springframework.stereotype.Component;
  * @author Jie
  * @since
  */
+@Slf4j
 @Component
-public class MongoAsyncAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
-
+public class AsyncAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
 
     @Override
     protected void append(ILoggingEvent loggingEvent) {
-        MongoTemplate mongoTemplate = ApplicationContextProvider.getBean(MongoTemplate.class);
+        HttpLogService logService;
+        try {
+            logService = ApplicationContextProvider.getBean(HttpLogService.class);
+        } catch (Exception e) {
+            log.error("AsyncAppender get HttpLogService bean fail", e);
+            return;
+        }
         Object[] data = loggingEvent.getArgumentArray();
         if (data == null || data.length < 1) {
             return;
         }
-        String collectionName = loggingEvent.getMessage();
-        mongoTemplate.insert(data[0], collectionName);
-
+        logService.record((HttpLogRecord) data[0]);
     }
 
 }

@@ -14,21 +14,26 @@
     <properties>
         <pay-base.version>0.0.1-SNAPSHOT</pay-base.version>
         <pay-app-api.version>0.0.1-SNAPSHOT</pay-app-api.version>
+        <pay-http-log.version>0.0.1-SNAPSHOT</pay-http-log.version>
     </properties>
 
 
     <dependencies>
-
+        <!--本地依赖-->
         <dependency>
             <groupId>com.gloryjie</groupId>
             <artifactId>pay-base</artifactId>
             <version>${pay-base.version}</version>
         </dependency>
-
         <dependency>
             <groupId>com.gloryjie</groupId>
             <artifactId>pay-app-api</artifactId>
             <version>${pay-app-api.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.gloryjie</groupId>
+            <artifactId>pay-http-log</artifactId>
+            <version>${pay-http-log.version}</version>
         </dependency>
 
         <dependency>
@@ -44,6 +49,25 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-mongodb</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+        </dependency>
+
+        <!--<dependency>-->
+            <!--<groupId>mysql</groupId>-->
+            <!--<artifactId>mysql-connector-java</artifactId>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>com.alibaba</groupId>-->
+            <!--<artifactId>druid-spring-boot-starter</artifactId>-->
+        <!--</dependency>-->
+
+        <!--<dependency>-->
+            <!--<groupId>org.mybatis.spring.boot</groupId>-->
+            <!--<artifactId>mybatis-spring-boot-starter</artifactId>-->
+        <!--</dependency>-->
 
     </dependencies>
 

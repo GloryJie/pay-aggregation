@@ -9,7 +9,7 @@
  * ------------------------------------------------------------------
  * 2019/3/18      Jie            GloryJie@163.com
  */
-package com.gloryjie.pay.gateway.log;
+package com.gloryjie.pay.log.http.appender;
 
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
@@ -30,7 +30,7 @@ public class ApplicationContextProvider implements ApplicationContextAware {
         context = applicationContext;
     }
 
-    public static <T> T getBean(Class<T> type){
+    static <T> T getBean(Class<T> type){
         return context.getBean(type);
     }
 }

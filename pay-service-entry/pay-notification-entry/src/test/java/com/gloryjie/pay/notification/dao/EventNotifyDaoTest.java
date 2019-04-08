@@ -71,7 +71,7 @@ public class EventNotifyDaoTest {
         eventNotify.setNotifyTime(1);
         eventNotify.setNotifyUrl("http://www.xxxx.co");
         eventNotify.setNotifyInterval("[1,2,3,4,5]");
-        eventNotify.setEventData("data");
+        eventNotify.setEventData("list");
         eventNotify.setLastReply("success");
         eventNotify.setTimeLastNotify(LocalDateTime.now());
         eventNotify.setVersion(0);

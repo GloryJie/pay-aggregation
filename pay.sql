@@ -148,3 +148,28 @@ CREATE TABLE `t_event_notify` (
   PRIMARY KEY (`event_no`),
   KEY `idx_source_no` (`source_no`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT;
+
+-- -- ----------------------------
+-- -- Http日志记录
+-- -- ----------------------------
+DROP TABLE IF EXISTS `t_http_log`;
+CREATE TABLE `t_http_log` (
+  `id` int not null auto_increment,
+  `type` varchar(32) not null comment 'http日志类型',
+  `app_id` varchar(16) comment '应用标识',
+  `platform` varchar(16) comment '支付平台',
+  `live_mode` tinyint(2) comment '是否是生产模式',
+  `req_timestamp` bigint comment '请求时间戳',
+  `req_client_ip` varchar(32) comment '请求源的ip地址',
+  `req_uri` varchar(128) comment '请求uri地址',
+  `req_body` varchar(4096) comment '请求体',
+  `req_method` varchar(8) comment '请求方法',
+  `req_header` varchar(2048) comment '请求头',
+  `resp_milli` bigint comment '相应时间',
+  `resp_http_status` varchar(6) comment '响应状态码',
+  `resp_header` varchar(2048) comment '响应头',
+  `resp_body` varchar(4096) comment '响应内容',
+  `resp_timestamp` bigint comment '响应时间戳',
+  primary key (`id`),
+  index `http_log_app_type`(`app_id`,`type`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT;

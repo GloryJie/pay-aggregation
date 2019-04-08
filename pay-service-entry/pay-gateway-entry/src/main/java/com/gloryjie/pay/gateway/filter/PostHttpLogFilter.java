@@ -12,6 +12,8 @@
 package com.gloryjie.pay.gateway.filter;
 
 import com.gloryjie.pay.base.util.JsonUtil;
+import com.gloryjie.pay.log.http.enums.HttpLogType;
+import com.gloryjie.pay.log.http.model.HttpLogRecord;
 import com.netflix.util.Pair;
 import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
@@ -63,7 +65,7 @@ public class PostHttpLogFilter extends ZuulFilter {
 
         RequestContext context = RequestContext.getCurrentContext();
         HttpServletRequest request = context.getRequest();
-        Document logDocument = (Document) context.get(PreHttpLogFilter.REQUEST_PRE_LOG);
+        HttpLogRecord logDocument = (HttpLogRecord) context.get(PreHttpLogFilter.REQUEST_PRE_LOG);
         String path = request.getServletPath();
 
         if (path.contains(SignCheckFilter.API_FLAG)) {
@@ -77,34 +79,36 @@ public class PostHttpLogFilter extends ZuulFilter {
         List<Pair<String, String>> headerList = context.getOriginResponseHeaders();
         for (Pair<String, String> pair : headerList) {
             if ("appId".equals(pair.first())) {
-                logDocument.put("appId", pair.second());
+                logDocument.setAppId(pair.second());
                 continue;
             }
             if (!pair.first().contains("Zuul")) {
                 respHeaderMap.put(pair.first(), pair.second());
             }
         }
-        logDocument.put("respHeader", JsonUtil.toJson(respHeaderMap));
-        logDocument.put("respHttpStatus", String.valueOf(context.getResponseStatusCode()));
+        logDocument.setReqHeader(JsonUtil.toJson(respHeaderMap));
+        logDocument.setRespHttpStatus(String.valueOf(context.getResponseStatusCode()));
         long respTimestamp = System.currentTimeMillis();
-        logDocument.put("respTimestamp", respTimestamp);
-        logDocument.put("respMilli", respTimestamp - (long) logDocument.get(PreHttpLogFilter.REQ_TIMESTAMP));
+        logDocument.setRespTimestamp(respTimestamp);
+        logDocument.setRespMilli(respTimestamp - logDocument.getReqTimestamp());
 
 
         try {
             String respBody = StreamUtils.copyToString(context.getResponseDataStream(), StandardCharsets.UTF_8);
             context.setResponseBody(respBody);
-            logDocument.put("respBody", respBody);
+            logDocument.setRespBody(respBody);
 
             if (path.contains(SignCheckFilter.API_FLAG)) {
-                logDocument.put("appId", context.getZuulRequestHeaders().get(SignCheckFilter.APP_ID_HEADER));
-                logDocument.put("reqBody", String.valueOf(context.get(SignCheckFilter.ORIGINAL_REQ_BODY)));
-                HTTP_LOG.info("api_req_log", logDocument);
+                logDocument.setAppId(context.getZuulRequestHeaders().get(SignCheckFilter.APP_ID_HEADER));
+                logDocument.setReqBody(String.valueOf(context.get(SignCheckFilter.ORIGINAL_REQ_BODY)));
+                logDocument.setType(HttpLogType.API_REQUEST.name().toLowerCase());
+                HTTP_LOG.info(logDocument.getType(), logDocument);
             } else {
                 String reqBody = StreamUtils.copyToString(request.getInputStream(), StandardCharsets.UTF_8);
-                logDocument.put("reqBody", reqBody);
-                logDocument.put("platform", getPlatformName(path));
-                HTTP_LOG.info("platform_notify_log", logDocument);
+                logDocument.setReqBody(reqBody);
+                logDocument.setPlatform(getPlatformName(path));
+                logDocument.setType(HttpLogType.PLATFORM_NOTIFY_REQUEST.name().toLowerCase());
+                HTTP_LOG.info(logDocument.getType(), logDocument);
             }
         } catch (IOException e) {
             log.error("post log filter read reqBody or respBody fail", e);

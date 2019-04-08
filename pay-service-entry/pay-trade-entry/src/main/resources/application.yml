@@ -7,7 +7,7 @@ spring:
       url: "jdbc:mysql://localhost:3306/pay?useUnicode=true&characterEncoding=UTF8&serverTimezone=GMT%2B8"
   data:
     mongodb:
-      uri: mongodb://localhost:32768/http_log
+      uri: mongodb://localhost:27017/http_log
   jackson:
     default-property-inclusion: non_null
     time-zone: GMT+8
@@ -33,6 +33,9 @@ eureka:
 # 业务配置
 pay:
   host: "http://jierong.nat300.top"
+  httplog:
+    # 指定存储方式
+    store: mongodb
   idFactory:
     workerId: 0
     dataCenterId: 0

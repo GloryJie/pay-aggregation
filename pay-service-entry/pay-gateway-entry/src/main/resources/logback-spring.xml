@@ -32,7 +32,7 @@
     </appender>
 
     <!--mongo 存储格式化日志-->
-    <appender name="MONGO_APPENDER" class="com.gloryjie.pay.gateway.log.MongoAsyncAppender">
+    <appender name="MONGO_APPENDER" class="com.gloryjie.pay.log.http.appender.AsyncAppender">
     </appender>
 
     <!--AsyncAppender 只会是第一个appender-ref起作用-->

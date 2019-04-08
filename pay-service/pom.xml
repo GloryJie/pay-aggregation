@@ -18,6 +18,7 @@
         <module>pay-channel</module>
         <module>pay-notification</module>
         <module>pay-user</module>
+        <module>pay-http-log</module>
     </modules>
 
 

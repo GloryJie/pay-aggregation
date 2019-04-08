@@ -8,7 +8,9 @@ spring:
     name: 'cloud-gateway'
   data:
     mongodb:
-      uri: mongodb://localhost:32768/http_log
+      uri: mongodb://localhost:27017/http_log
+mybatis:
+  mapper-locations: classpath*:/mapper/*.xml
 
 # ribbon超时时间设置
 ribbon:
@@ -53,7 +55,11 @@ pay:
   trigger:
     signCheck: false
     token-check: false
-
+  httplog:
+    # 指定存储方式
+    store: mongodb
+    # 去除多余的配置
+    exclude: mysql
 logging:
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss.SSS} %clr(%5p) %clr(${PID:-}){magenta} [%15.15t] %clr(%-40.40logger{39}){cyan} : %m%n"
