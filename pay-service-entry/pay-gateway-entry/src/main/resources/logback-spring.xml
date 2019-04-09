@@ -31,8 +31,8 @@
         </encoder>
     </appender>
 
-    <!--mongo 存储格式化日志-->
-    <appender name="MONGO_APPENDER" class="com.gloryjie.pay.log.http.appender.AsyncAppender">
+    <!--记录HTTP日志的appender-->
+    <appender name="HTTP_LOG_APPENDER" class="com.gloryjie.pay.log.http.appender.HttpLogAppender">
     </appender>
 
     <!--AsyncAppender 只会是第一个appender-ref起作用-->
@@ -43,16 +43,16 @@
         <appender-ref ref="FILE_APPENDER"/>
     </appender>
 
-    <!--异步输出到mongo-->
-    <appender name="MONGO_ASYNC" class="ch.qos.logback.classic.AsyncAppender">
+    <!--异步记录HTTP日志-->
+    <appender name="ASYNC_HTTP_LOG_APPENDER" class="ch.qos.logback.classic.AsyncAppender">
         <discardingThreshold>0</discardingThreshold>
         <queueSize>512</queueSize>
-        <appender-ref ref="MONGO_APPENDER"/>
+        <appender-ref ref="HTTP_LOG_APPENDER"/>
     </appender>
 
     <!--用于记录api请求日志，以及平台异步通知的logger-->
     <logger name="HttpLogger" level="INFO" additivity="false">
-        <appender-ref ref="MONGO_ASYNC"/>
+        <appender-ref ref="ASYNC_HTTP_LOG_APPENDER"/>
     </logger>
 
     <!--基本日志为控制台以及文件输出-->

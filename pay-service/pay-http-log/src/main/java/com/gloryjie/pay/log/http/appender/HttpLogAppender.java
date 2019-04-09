@@ -27,7 +27,7 @@ import org.springframework.stereotype.Component;
  */
 @Slf4j
 @Component
-public class AsyncAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
+public class HttpLogAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
 
     @Override
     protected void append(ILoggingEvent loggingEvent) {
