@@ -8,3 +8,6 @@ build.output=pay-service-entry/pay-gateway-entry/target/pay-gateway-entry-0.0.1-
 
 # Docker镜像构建之后push的仓库地址
 docker.repo=registry.cn-hangzhou.aliyuncs.com/gloryjie/pay-gateway
+
+# dockerfile位置
+docker.file=pay-service-entry/pay-gateway-entry/Dockerfile
