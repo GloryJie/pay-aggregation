@@ -11,3 +11,6 @@ docker.repo=registry.cn-hangzhou.aliyuncs.com/gloryjie/pay-trade
 
 # dockerfile位置
 docker.file=pay-service-entry/pay-trade-entry/Dockerfile
+
+# 打包的镜像版本
+docker.tag=0.1_dev

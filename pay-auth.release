@@ -13,4 +13,4 @@ docker.repo=registry.cn-hangzhou.aliyuncs.com/gloryjie/pay-auth
 docker.file=pay-service-entry/pay-auth-entry/Dockerfile
 
 # 打包的镜像版本
-docker.tag=dev_0.1
+docker.tag=0.1_dev
