@@ -54,7 +54,7 @@ pay:
     # 支付单默认的过期时间，120M
     defaultExpireTime: 120
   rocketmq:
-    nameSrv: "localhost:9876"
+    nameSrv: "gloryjie.com:9876"
     trade:
       topic: "TRADE_CORE"
       producer: "PID_TRADE"
