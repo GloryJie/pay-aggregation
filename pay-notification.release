@@ -8,3 +8,6 @@ build.output=pay-service-entry/pay-notification-entry/target/pay-notification-en
 
 # Docker镜像构建之后push的仓库地址
 docker.repo=registry.cn-hangzhou.aliyuncs.com/gloryjie/pay-notification
+
+# 指定dockerfile位置
+docker.file=pay-service-entry/pay-notification-entry/Dockerfile
