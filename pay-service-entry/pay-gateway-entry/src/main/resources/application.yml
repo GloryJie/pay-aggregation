@@ -1,68 +1,64 @@
-eureka:
-  client:
-    service-url:
-      defaultZone: http://localhost:10000/eureka
+# 启用Apollo配置中心
+apollo:
+  bootstrap:
+    enabled: true
+    namespaces: application, pay-eureka, pay-gateway
 
-spring:
-  application:
-    name: 'cloud-gateway'
-  data:
-    mongodb:
-      uri: mongodb://localhost:27017/http_log
-mybatis:
-  mapper-locations: classpath*:/mapper/*.xml
+#eureka:
+#  client:
+#    service-url:
+#      defaultZone: http://pay-server-register:10000/eureka
+#
+#spring:
+#  data:
+#    mongodb:
+#      uri: mongodb://localhost:27017/http_log
 
-# ribbon超时时间设置
-ribbon:
-  ConnectTimeout: 1000
-  ReadTimeout: 1000
-  # 对当前实例的重试次数
-  maxAutoRetries: 1
-  # 切换实例的重试次数
-  maxAutoRetriesNextServer: 3
-  # 对所有操作请求都进行重试
-  okToRetryOnAllOperations: true
-# hystrix的超时时间设置
-hystrix:
-  command:
-    default:
-      execution:
-        isolation:
-          thread:
-            timeoutInMilliseconds: 3000
-
-server:
-  port: 12000
-zuul:
-  ignored-services: '*'
-  sensitive-headers: Cookie,Set-Cookie
-  routes:
-    trade-service: /pay/trade/**
-    notify-service: /pay/notification/**
-    auth-service: /pay/auth/**
-  # 禁用默认的错误过滤器
-  SendErrorFilter:
-    error:
-      disable: true
-  retryable: true
-management:
-  endpoints:
-    web:
-      exposure:
-        include: '*'
-
-pay:
-  trigger:
-    signCheck: false
-    token-check: false
-  httplog:
-    # 指定存储方式
-    store: mongodb
-    # 去除多余的配置
-    exclude: mysql
-logging:
-  pattern:
-    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} %clr(%5p) %clr(${PID:-}){magenta} [%15.15t] %clr(%-40.40logger{39}){cyan} : %m%n"
-  path: "/Users/jie/Documents/log/pay"
-  level:
-  - com.gloryjie.pay: info
+## ribbon超时时间设置
+#ribbon:
+#  ConnectTimeout: 1000
+#  ReadTimeout: 1000
+#  # 对当前实例的重试次数
+#  maxAutoRetries: 1
+#  # 切换实例的重试次数
+#  maxAutoRetriesNextServer: 3
+#  # 对所有操作请求都进行重试
+#  okToRetryOnAllOperations: true
+## hystrix的超时时间设置
+#hystrix:
+#  command:
+#    default:
+#      execution:
+#        isolation:
+#          thread:
+#            timeoutInMilliseconds: 3000
+#
+#server:
+#  port: 12000
+#zuul:
+#  ignored-services: '*'
+#  sensitive-headers: Cookie,Set-Cookie
+#  routes:
+#    trade-service: /pay/trade/**
+#    notify-service: /pay/notification/**
+#    auth-service: /pay/auth/**
+#  # 禁用默认的错误过滤器
+#  SendErrorFilter:
+#    error:
+#      disable: true
+#  retryable: true
+#management:
+#  endpoints:
+#    web:
+#      exposure:
+#        include: '*'
+#
+#pay:
+#  trigger:
+#    signCheck: false
+#    token-check: false
+#  httplog:
+#    # 指定存储方式
+#    store: mongodb
+#    # 去除多余的配置
+#    exclude: mysql

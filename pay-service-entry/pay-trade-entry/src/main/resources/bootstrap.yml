@@ -1,0 +1,24 @@
+spring:
+  jackson:
+    default-property-inclusion: non_null
+    time-zone: GMT+8
+  application:
+    name: 'trade-service'
+
+mybatis:
+  mapper-locations: classpath*:/mapper/*.xml
+  config-location: classpath:mybatis-config.xml
+
+  # mybatis pageHelper配置
+pagehelper:
+  reasonable: true
+
+logging:
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} %clr(%5p) %clr(${PID:-}){magenta} [%15.15t] %clr(%-40.40logger{39}){cyan} : %m%n"
+  path: "/Users/jie/Documents/log/pay"
+  level:
+  - com.gloryjie.pay: info
+
+server:
+  port: 10030

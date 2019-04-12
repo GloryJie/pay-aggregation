@@ -1,0 +1,18 @@
+server:
+  port: 10000
+spring:
+  application:
+    name: server-register
+eureka:
+  client:
+    # 不注册自己
+    register-with-eureka: false
+    # 不拉取服务注册列表
+    fetch-registry: false
+
+logging:
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} %clr(%5p) %clr(${PID:-}){magenta} [%15.15t] %clr(%-40.40logger{39}){cyan} : %m%n"
+  path: "/Users/jie/Documents/log/pay"
+  level:
+  - com.gloryjie.pay: info

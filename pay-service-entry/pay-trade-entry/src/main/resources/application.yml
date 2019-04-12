@@ -1,79 +1,62 @@
-spring:
-  datasource:
-    druid:
-      username: root
-      password: 123456
-      driver-class-name: com.mysql.cj.jdbc.Driver
-      url: "jdbc:mysql://localhost:3306/pay?useUnicode=true&characterEncoding=UTF8&serverTimezone=GMT%2B8"
-  data:
-    mongodb:
-      uri: mongodb://localhost:27017/http_log
-  jackson:
-    default-property-inclusion: non_null
-    time-zone: GMT+8
-  application:
-    name: 'trade-service'
-mybatis:
-  mapper-locations: classpath*:/mapper/*.xml
-  config-location: classpath:mybatis-config.xml
-server:
-  port: 10030
+# 启用Apollo配置中心
+apollo:
+  bootstrap:
+    enabled: true
+    namespaces: application, pay-eureka, pay-mysql, pay-mongodb, pay-rocketmq, pay-trade
 
-# mybatis pageHelper配置
-pagehelper:
-  reasonable: true
+#spring:
+#  datasource:
+#    druid:
+#      username: root
+#      password: 123456
+#      driver-class-name: com.mysql.cj.jdbc.Driver
+#      url: "jdbc:mysql://localhost:3306/pay?useUnicode=true&characterEncoding=UTF8&serverTimezone=GMT%2B8"
+#  data:
+#    mongodb:
+#      uri: mongodb://localhost:27017/http_log
 
-eureka:
-  client:
-    service-url:
-      defaultZone: http://localhost:10000/eureka
-    register-with-eureka: true
-    fetch-registry: true
+#eureka:
+#  client:
+#    service-url:
+#      defaultZone: http://localhost:10000/eureka
 
 # 业务配置
-pay:
-  host: "http://jierong.nat300.top"
-  httplog:
-    # 指定存储方式
-    store: mongodb
-  idFactory:
-    workerId: 0
-    dataCenterId: 0
-  trigger:
-    signCheck: false
-    # 主动轮询状态
-    initiativeQuery: true
-    # 关闭订单前先主动查询一次
-    queryBeforeClose: true
-  channel:
-    # 渠道配置
-    alipay:
-      sandboxMode: true
-      notifyUri: "/pay/trade/platform/notify/alipay"
-  trade:
-    # 支付单默认的过期时间，120M
-    defaultExpireTime: 120
-  rocketmq:
-    nameSrv: "gloryjie.com:9876"
-    trade:
-      topic: "TRADE_CORE"
-      producer: "PID_TRADE"
-      # 异步退款
-      asyncRefundConsumer: "CID_REFUND"
-      # 定时关单
-      closeChargeConsumer: "CID_CLOSE_CHARGE"
-    notify:
-      topic: "PAY_EVENT"
-      producer: "PID_NOTIFY"
-      interval: 0s,1m,4m,10m,1h,2h,6h,15h
-      # 事件通知
-      eventNotifyConsumer: "CID_EVENT_NOTIFY"
-      # 监听事件变化
-      tradeEventListenConsumer: "CID_TRADE_EVENT_LISTEN"
-
-logging:
-  pattern:
-    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} %clr(%5p) %clr(${PID:-}){magenta} [%15.15t] %clr(%-40.40logger{39}){cyan} : %m%n"
-  path: "/Users/jie/Documents/log/pay"
-  level:
-  - com.gloryjie.pay: info
+#pay:
+#  host: "http://jierong.nat300.top"
+#  httplog:
+#    # 指定存储方式
+#    store: mongodb
+#  idFactory:
+#    workerId: 0
+#    dataCenterId: 0
+#  trigger:
+#    signCheck: false
+#    # 主动轮询状态
+#    initiativeQuery: true
+#    # 关闭订单前先主动查询一次
+#    queryBeforeClose: true
+#  channel:
+#    # 渠道配置
+#    alipay:
+#      sandboxMode: true
+#      notifyUri: "/pay/trade/platform/notify/alipay"
+#  trade:
+#    # 支付单默认的过期时间，120M
+#    defaultExpireTime: 120
+#  rocketmq:
+#    nameSrv: "gloryjie.com:9876"
+#    trade:
+#      topic: "TRADE_CORE"
+#      producer: "PID_TRADE"
+#      # 异步退款
+#      asyncRefundConsumer: "CID_REFUND"
+#      # 定时关单
+#      closeChargeConsumer: "CID_CLOSE_CHARGE"
+#    notify:
+#      topic: "PAY_EVENT"
+#      producer: "PID_NOTIFY"
+#      interval: 0s,1m,4m,10m,1h,2h,6h,15h
+#      # 事件通知
+#      eventNotifyConsumer: "CID_EVENT_NOTIFY"
+#      # 监听事件变化
+#      tradeEventListenConsumer: "CID_TRADE_EVENT_LISTEN"
