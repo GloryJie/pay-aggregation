@@ -29,3 +29,14 @@ target/
 /dist/
 /nbdist/
 /.nb-gradle/
+/pay-service-entry/pay-auth-entry/src/main/resources/application.yml
+.DS_Store
+pay-service-entry/.DS_Store
+pay-service/.DS_Store
+pay-service/pay-channel/src/main/java/com/gloryjie/pay/channel/cache/
+pay-service/pay-trade/src/main/java/com/gloryjie/pay/trade/error/
+/pay-service-entry/pay-gateway-entry/src/main/resources/application.yml
+/pay-service-entry/pay-notification-entry/src/main/resources/application.yml
+/pay-service-entry/pay-server-register/src/main/resources/application.yml
+/pay-service-entry/pay-trade-entry/src/main/resources/application.yml
+/LOG_FILE_PATH_IS_UNDEFINED/
