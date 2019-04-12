@@ -1,4 +1,4 @@
 FROM openjdk:8-jdk-alpine
 COPY target/pay-*.jar /app.jar
-ENTRYPOINT ["java","-jar","/app.jar"]
-EXPOSE 10030
+ENV PRE_PARAM=""
+ENTRYPOINT ["sh","-c","java $PRE_PARAM -jar /app.jar"]
