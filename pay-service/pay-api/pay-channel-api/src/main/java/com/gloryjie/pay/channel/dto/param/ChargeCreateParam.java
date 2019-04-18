@@ -34,7 +34,6 @@ public class ChargeCreateParam {
     /**
      * 平台应用Id
      */
-    @NotNull
     private Integer appId;
 
     /**

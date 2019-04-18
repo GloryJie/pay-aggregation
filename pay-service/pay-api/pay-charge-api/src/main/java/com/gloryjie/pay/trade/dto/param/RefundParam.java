@@ -25,7 +25,6 @@ import javax.validation.constraints.NotNull;
 @Data
 public class RefundParam {
 
-    @NotNull
     private Integer appId;
 
     @NotNull

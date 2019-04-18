@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="60" debug="false">
+
+    <!--转换有颜色的日志格式-->
+    <conversionRule conversionWord="clr" converterClass="org.springframework.boot.logging.logback.ColorConverter"/>
+    <!--从spring配置中获取属性值-->
+    <springProperty scope="context" name="LOG_LEVEL" source="logging.level"/>
+    <springProperty scope="context" name="LOG_PATTERN" source="logging.pattern.console"/>
+    <springProperty scope="context" name="LOG_FILE_PATH" source="logging.path"/>
+    <property name="APP_NAME" value="pay-all-in-one"/>
+
+    <!--控制台输出-->
+    <appender name="CONSOLE_APPENDER" class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <pattern>${LOG_PATTERN}</pattern>
+        </layout>
+    </appender>
+
+    <!--文件输出, 按照时间以及单文件大小来划分-->
+    <appender name="FILE_APPENDER" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_FILE_PATH}/${APP_NAME}/${APP_NAME}.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_FILE_PATH}/${APP_NAME}/${APP_NAME}-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <maxFileSize>100MB</maxFileSize>
+            <maxHistory>30</maxHistory>
+            <totalSizeCap>20GB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <charset>UTF-8</charset>
+            <pattern>${LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <!--AsyncAppender 只会是第一个appender-ref起作用-->
+    <!--异步输出到文件-->
+    <appender name="FILE_ASYNC" class="ch.qos.logback.classic.AsyncAppender">
+        <discardingThreshold>0</discardingThreshold>
+        <queueSize>1024</queueSize>
+        <appender-ref ref="FILE_APPENDER"/>
+    </appender>
+
+    <!--记录HTTP日志的appender-->
+    <appender name="HTTP_LOG_APPENDER" class="com.gloryjie.pay.log.http.appender.HttpLogAppender">
+    </appender>
+
+    <!--异步记录HTTP日志-->
+    <appender name="ASYNC_HTTP_LOG_APPENDER" class="ch.qos.logback.classic.AsyncAppender">
+        <discardingThreshold>0</discardingThreshold>
+        <queueSize>512</queueSize>
+        <appender-ref ref="HTTP_LOG_APPENDER"/>
+    </appender>
+
+    <!--用于记录api请求日志，以及平台异步通知的logger-->
+    <logger name="HttpLogger" level="INFO" additivity="false">
+        <appender-ref ref="ASYNC_HTTP_LOG_APPENDER"/>
+    </logger>
+
+    <!--基本日志为控制台以及文件输出-->
+    <root level="${LOG_LEVEL:-info}">
+        <appender-ref ref="CONSOLE_APPENDER"/>
+        <appender-ref ref="FILE_ASYNC"/>
+    </root>
+
+</configuration>

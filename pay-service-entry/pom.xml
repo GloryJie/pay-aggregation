@@ -17,7 +17,52 @@
         <module>pay-gateway-entry</module>
         <module>pay-server-register</module>
         <module>pay-auth-entry</module>
+        <module>pay-all-in-one</module>
     </modules>
+
+    <properties>
+        <pay-app.version>0.0.1-SNAPSHOT</pay-app.version>
+        <pay-trade.version>0.0.1-SNAPSHOT</pay-trade.version>
+        <pay-http-log.version>0.0.1-SNAPSHOT</pay-http-log.version>
+        <pay-notification.version>0.0.1-SNAPSHOT</pay-notification.version>
+        <pay-channel.version>0.0.1-SNAPSHOT</pay-channel.version>
+        <pay-user.version>0.0.1-SNAPSHOT</pay-user.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.gloryjie</groupId>
+                <artifactId>pay-app</artifactId>
+                <version>${pay-app.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.gloryjie</groupId>
+                <artifactId>pay-trade</artifactId>
+                <version>${pay-trade.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.gloryjie</groupId>
+                <artifactId>pay-http-log</artifactId>
+                <version>${pay-http-log.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.gloryjie</groupId>
+                <artifactId>pay-notification</artifactId>
+                <version>${pay-notification.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.gloryjie</groupId>
+                <artifactId>pay-channel</artifactId>
+                <version>${pay-channel.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.gloryjie</groupId>
+                <artifactId>pay-user</artifactId>
+                <version>${pay-user.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
 
 </project>
