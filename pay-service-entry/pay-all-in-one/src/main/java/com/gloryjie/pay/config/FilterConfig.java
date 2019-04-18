@@ -1,5 +1,6 @@
 package com.gloryjie.pay.config;
 
+import com.gloryjie.pay.filter.ErrorHandlerFilter;
 import com.gloryjie.pay.filter.HttpLogFilter;
 import com.gloryjie.pay.filter.SignCheckFilter;
 import com.gloryjie.pay.filter.UriRewriteFilter;
@@ -24,7 +25,7 @@ public class FilterConfig {
         registration.setFilter(new UriRewriteFilter());
         registration.addUrlPatterns("/pay/trade/*", "/pay/notification/*", "/pay/auth/*");
         registration.setName("rewriteUriFilter");
-        registration.setOrder(Integer.MIN_VALUE + 2);
+        registration.setOrder(Integer.MIN_VALUE + 30);
         return registration;
     }
 
@@ -34,7 +35,7 @@ public class FilterConfig {
         registration.setFilter(signCheckFilter);
         registration.addUrlPatterns("/pay/trade/api/*");
         registration.setName("signCheckFilter");
-        registration.setOrder(Integer.MIN_VALUE+1);
+        registration.setOrder(Integer.MIN_VALUE+20);
         return registration;
     }
 
@@ -44,6 +45,16 @@ public class FilterConfig {
         registration.setFilter(new HttpLogFilter());
         registration.addUrlPatterns("/pay/trade/api/*","/pay/trade/platform/notify/*");
         registration.setName("httpLogFilter");
+        registration.setOrder(Integer.MIN_VALUE+10);
+        return registration;
+    }
+
+    @Bean
+    public FilterRegistrationBean errorHandlerFilterRegistrationBean() {
+        FilterRegistrationBean registration = new FilterRegistrationBean();
+        registration.setFilter(new ErrorHandlerFilter());
+        registration.addUrlPatterns("/*");
+        registration.setName("errorHandlerFilterRegistrationBean");
         registration.setOrder(Integer.MIN_VALUE);
         return registration;
     }

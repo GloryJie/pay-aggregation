@@ -30,16 +30,16 @@ public class ExternalException extends BaseException {
         super(baseErrorEnum, detailMsg);
     }
 
-    public static BusinessException create(BaseErrorEnum errorEnum) {
-        return new BusinessException(errorEnum);
+    public static ExternalException create(BaseErrorEnum errorEnum) {
+        return new ExternalException(errorEnum);
     }
 
-    public static BusinessException create(BaseErrorEnum errorEnum, String detailMsg) {
-        return new BusinessException(errorEnum, detailMsg);
+    public static ExternalException create(BaseErrorEnum errorEnum, String detailMsg) {
+        return new ExternalException(errorEnum, detailMsg);
     }
 
-    public static BusinessException create(BaseErrorEnum errorEnum, String detailMsg, Object... args) {
+    public static ExternalException create(BaseErrorEnum errorEnum, String detailMsg, Object... args) {
         String message = String.format(detailMsg, args);
-        return new BusinessException(errorEnum, message);
+        return new ExternalException(errorEnum, message);
     }
 }
