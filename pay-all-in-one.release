@@ -8,3 +8,9 @@ build.output=pay-service-entry/pay-server-register/target/pay-all-in-one-0.0.1-S
 
 # Docker镜像构建之后push的仓库地址
 docker.repo=registry.cn-hangzhou.aliyuncs.com/gloryjie/pay-all-in-one
+
+# dockerfile位置
+docker.file=pay-service-entry/pay-all-in-one/Dockerfile
+
+# 打包的镜像版本
+docker.tag=0.1_dev
