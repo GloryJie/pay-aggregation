@@ -14,7 +14,6 @@ import com.gloryjie.pay.base.util.SignUtil;
 import com.gloryjie.pay.base.util.cipher.Rsa;
 import com.gloryjie.pay.base.util.validator.ParamValidator;
 import com.gloryjie.pay.model.UniformRequestParam;
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,10 +82,10 @@ public class SignCheckFilter implements Filter {
         // 4. 验证修改请求体数据，只保留业务数据, 并将验证过的appId放进请求头
         servletRequest.setAttribute(APP_ID_HEADER, uniformRequestParam.getAppId());
 
-        RewriteHttpServletRequestWrapper rewriteRequest = null;
+        RewriteBodyHttpServletRequestWrapper rewriteRequest = null;
         if (DefaultConstant.REQUEST_METHOD.POST.equalsIgnoreCase(servletRequest.getMethod()) && uniformRequestParam.getBizData() != null) {
             String newBody = JsonUtil.toJson(uniformRequestParam.getBizData());
-            rewriteRequest = new RewriteHttpServletRequestWrapper(servletRequest, newBody);
+            rewriteRequest = new RewriteBodyHttpServletRequestWrapper(servletRequest, newBody);
             rewriteRequest.putHeader(APP_ID_HEADER, String.valueOf(uniformRequestParam.getAppId()));
         }
         servletRequest.setAttribute(SIGN_CHECK_RESULT, true);
@@ -151,13 +150,13 @@ public class SignCheckFilter implements Filter {
         }
     }
 
-    class RewriteHttpServletRequestWrapper extends HttpServletRequestWrapper {
+    class RewriteBodyHttpServletRequestWrapper extends HttpServletRequestWrapper {
 
         byte[] bodyData;
 
         private final Map<String, String> customHeaders;
 
-        RewriteHttpServletRequestWrapper(HttpServletRequest request, String body) {
+        RewriteBodyHttpServletRequestWrapper(HttpServletRequest request, String body) {
             super(request);
             bodyData = body.getBytes(StandardCharsets.UTF_8);
             customHeaders = new HashMap<>(3);
@@ -203,13 +202,35 @@ public class SignCheckFilter implements Filter {
             }
             return Collections.enumeration(set);
         }
+
+        @Override
+        public Enumeration<String> getHeaders(String name) {
+            Set<String> set = new HashSet<>();
+            @SuppressWarnings("unchecked")
+            Enumeration<String> e = ((HttpServletRequest) getRequest()).getHeaders(name);
+            while (e.hasMoreElements()) {
+                String n = e.nextElement();
+                set.add(n);
+            }
+            if (customHeaders.containsKey(name)){
+                set.add(customHeaders.get(name));
+            }
+            return Collections.enumeration(set);
+        }
+
+        @Override
+        public int getIntHeader(String name) {
+            if (customHeaders.containsKey(name)){
+                return Integer.valueOf(customHeaders.get(name));
+            }
+            return super.getIntHeader(name);
+        }
     }
 
     class ServletInputStreamWrapper extends ServletInputStream {
 
         private byte[] data;
         private int idx;
-
         private InputStream inputStream;
 
         public ServletInputStreamWrapper(byte[] data) {

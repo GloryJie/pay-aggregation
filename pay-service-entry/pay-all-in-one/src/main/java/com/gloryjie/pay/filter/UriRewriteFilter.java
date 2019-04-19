@@ -1,13 +1,8 @@
 package com.gloryjie.pay.filter;
 
-import org.springframework.core.annotation.Order;
-import org.springframework.util.StreamUtils;
-
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServletResponseWrapper;
 import java.io.IOException;
 
 /**
@@ -25,8 +20,7 @@ public class UriRewriteFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest servletRequest = (HttpServletRequest) request;
 
-        HttpServletResponseWrapper responseWrapper = new HttpServletResponseWrapper((HttpServletResponse) response);
-        String path = servletRequest.getRequestURI();
+        String path = servletRequest.getServletPath();
         if (path.contains(TRADE_SERVICE_PREFIX)) {
             path = path.replace(TRADE_SERVICE_PREFIX, "");
         } else if (path.contains(NOTIFICATION_SERVICE_PREFIX)) {
@@ -36,16 +30,18 @@ public class UriRewriteFilter implements Filter {
         } else {
             chain.doFilter(request, response);
         }
-        MyHttpServletRequestWrapper requestWrapper = new MyHttpServletRequestWrapper(path, servletRequest);
-        chain.doFilter(requestWrapper, responseWrapper);
+        RewritePathHttpServletRequestWrapper requestWrapper = new RewritePathHttpServletRequestWrapper(path, servletRequest);
+        chain.doFilter(requestWrapper, response);
     }
 
-    class MyHttpServletRequestWrapper extends HttpServletRequestWrapper {
+    class RewritePathHttpServletRequestWrapper extends HttpServletRequestWrapper {
         String path;
-        MyHttpServletRequestWrapper(String path, HttpServletRequest request){
+
+        RewritePathHttpServletRequestWrapper(String path, HttpServletRequest request) {
             super(request);
             this.path = path;
         }
+
         @Override
         public String getServletPath() {
             return path;

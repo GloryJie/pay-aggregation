@@ -6,7 +6,7 @@ import com.gloryjie.pay.log.http.enums.HttpLogType;
 import com.gloryjie.pay.log.http.model.HttpLogRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.StreamUtils;
+import org.springframework.web.util.ContentCachingRequestWrapper;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -49,8 +49,8 @@ public class HttpLogFilter implements Filter {
 
         // 响应体
         BodyCachingHttpServletResponseWrapper responseWrapper = new BodyCachingHttpServletResponseWrapper((HttpServletResponse) response);
-
-        chain.doFilter(servletRequest, responseWrapper);
+        ContentCachingRequestWrapper requestWrapper = new ContentCachingRequestWrapper(servletRequest);
+        chain.doFilter(requestWrapper, responseWrapper);
 
         // 响应内容
         HttpServletResponse servletResponse = (HttpServletResponse) response;
@@ -58,7 +58,7 @@ public class HttpLogFilter implements Filter {
 
         if (path.contains(SignCheckFilter.API_FLAG)) {
             // 只记录通过签名的
-            if (servletRequest.getAttribute(SignCheckFilter.SIGN_CHECK_RESULT) == null) {
+            if (requestWrapper.getAttribute(SignCheckFilter.SIGN_CHECK_RESULT) == null) {
                 return;
             }
         }
@@ -72,8 +72,6 @@ public class HttpLogFilter implements Filter {
         logDocument.setRespTimestamp(respTimestamp);
         logDocument.setRespMilli(respTimestamp - logDocument.getReqTimestamp());
 
-
-
         String respBody = new String(responseWrapper.getBody(),StandardCharsets.UTF_8);
         logDocument.setRespBody(respBody);
 
@@ -85,7 +83,7 @@ public class HttpLogFilter implements Filter {
             HTTP_LOG.info(logDocument.getType(), logDocument);
         } else {
             logDocument.setAppId(respHeaderMap.get("appId"));
-            logDocument.setReqBody(StreamUtils.copyToString(servletRequest.getInputStream(),StandardCharsets.UTF_8));
+            logDocument.setReqBody(new String(requestWrapper.getContentAsByteArray(),StandardCharsets.UTF_8));
             logDocument.setPlatform(getPlatformName(path));
             logDocument.setType(HttpLogType.PLATFORM_NOTIFY_REQUEST.name().toLowerCase());
             HTTP_LOG.info(logDocument.getType(), logDocument);
