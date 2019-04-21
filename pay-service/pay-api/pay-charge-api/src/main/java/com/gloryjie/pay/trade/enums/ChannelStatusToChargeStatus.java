@@ -15,6 +15,7 @@ import com.gloryjie.pay.base.enums.error.CommonErrorEnum;
 import com.gloryjie.pay.base.exception.error.SystemException;
 import com.gloryjie.pay.channel.enums.AlipayStatus;
 import com.gloryjie.pay.channel.enums.ChannelType;
+import com.gloryjie.pay.channel.enums.UnionpayStatus;
 
 /**
  * 渠道状态转换为支付单对应状态
@@ -24,14 +25,12 @@ import com.gloryjie.pay.channel.enums.ChannelType;
  */
 public class ChannelStatusToChargeStatus {
 
-
     public static ChargeStatus switchStatus(ChannelType channel, String status) {
-        switch (channel) {
-            case ALIPAY_PAGE:
-            case ALIPAY_WAP:
-            case ALIPAY_SCAN_CODE:
-            case ALIPAY_BAR_CODE:
+        switch (channel.getPlatformType()) {
+            case ALIPAY:
                 return alipayStatusToChargeStatus(status);
+            case UNIONPAY:
+                return unionpayStatusToChargeStatus(status);
             default:
                 throw SystemException.create(CommonErrorEnum.INTERNAL_SYSTEM_ERROR);
         }
@@ -56,7 +55,29 @@ public class ChannelStatusToChargeStatus {
                 chargeStatus = ChargeStatus.FAILURE;
                 break;
             default:
-                throw SystemException.create(CommonErrorEnum.INTERNAL_SYSTEM_ERROR, "status not exists");
+                throw SystemException.create(CommonErrorEnum.INTERNAL_SYSTEM_ERROR, "alipay status not exists");
+        }
+        return chargeStatus;
+    }
+
+    private static ChargeStatus unionpayStatusToChargeStatus(String status) {
+        UnionpayStatus unionpayStatus = UnionpayStatus.valueOf(status);
+        ChargeStatus chargeStatus;
+        switch (unionpayStatus) {
+            case TRADE_ACCEPT_SUCCESS:
+            case TIMEOUT_OR_UNKNOWN_STATUS:
+            case TRADE_NOT_EXISTS:
+            case TRADE_REPEAT:
+                chargeStatus = ChargeStatus.WAIT_PAY;
+                break;
+            case TRADE_SUCCESS:
+                chargeStatus = ChargeStatus.SUCCESS;
+                break;
+            case TRADE_FAIL:
+                chargeStatus = ChargeStatus.FAILURE;
+                break;
+            default:
+                throw SystemException.create(CommonErrorEnum.INTERNAL_SYSTEM_ERROR, "unionpay status not exists");
         }
         return chargeStatus;
     }

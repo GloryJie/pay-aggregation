@@ -32,6 +32,12 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>com.egzosn</groupId>
+            <artifactId>pay-java-union</artifactId>
+        </dependency>
+
     </dependencies>
 
 </project>

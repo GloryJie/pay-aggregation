@@ -66,6 +66,11 @@ public class ChargeQueryExecutors {
                 maxTimes = 5;
                 strategy = new RandomIntervalStrategy(0, Math.toIntExact(timeExpire * 60 / maxTimes), TimeUnit.SECONDS);
                 break;
+            case UNIONPAY_PAGE:
+            case UNIONPAY_WAP:
+                maxTimes = 5;
+                strategy = new RandomIntervalStrategy(0, Math.toIntExact(timeExpire * 60 / maxTimes), TimeUnit.SECONDS);
+                break;
             default:
                 log.info("unsupported ChannelType={} query task, chargeNo={}", channelType, chargeNo);
                 return;

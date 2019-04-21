@@ -33,8 +33,9 @@ public enum ChannelError implements BaseErrorEnum {
      */
     CHANNEL_CONFIG_EXISTS(HttpStatus.BAD_REQUEST,"201","渠道配置已存在"),
     CHANNEL_CONFIG_NOT_EXISTS(HttpStatus.BAD_REQUEST,"202","渠道未配置"),
-    PLATFORM_NOTIFY_SIGN_NOT_THROUGH(HttpStatus.BAD_REQUEST,"203","渠道异步通知签名未通过"),
-    PLATFORM_NOTIFY_PARAM_ILLEGAL(HttpStatus.BAD_REQUEST,"204","渠道异步通知参数异常")
+    CHANNEL_CONFIG_NOT_USING(HttpStatus.BAD_REQUEST,"203","渠道配置未启用"),
+    PLATFORM_NOTIFY_SIGN_NOT_THROUGH(HttpStatus.BAD_REQUEST,"204","渠道异步通知签名未通过"),
+    PLATFORM_NOTIFY_PARAM_ILLEGAL(HttpStatus.BAD_REQUEST,"205","渠道异步通知参数异常")
     ;
 
     private int code;

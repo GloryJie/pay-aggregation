@@ -20,6 +20,7 @@ import com.gloryjie.pay.base.util.idGenerator.IdFactory;
 import com.gloryjie.pay.channel.dto.ChannelRefundDto;
 import com.gloryjie.pay.channel.dto.response.ChannelRefundResponse;
 import com.gloryjie.pay.channel.service.ChannelGatewayService;
+import com.gloryjie.pay.trade.dao.ChargeDao;
 import com.gloryjie.pay.trade.dao.RefundDao;
 import com.gloryjie.pay.trade.dto.RefreshRefundDto;
 import com.gloryjie.pay.trade.dto.RefundDto;
@@ -52,6 +53,9 @@ public class RefundBiz {
 
     @Autowired
     private RefundDao refundDao;
+
+    @Autowired
+    private ChargeDao chargeDao;
 
     @Autowired
     private TradeMqProducer tradeMqProducer;
@@ -132,7 +136,11 @@ public class RefundBiz {
         if (RefundStatus.PROCESSING != refund.getStatus()) {
             return;
         }
+        // TODO: 2019/4/21 临时解决,可考虑MQ发送消息携带更多信息,或者Refund冗余交易平台流水号和支付单amount
+        Charge charge = chargeDao.getByAppIdAndChargeNo(refund.getAppId(), refund.getChargeNo());
         ChannelRefundDto channelRefundDto = BeanConverter.covert(refund, ChannelRefundDto.class);
+        channelRefundDto.setAmount(charge.getAmount());
+        channelRefundDto.setPlatformTradeNo(charge.getPlatformTradeNo());
         ChannelRefundResponse refundResponse = channelGatewayService.refund(channelRefundDto);
         RefreshRefundDto refreshRefundDto = BeanConverter.covert(refund, RefreshRefundDto.class);
         if (refundResponse.isSuccess()) {

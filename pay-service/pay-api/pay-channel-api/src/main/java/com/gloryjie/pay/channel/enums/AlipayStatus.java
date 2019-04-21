@@ -11,6 +11,7 @@
  */
 package com.gloryjie.pay.channel.enums;
 
+import com.gloryjie.pay.channel.constant.ChannelConstant;
 import lombok.Getter;
 
 /**
@@ -27,7 +28,8 @@ public enum AlipayStatus {
     TRADE_CLOSED(1,"未付款交易超时关闭，或支付完成后全额退款"),
     TRADE_SUCCESS(2,"交易支付成功"),
     TRADE_FINISHED(3,"交易结束，不可退款"),
-    TRADE_FAIL(4,"交易失败,自定义状态,抛出异常才会有");
+    TRADE_FAIL(4,"交易失败,自定义状态,抛出异常才会有"),
+    TRADE_NOT_EXISTS(4,"交易不存在");
 
     int code;
 

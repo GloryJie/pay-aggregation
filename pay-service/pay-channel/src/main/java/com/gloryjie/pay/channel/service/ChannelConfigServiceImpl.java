@@ -39,6 +39,16 @@ public class ChannelConfigServiceImpl implements ChannelConfigService {
     private ChannelConfigDao channelConfigDao;
 
     @Override
+    public ChannelConfigDto getUsingChannelConfig(Integer appId, ChannelType channelType) {
+        ChannelConfig channelConfig = channelConfigDao.loadByAppIdAndChannel(appId, channelType);
+        // 是否启用进行判断
+        if (channelConfig == null || channelConfig.getStatus().isStop()){
+            throw BusinessException.create(ChannelError.CHANNEL_CONFIG_NOT_USING);
+        }
+        return BeanConverter.covert(channelConfig, ChannelConfigDto.class);
+    }
+
+    @Override
     public List<ChannelConfigDto> getChannelConfig(Integer appId) {
         List<ChannelConfig> configList = channelConfigDao.getByAppId(appId);
         return BeanConverter.batchCovert(configList, ChannelConfigDto.class);

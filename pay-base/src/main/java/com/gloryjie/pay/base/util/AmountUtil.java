@@ -47,4 +47,8 @@ public class AmountUtil {
         return decimal.multiply(new BigDecimal(100)).longValue();
     }
 
+    public static BigDecimal longToBigDecimal(Long amount){
+        BigDecimal decimal = new BigDecimal(amount);
+        return decimal.divide(new BigDecimal(100L), 2, BigDecimal.ROUND_HALF_DOWN);
+    }
 }

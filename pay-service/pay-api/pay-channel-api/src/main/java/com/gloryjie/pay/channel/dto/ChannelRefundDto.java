@@ -55,5 +55,17 @@ public class ChannelRefundDto {
     @NotNull
     private Long amount;
 
+    /**
+     * 原支付单金额
+     */
+    @NotNull
+    private Long chargeAmount;
+
+    /**
+     * 支付平台的流水交易号
+     */
+    @NotNull
+    private String platformTradeNo;
+
 
 }
