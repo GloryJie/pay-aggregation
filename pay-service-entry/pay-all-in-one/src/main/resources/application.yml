@@ -43,6 +43,9 @@ apollo:
 #    alipay:
 #      sandboxMode: true
 #      notifyUri: "/pay/trade/platform/notify/alipay"
+#    unionpay:
+#      chargeNotifyUri: "/pay/trade/platform/notify/unionpay/charge"
+#      refundNotifyUri: "/pay/trade/platform/notify/unionpay/refund"
 #  trade:
 #    # 支付单默认的过期时间，120M
 #    defaultExpireTime: 120

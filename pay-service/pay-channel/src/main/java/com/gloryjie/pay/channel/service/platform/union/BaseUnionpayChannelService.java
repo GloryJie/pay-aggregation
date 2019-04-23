@@ -45,10 +45,10 @@ public abstract class BaseUnionpayChannelService implements PayChannelService {
     @Value("${pay.host}")
     protected String host;
 
-    @Value("${pay.channel.unionpay.notifyUri:/pay/trade/platform/notify/unionpay/charge}")
+    @Value("${pay.channel.unionpay.chargeNotifyUri:/pay/trade/platform/notify/unionpay/charge}")
     protected String tradeNotifyUri;
 
-    @Value("${pay.channel.unionpay.notifyUri:/pay/trade/platform/notify/unionpay/refund}")
+    @Value("${pay.channel.unionpay.refundNotifyUri:/pay/trade/platform/notify/unionpay/refund}")
     protected String refundNotifyUri;
 
     @Autowired
