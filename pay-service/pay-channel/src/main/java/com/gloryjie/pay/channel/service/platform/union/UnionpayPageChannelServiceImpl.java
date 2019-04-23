@@ -7,6 +7,7 @@ import com.egzosn.pay.union.bean.UnionTransactionType;
 import com.gloryjie.pay.channel.constant.ChannelConstant;
 import com.gloryjie.pay.channel.dto.ChannelPayDto;
 import com.gloryjie.pay.channel.dto.response.ChannelPayResponse;
+import com.gloryjie.pay.channel.enums.AsyncNotifyType;
 import com.gloryjie.pay.channel.enums.ChannelType;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -32,7 +33,7 @@ public class UnionpayPageChannelServiceImpl extends BaseUnionpayChannelService{
         if (payDto.getExtra() != null && StringUtils.isNotBlank(payDto.getExtra().get(ChannelConstant.Alipay.WAP_PAGE_EXTRA))) {
             returnUrl = payDto.getExtra().get(ChannelConstant.Unionpay.WAP_PAGE_EXTRA);
         }
-        PayService payService = getUnionpayService(payDto.getAppId(), getChannelType(), returnUrl, payDto.getLiveMode());
+        PayService payService = getUnionpayService(payDto.getAppId(), getChannelType(), AsyncNotifyType.TRADE_RESULT, returnUrl, payDto.getLiveMode());
         PayOrder payOrder = initPayOrder(payDto);
         payOrder.setTransactionType(UnionTransactionType.WEB);
         // 执行请求

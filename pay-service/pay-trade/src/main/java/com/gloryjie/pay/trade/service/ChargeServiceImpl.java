@@ -27,7 +27,6 @@ import com.gloryjie.pay.trade.dao.ChargeDao;
 import com.gloryjie.pay.trade.dao.RefundDao;
 import com.gloryjie.pay.trade.dto.ChargeDto;
 import com.gloryjie.pay.trade.dto.RefreshChargeDto;
-import com.gloryjie.pay.trade.dto.RefreshRefundDto;
 import com.gloryjie.pay.trade.dto.RefundDto;
 import com.gloryjie.pay.trade.dto.param.ChargeQueryParam;
 import com.gloryjie.pay.trade.dto.param.RefundParam;
@@ -139,7 +138,7 @@ public class ChargeServiceImpl implements ChargeService {
     @Override
     public boolean handleChargeAsyncNotify(PlatformType platformType, Map<String, String> param) {
         // 业务检查
-        String chargeNo = getChargeNofromNotifyParam(platformType, param);
+        String chargeNo = getChargeNoFromNotifyParam(platformType, param);
         if (StringUtils.isBlank(chargeNo)) {
             return false;
         }
@@ -154,7 +153,7 @@ public class ChargeServiceImpl implements ChargeService {
             return true;
         }
         // 交给渠道网关处理
-        ChannelPayQueryResponse response = channelGatewayService.handleAsyncNotify(charge.getAppId(), charge.getChannel(), param);
+        ChannelPayQueryResponse response = channelGatewayService.handleTradeAsyncNotify(charge.getAppId(), charge.getChannel(), param);
         RefreshChargeDto refreshChargeDto = chargeBiz.generateRefreshChargeDto(charge, response);
         charge = chargeBiz.refreshCharge(refreshChargeDto, charge);
         log.info("handle platform={} async notify, chargeNo={} completed chargeStatus={}", platformType.name(), chargeNo, charge.getStatus().name());
@@ -209,10 +208,12 @@ public class ChargeServiceImpl implements ChargeService {
      * @param param
      * @return
      */
-    private String getChargeNofromNotifyParam(PlatformType platformType, Map<String, String> param) {
+    private String getChargeNoFromNotifyParam(PlatformType platformType, Map<String, String> param) {
         switch (platformType) {
             case ALIPAY:
                 return param.get("out_trade_no");
+            case UNIONPAY:
+                return param.get("orderId");
             default:
                 return "";
         }

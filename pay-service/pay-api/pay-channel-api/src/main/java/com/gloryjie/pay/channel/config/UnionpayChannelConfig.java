@@ -33,5 +33,10 @@ public class UnionpayChannelConfig {
      */
     private String rootCert;
 
+    /**
+     * 根证书
+     */
+    private String middleCert;
+
 
 }

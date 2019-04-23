@@ -144,14 +144,26 @@ public class RefundBiz {
         ChannelRefundResponse refundResponse = channelGatewayService.refund(channelRefundDto);
         RefreshRefundDto refreshRefundDto = BeanConverter.covert(refund, RefreshRefundDto.class);
         if (refundResponse.isSuccess()) {
-            refreshRefundDto.setStatus(RefundStatus.SUCCESS);
-            refreshRefundDto.setPlatformTradeNo(refundResponse.getPlatformTradeNo());
-            refreshRefundDto.setTimeSucceed(refundResponse.getTimeSucceed());
+            switch (charge.getChannel().getPlatformType()) {
+                case ALIPAY:
+                    // 支付宝为同步退款
+                    refreshRefundDto.setStatus(RefundStatus.SUCCESS);
+                    refreshRefundDto.setPlatformTradeNo(refundResponse.getPlatformTradeNo());
+                    refreshRefundDto.setTimeSucceed(refundResponse.getTimeSucceed());
+                    break;
+                case UNIONPAY:
+                    // 银联退款结果需要等待异步通知, 为此若成功则什么都不做
+                    return;
+                case WXPAY:
+                    return;
+                default:
+                    break;
+            }
         } else {
+            refreshRefundDto.setStatus(RefundStatus.FAILURE);
             refreshRefundDto.setFailureCode(refundResponse.getSubCode());
             refreshRefundDto.setFailureMsg(refundResponse.getSubMsg());
         }
-
         this.refreshRefund(refreshRefundDto, refund);
     }
 

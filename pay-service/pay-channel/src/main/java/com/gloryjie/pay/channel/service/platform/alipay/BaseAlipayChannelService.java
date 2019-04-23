@@ -197,17 +197,9 @@ public abstract class BaseAlipayChannelService implements PayChannelService {
     }
 
     @Override
-    public ChannelPayQueryResponse handleAsyncNotify(Integer appId, Map<String, String> param) {
-        ChannelConfig config = channelConfigDao.loadByAppIdAndChannel(appId, getChannelType());
-        if (config == null) {
-            throw SystemException.create(ChannelError.CHANNEL_CONFIG_NOT_EXISTS);
-        }
-        AlipayChannelConfig alipayConfig = BeanConverter.mapToBean(new HashMap<>(config.getChannelConfig()), AlipayChannelConfig.class);
-        if (!alipayConfig.getMerchantId().equals(param.get("app_id"))) {
-            throw ExternalException.create(ChannelError.PLATFORM_NOTIFY_SIGN_NOT_THROUGH);
-        }
+    public ChannelPayQueryResponse handleTradeAsyncNotify(Integer appId, Map<String, String> param) {
         // 签名验证
-        boolean result = this.verifySign(param, alipayConfig.getMerchantPublicKey());
+        boolean result = this.verifySign(appId, param);
         if (!result) {
             throw ExternalException.create(ChannelError.PLATFORM_NOTIFY_SIGN_NOT_THROUGH);
         }
@@ -222,9 +214,24 @@ public abstract class BaseAlipayChannelService implements PayChannelService {
     }
 
     @Override
-    public boolean verifySign(Map<String, String> param, String publicKey) {
+    public ChannelRefundResponse handleRefundAsyncNotify(Integer appId, Map<String, String> param) {
+        // 支付宝退款为同步
+        throw  new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean verifySign(Integer appId, Map<String, String> param) {
+        ChannelConfig config = channelConfigDao.loadByAppIdAndChannel(appId, getChannelType());
+        if (config == null) {
+            throw SystemException.create(ChannelError.CHANNEL_CONFIG_NOT_EXISTS);
+        }
+        AlipayChannelConfig alipayConfig = BeanConverter.mapToBean(new HashMap<>(config.getChannelConfig()), AlipayChannelConfig.class);
+        if (!alipayConfig.getMerchantId().equals(param.get("app_id"))) {
+            throw ExternalException.create(ChannelError.PLATFORM_NOTIFY_SIGN_NOT_THROUGH);
+        }
+
         try {
-            return AlipaySignature.rsaCheckV1(param, publicKey, DefaultConstant.CHARSET, param.get("sign_type"));
+            return AlipaySignature.rsaCheckV1(param, alipayConfig.getMerchantPublicKey(), DefaultConstant.CHARSET, param.get("sign_type"));
         } catch (AlipayApiException e) {
             log.warn("verify platform=ALIPAY notify sign fail", e);
         }

@@ -41,11 +41,6 @@ public class DefaultChannelGatewayService implements ChannelGatewayService, Appl
     }
 
     @Override
-    public ChannelPayQueryResponse handleAsyncNotify(Integer appId, ChannelType channelType, Map<String, String> param) {
-        return channelMap.get(channelType).handleAsyncNotify(appId, param);
-    }
-
-    @Override
     public ChannelResponse refund(ChannelRefundDto refundDto) {
         return channelMap.get(refundDto.getChannel()).refund(refundDto);
     }
@@ -58,6 +53,17 @@ public class DefaultChannelGatewayService implements ChannelGatewayService, Appl
     @Override
     public ChannelResponse queryRefund(ChannelRefundQueryDto queryDto) {
         return channelMap.get(queryDto.getChannel()).queryRefund(queryDto);
+    }
+
+    @Override
+    public <T extends ChannelResponse> T handleTradeAsyncNotify(Integer appId, ChannelType channelType, Map<String, String> param) {
+        return (T) channelMap.get(channelType).handleTradeAsyncNotify(appId,param);
+
+    }
+
+    @Override
+    public <T extends ChannelResponse> T handleRefundAsyncNotify(Integer appId, ChannelType channelType, Map<String, String> param) {
+        return (T) channelMap.get(channelType).handleRefundAsyncNotify(appId, param);
     }
 
     @Override

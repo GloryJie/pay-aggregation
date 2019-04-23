@@ -12,7 +12,6 @@
 package com.gloryjie.pay.channel.service;
 
 import com.gloryjie.pay.channel.dto.*;
-import com.gloryjie.pay.channel.dto.response.ChannelPayResponse;
 import com.gloryjie.pay.channel.dto.response.ChannelResponse;
 import com.gloryjie.pay.channel.enums.ChannelType;
 
@@ -29,7 +28,7 @@ public interface ChannelGatewayService {
      * 发起支付请求
      * @return
      */
-    ChannelPayResponse pay(ChannelPayDto payDto);
+    <T extends ChannelResponse> T pay(ChannelPayDto payDto);
 
     /**
      * 发起退款请求
@@ -53,12 +52,22 @@ public interface ChannelGatewayService {
     <T extends ChannelResponse> T queryRefund(ChannelRefundQueryDto queryDto);
 
     /**
-     * 处理异步通知，
+     * 处理交易异步通知
      * @param appId
      * @param channelType
      * @param param
      * @return
      */
-    ChannelPayQueryResponse handleAsyncNotify(Integer appId, ChannelType channelType, Map<String,String> param);
+    <T extends ChannelResponse> T handleTradeAsyncNotify(Integer appId, ChannelType channelType, Map<String, String> param);
+
+
+    /**
+     * 处理退款异步通知
+     * @param appId
+     * @param channelType
+     * @param param
+     * @return
+     */
+    <T extends ChannelResponse> T handleRefundAsyncNotify(Integer appId, ChannelType channelType, Map<String, String> param);
 
 }

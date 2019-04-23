@@ -13,6 +13,7 @@ package com.gloryjie.pay.channel.service;
 
 import com.gloryjie.pay.channel.dto.*;
 import com.gloryjie.pay.channel.dto.response.ChannelPayResponse;
+import com.gloryjie.pay.channel.dto.response.ChannelRefundResponse;
 import com.gloryjie.pay.channel.dto.response.ChannelResponse;
 import com.gloryjie.pay.channel.enums.ChannelType;
 
@@ -59,17 +60,24 @@ public interface PayChannelService {
     ChannelResponse queryRefund(ChannelRefundQueryDto queryDto);
 
     /**
-     * 处理渠道的异步通知，负责验签以及组合需要的参数，不负责业务检查
+     * 处理渠道支付的异步通知，负责验签以及组合需要的参数，不负责业务检查
      * @return
      * @param param
      */
-    ChannelPayQueryResponse handleAsyncNotify(Integer appId, Map<String, String> param);
+    ChannelPayQueryResponse handleTradeAsyncNotify(Integer appId, Map<String, String> param);
+
+    /**
+     * 处理渠道的退款异步通知，负责验签以及组合需要的参数，不负责业务检查
+     * @return
+     * @param param
+     */
+    ChannelRefundResponse handleRefundAsyncNotify(Integer appId, Map<String, String> param);
 
     /**
      * 渠道验签
+     * @param appId 应用
      * @param param 参数
-     * @param publicKey 支付宝公钥
      */
-    boolean verifySign(Map<String, String> param, String publicKey);
+    boolean verifySign(Integer appId, Map<String, String> param);
 
 }
