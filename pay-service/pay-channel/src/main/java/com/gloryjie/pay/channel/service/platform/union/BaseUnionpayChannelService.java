@@ -1,6 +1,7 @@
 package com.gloryjie.pay.channel.service.platform.union;
 
 import com.egzosn.pay.common.api.PayService;
+import com.egzosn.pay.common.bean.PayOrder;
 import com.egzosn.pay.common.bean.RefundOrder;
 import com.egzosn.pay.common.bean.result.PayError;
 import com.egzosn.pay.common.exception.PayErrorException;
@@ -12,7 +13,6 @@ import com.gloryjie.pay.base.constant.DefaultConstant;
 import com.gloryjie.pay.base.util.AmountUtil;
 import com.gloryjie.pay.base.util.BeanConverter;
 import com.gloryjie.pay.channel.config.UnionpayChannelConfig;
-import com.gloryjie.pay.channel.constant.ChannelConstant;
 import com.gloryjie.pay.channel.dto.*;
 import com.gloryjie.pay.channel.dto.response.ChannelResponse;
 import com.gloryjie.pay.channel.enums.ChannelType;
@@ -44,7 +44,7 @@ public abstract class BaseUnionpayChannelService implements PayChannelService {
     @Autowired
     ChannelConfigService configService;
 
-    public PayService getUnionpayService(Integer appId, ChannelType channelType) {
+    public PayService getUnionpayService(Integer appId, ChannelType channelType,String returnUrl, boolean liveMode) {
         ChannelConfigDto channelConfigDto = configService.getUsingChannelConfig(appId, channelType);
         Map<String, Object> configMap = new HashMap<>(channelConfigDto.getChannelConfig());
         UnionpayChannelConfig configModel = BeanConverter.mapToBean(configMap, UnionpayChannelConfig.class);
@@ -60,20 +60,18 @@ public abstract class BaseUnionpayChannelService implements PayChannelService {
         configStorage.setSignType(SignUtils.RSA2.name());
         configStorage.setNotifyUrl(host + notifyUri);
         // returnUrl必填,否则签名无法通过
-        configStorage.setReturnUrl(host + notifyUri);
-        // TODO: 2019/4/21 沙箱环境可配置
-        configStorage.setTest(true);
+        configStorage.setReturnUrl(returnUrl);
+        configStorage.setTest(!liveMode);
+
         return new UnionPayService(configStorage);
     }
 
 
     @Override
     public ChannelPayQueryResponse queryPayment(ChannelPayQueryDto queryDto) {
-        PayService payService = getUnionpayService(queryDto.getAppId(), queryDto.getChannel());
+        PayService payService = getUnionpayService(queryDto.getAppId(), queryDto.getChannel(), null, false);
         ChannelPayQueryResponse response = new ChannelPayQueryResponse();
-
         try {
-
             // UnionService.query()内部做了响应码的检查, 只有respCode和origRespCode都为00时才返回数据,否则抛出异常
             Map respParam = payService.query(null, queryDto.getChargeNo());
             response.setSuccess(true);
@@ -100,7 +98,7 @@ public abstract class BaseUnionpayChannelService implements PayChannelService {
 
     @Override
     public ChannelResponse refund(ChannelRefundDto refundDto) {
-        PayService payService = getUnionpayService(refundDto.getAppId(), refundDto.getChannel());
+        PayService payService = getUnionpayService(refundDto.getAppId(), refundDto.getChannel(), null, false);
         RefundOrder refundOrder = new RefundOrder();
         refundOrder.setOutTradeNo(refundDto.getPlatformTradeNo());
         refundOrder.setTotalAmount(AmountUtil.longToBigDecimal(refundDto.getChargeAmount()));
@@ -124,5 +122,19 @@ public abstract class BaseUnionpayChannelService implements PayChannelService {
     @Override
     public boolean verifySign(Map<String, String> param, String publicKey) {
         return false;
+    }
+
+    /**
+     * 初始化PayOrder对象信息
+     * @param payDto
+     * @return
+     */
+    protected PayOrder initPayOrder(ChannelPayDto payDto){
+        PayOrder payOrder = new PayOrder();
+        payOrder.setSubject(payDto.getSubject());
+        payOrder.setBody(payDto.getBody());
+        payOrder.setPrice(AmountUtil.longToBigDecimal(payDto.getAmount()));
+        payOrder.setOutTradeNo(payDto.getChargeNo());
+        return payOrder;
     }
 }

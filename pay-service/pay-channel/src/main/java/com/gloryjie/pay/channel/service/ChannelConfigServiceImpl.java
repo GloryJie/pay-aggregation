@@ -43,7 +43,7 @@ public class ChannelConfigServiceImpl implements ChannelConfigService {
         ChannelConfig channelConfig = channelConfigDao.loadByAppIdAndChannel(appId, channelType);
         // 是否启用进行判断
         if (channelConfig == null || channelConfig.getStatus().isStop()){
-            throw BusinessException.create(ChannelError.CHANNEL_CONFIG_NOT_USING);
+            throw BusinessException.create(ChannelError.CHANNEL_CONFIG_NOT_EXISTS, "或未启用");
         }
         return BeanConverter.covert(channelConfig, ChannelConfigDto.class);
     }

@@ -58,5 +58,10 @@ public class ChannelPayDto {
 
     private Map<String,String> extra;
 
+    /**
+     * 是否生产模式
+     */
+    private Boolean liveMode;
+
 
 }

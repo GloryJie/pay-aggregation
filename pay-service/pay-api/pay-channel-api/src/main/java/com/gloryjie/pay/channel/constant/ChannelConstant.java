@@ -12,7 +12,6 @@
 package com.gloryjie.pay.channel.constant;
 
 
-import java.net.PortUnreachableException;
 
 /**
  * @author Jie
@@ -24,6 +23,10 @@ public class ChannelConstant {
     public interface Alipay {
         String TRADE_NOT_EXISTS_STATUS = "ACQ.TRADE_NOT_EXIST";
 
+        String WAP_PAGE_EXTRA = "redirectUrl";
+    }
+
+    public interface Unionpay {
         String WAP_PAGE_EXTRA = "redirectUrl";
     }
 }

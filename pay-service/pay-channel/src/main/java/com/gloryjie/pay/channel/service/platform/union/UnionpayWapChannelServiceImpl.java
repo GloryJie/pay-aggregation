@@ -14,16 +14,14 @@ import org.springframework.stereotype.Service;
 import java.util.Map;
 
 /**
- * 银联PC网页支付
  * @author jie
- * @since 2019/4/21
+ * @since 2019/4/23
  */
 @Service
-public class UnionpayPageChannelServiceImpl extends BaseUnionpayChannelService{
-
+public class UnionpayWapChannelServiceImpl extends BaseUnionpayChannelService {
     @Override
     public ChannelType getChannelType() {
-        return ChannelType.UNIONPAY_PAGE;
+        return ChannelType.UNIONPAY_WAP;
     }
 
     @Override
@@ -34,7 +32,7 @@ public class UnionpayPageChannelServiceImpl extends BaseUnionpayChannelService{
         }
         PayService payService = getUnionpayService(payDto.getAppId(), getChannelType(), returnUrl, payDto.getLiveMode());
         PayOrder payOrder = initPayOrder(payDto);
-        payOrder.setTransactionType(UnionTransactionType.WEB);
+        payOrder.setTransactionType(UnionTransactionType.WAP);
         // 执行请求
         Map<String,Object> directOrderInfo = payService.orderInfo(payOrder);
 
