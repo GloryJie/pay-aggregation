@@ -70,6 +70,14 @@ public interface ChargeService {
     boolean handleChargeAsyncNotify(PlatformType platformType, Map<String,String> param);
 
     /**
+     * 处理退款的异步通知结果
+     * @param platformType
+     * @param param
+     * @return
+     */
+    boolean handleRefundAsyncNotify(PlatformType platformType, Map<String,String> param);
+
+    /**
      * 查询支付列表
      * @param queryParam
      * @return

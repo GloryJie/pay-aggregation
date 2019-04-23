@@ -36,7 +36,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -139,7 +138,7 @@ public class RefundBiz {
         // TODO: 2019/4/21 临时解决,可考虑MQ发送消息携带更多信息,或者Refund冗余交易平台流水号和支付单amount
         Charge charge = chargeDao.getByAppIdAndChargeNo(refund.getAppId(), refund.getChargeNo());
         ChannelRefundDto channelRefundDto = BeanConverter.covert(refund, ChannelRefundDto.class);
-        channelRefundDto.setAmount(charge.getAmount());
+        channelRefundDto.setChargeAmount(charge.getAmount());
         channelRefundDto.setPlatformTradeNo(charge.getPlatformTradeNo());
         ChannelRefundResponse refundResponse = channelGatewayService.refund(channelRefundDto);
         RefreshRefundDto refreshRefundDto = BeanConverter.covert(refund, RefreshRefundDto.class);
@@ -196,6 +195,26 @@ public class RefundBiz {
         }
 
         return refund;
+    }
+
+    public RefreshRefundDto generateRefreshRefundParam(Refund refund, ChannelRefundResponse refundResponse){
+        RefreshRefundDto refreshRefundDto = new RefreshRefundDto();
+        refreshRefundDto.setAppId(refund.getAppId());
+        refreshRefundDto.setChannel(refund.getChannel());
+        refreshRefundDto.setRefundNo(refund.getRefundNo());
+
+        if (refundResponse.isSuccess()){
+            refreshRefundDto.setStatus(RefundStatus.SUCCESS);
+            refreshRefundDto.setAmount(refundResponse.getRefundAmount());
+            refreshRefundDto.setPlatformTradeNo(refundResponse.getPlatformTradeNo());
+            refreshRefundDto.setTimeSucceed(refundResponse.getTimeSucceed());
+        }else {
+            refreshRefundDto.setStatus(RefundStatus.FAILURE);
+            refreshRefundDto.setFailureMsg(refundResponse.getSubMsg());
+            refreshRefundDto.setFailureCode(refundResponse.getSubCode());
+        }
+
+        return refreshRefundDto;
     }
 
     /**

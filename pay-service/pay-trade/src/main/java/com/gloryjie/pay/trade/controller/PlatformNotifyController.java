@@ -34,7 +34,6 @@ public class PlatformNotifyController {
     public static final String UNIONPAY_SUCCESS_RESPONSE = "ok";
 
 
-
     @Autowired
     private ChargeService chargeService;
 
@@ -54,6 +53,13 @@ public class PlatformNotifyController {
     @PostMapping("/unionpay/charge")
     public String unionpayTradeAsyncNotify(@RequestParam Map<String, String> param, HttpServletResponse response) {
         boolean result = chargeService.handleChargeAsyncNotify(PlatformType.UNIONPAY, param);
+        response.addHeader("appId", param.get("appId"));
+        return result ? UNIONPAY_SUCCESS_RESPONSE : UNIFORM_HANDLE_FAIL_FLAG;
+    }
+
+    @PostMapping("/unionpay/refund")
+    public String unionpayRefundAsyncNotify(@RequestParam Map<String, String> param, HttpServletResponse response) {
+        boolean result = chargeService.handleRefundAsyncNotify(PlatformType.UNIONPAY, param);
         response.addHeader("appId", param.get("appId"));
         return result ? UNIONPAY_SUCCESS_RESPONSE : UNIFORM_HANDLE_FAIL_FLAG;
     }

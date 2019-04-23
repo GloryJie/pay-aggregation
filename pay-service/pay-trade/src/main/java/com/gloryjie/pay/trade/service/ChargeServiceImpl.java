@@ -18,6 +18,7 @@ import com.gloryjie.pay.base.exception.error.BusinessException;
 import com.gloryjie.pay.base.util.BeanConverter;
 import com.gloryjie.pay.channel.dto.ChannelPayQueryResponse;
 import com.gloryjie.pay.channel.dto.param.ChargeCreateParam;
+import com.gloryjie.pay.channel.dto.response.ChannelRefundResponse;
 import com.gloryjie.pay.channel.enums.ChannelType;
 import com.gloryjie.pay.channel.enums.PlatformType;
 import com.gloryjie.pay.channel.service.ChannelGatewayService;
@@ -27,11 +28,13 @@ import com.gloryjie.pay.trade.dao.ChargeDao;
 import com.gloryjie.pay.trade.dao.RefundDao;
 import com.gloryjie.pay.trade.dto.ChargeDto;
 import com.gloryjie.pay.trade.dto.RefreshChargeDto;
+import com.gloryjie.pay.trade.dto.RefreshRefundDto;
 import com.gloryjie.pay.trade.dto.RefundDto;
 import com.gloryjie.pay.trade.dto.param.ChargeQueryParam;
 import com.gloryjie.pay.trade.dto.param.RefundParam;
 import com.gloryjie.pay.trade.dto.param.RefundQueryParam;
 import com.gloryjie.pay.trade.enums.ChargeStatus;
+import com.gloryjie.pay.trade.enums.RefundStatus;
 import com.gloryjie.pay.trade.error.TradeError;
 import com.gloryjie.pay.trade.model.Charge;
 import com.gloryjie.pay.trade.model.Refund;
@@ -42,6 +45,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -132,6 +136,9 @@ public class ChargeServiceImpl implements ChargeService {
             return BeanConverter.batchCovert(refundList, RefundDto.class);
         }
         Refund refund = refundDao.getByAppIdAndRefundNo(appId, refundNo);
+        if (refund == null){
+            return new ArrayList<>();
+        }
         return Collections.singletonList(BeanConverter.covert(refund, RefundDto.class));
     }
 
@@ -144,10 +151,10 @@ public class ChargeServiceImpl implements ChargeService {
         }
         Charge charge = chargeDao.load(chargeNo);
         if (charge == null) {
-            log.warn("platform={} async notify, chargeNo={} not exist ", platformType.name(), chargeNo);
+            log.warn("platform={} async trade notify, chargeNo={} not exist ", platformType.name(), chargeNo);
             return false;
         }
-        log.info("ready to handle platform={} async notify, chargeNo={}", platformType.name(), chargeNo);
+        log.info("ready to handle platform={} async trade notify, chargeNo={}", platformType.name(), chargeNo);
         if (ChargeStatus.SUCCESS == charge.getStatus()) {
             log.info("chargeNo={} status already SUCCESS,ignore platform={} async notify ", chargeNo, platformType.name());
             return true;
@@ -156,9 +163,33 @@ public class ChargeServiceImpl implements ChargeService {
         ChannelPayQueryResponse response = channelGatewayService.handleTradeAsyncNotify(charge.getAppId(), charge.getChannel(), param);
         RefreshChargeDto refreshChargeDto = chargeBiz.generateRefreshChargeDto(charge, response);
         charge = chargeBiz.refreshCharge(refreshChargeDto, charge);
-        log.info("handle platform={} async notify, chargeNo={} completed chargeStatus={}", platformType.name(), chargeNo, charge.getStatus().name());
+        log.info("handle platform={} async trade notify, chargeNo={} completed chargeStatus={}", platformType.name(), chargeNo, charge.getStatus().name());
         param.put("appId", charge.getAppId().toString());
         return ChargeStatus.SUCCESS == charge.getStatus();
+    }
+
+    @Override
+    public boolean handleRefundAsyncNotify(PlatformType platformType, Map<String, String> param) {
+        String refundNo = getRefundNoFromNotifyParam(platformType, param);
+        if (StringUtils.isBlank(refundNo)) {
+            return false;
+        }
+        Refund refund = refundDao.load(refundNo);
+        if (refund == null) {
+            log.warn("platform={} async refund notify, refundNO={} not exist ", platformType.name(), refundNo);
+            return false;
+        }
+        log.info("ready to handle platform={} async refund notify, refundNo={}", platformType.name(), refundNo);
+        if (RefundStatus.SUCCESS == refund.getStatus()) {
+            log.info("refundNo={} status already SUCCESS,ignore platform={} async refund notify ", refundNo, platformType.name());
+            return true;
+        }
+        ChannelRefundResponse response = channelGatewayService.handleRefundAsyncNotify(refund.getAppId(), refund.getChannel(), param);
+        RefreshRefundDto refreshRefundDto = refundBiz.generateRefreshRefundParam(refund, response);
+        refund = refundBiz.refreshRefund(refreshRefundDto, refund);
+        log.info("handle platform={} async refund notify, refundNo={} completed refundStatus={}", platformType.name(), refundNo, refund.getStatus().name());
+        param.put("appId", refund.getAppId().toString());
+        return RefundStatus.SUCCESS == refund.getStatus();
     }
 
     @Override
@@ -212,6 +243,22 @@ public class ChargeServiceImpl implements ChargeService {
         switch (platformType) {
             case ALIPAY:
                 return param.get("out_trade_no");
+            case UNIONPAY:
+                return param.get("orderId");
+            default:
+                return "";
+        }
+    }
+
+    /**
+     * 从异步通知参数中获取refundNo
+     *
+     * @param platformType
+     * @param param
+     * @return
+     */
+    private String getRefundNoFromNotifyParam(PlatformType platformType, Map<String, String> param) {
+        switch (platformType) {
             case UNIONPAY:
                 return param.get("orderId");
             default:

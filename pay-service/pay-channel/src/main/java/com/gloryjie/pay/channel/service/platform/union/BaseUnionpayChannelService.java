@@ -114,13 +114,14 @@ public abstract class BaseUnionpayChannelService implements PayChannelService {
         PayService payService = getUnionpayService(refundDto.getAppId(), refundDto.getChannel(), AsyncNotifyType.REFUND_RESULT, null, false);
 
         RefundOrder refundOrder = new RefundOrder();
-        refundOrder.setOutTradeNo(refundDto.getPlatformTradeNo());
+        refundOrder.setOutTradeNo(refundDto.getChargeNo());
         refundOrder.setTotalAmount(AmountUtil.longToBigDecimal(refundDto.getChargeAmount()));
         refundOrder.setRefundAmount(AmountUtil.longToBigDecimal(refundDto.getAmount()));
         refundOrder.setRefundNo(refundDto.getRefundNo());
-
+        refundOrder.setTradeNo(refundDto.getPlatformTradeNo());
         ChannelRefundResponse response = new ChannelRefundResponse();
         try {
+            // 银联为异步退款, 结果依赖异步通知, 此处直接返回成功
             Map<String, Object> result = payService.refund(refundOrder);
             response.setSuccess(true);
             return response;
@@ -161,6 +162,8 @@ public abstract class BaseUnionpayChannelService implements PayChannelService {
         }
         ChannelRefundResponse response = new ChannelRefundResponse();
         response.setSuccess(true);
+        response.setMsg(param.get(SDKConstants.param_respMsg));
+        response.setCode(param.get(SDKConstants.param_respCode));
         response.setPlatformTradeNo(param.get(SDKConstants.param_queryId));
         response.setRefundAmount(Long.valueOf(param.get(SDKConstants.param_settleAmt)));
         response.setTimeSucceed(LocalDateTime.now());
