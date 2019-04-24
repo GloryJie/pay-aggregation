@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.gloryjie.pay.channel.dao.CertificateDao">
+
+    <resultMap id="BaseResultMap" type="com.gloryjie.pay.channel.model.Certificate">
+        <id column="id" property="id"/>
+        <result column="app_id" property="appId"/>
+        <result column="type" property="type"/>
+        <result column="channel" property="channel" jdbcType="VARCHAR"/>
+        <result column="cert_data" property="certData" jdbcType="LONGVARBINARY"/>
+    </resultMap>
+
+    <sql id="all_column">
+        id, app_id, type, channel, cert_data, create_time, update_time
+    </sql>
+
+    <sql id="all_value">
+        #{id}, #{appId}, #{type}, #{channel}, #{certData,jdbcType=LONGVARBINARY}, now(), now()
+    </sql>
+
+    <sql id="table">
+        t_certificate
+    </sql>
+
+    <insert id="insert" parameterType="com.gloryjie.pay.channel.model.Certificate" useGeneratedKeys="true" keyProperty="id">
+        insert into
+        <include refid="table"/>
+        (<include refid="all_column"/>)
+        values
+        (<include refid="all_value"/>)
+    </insert>
+
+    <select id="loadChannelCert" resultMap="BaseResultMap">
+        select
+        <include refid="all_column"/>
+        from
+        <include refid="table"/>
+        where app_id= #{appId}
+        and channel = #{channel}
+    </select>
+
+    <delete id="deleteChannelAllCert">
+        delete from
+        <include refid="table"/>
+        where app_id= #{appId} and channel = #{channel}
+    </delete>
+
+
+
+</mapper>

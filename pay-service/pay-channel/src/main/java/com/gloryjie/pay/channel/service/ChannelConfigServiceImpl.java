@@ -14,19 +14,25 @@ package com.gloryjie.pay.channel.service;
 import com.gloryjie.pay.base.exception.error.BusinessException;
 import com.gloryjie.pay.base.util.BeanConverter;
 import com.gloryjie.pay.base.util.validator.ParamValidator;
+import com.gloryjie.pay.channel.dao.CertificateDao;
 import com.gloryjie.pay.channel.dao.ChannelConfigDao;
+import com.gloryjie.pay.channel.dto.CertificateDto;
 import com.gloryjie.pay.channel.dto.ChannelConfigDto;
+import com.gloryjie.pay.channel.enums.CertificateType;
 import com.gloryjie.pay.channel.enums.ChannelConfigStatus;
 import com.gloryjie.pay.channel.enums.ChannelType;
 import com.gloryjie.pay.channel.error.ChannelError;
+import com.gloryjie.pay.channel.model.Certificate;
 import com.gloryjie.pay.channel.model.ChannelConfig;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author Jie
@@ -37,6 +43,9 @@ public class ChannelConfigServiceImpl implements ChannelConfigService {
 
     @Autowired
     private ChannelConfigDao channelConfigDao;
+
+    @Autowired
+    private CertificateDao certificateDao;
 
     @Override
     public ChannelConfigDto getUsingChannelConfig(Integer appId, ChannelType channelType) {
@@ -108,6 +117,30 @@ public class ChannelConfigServiceImpl implements ChannelConfigService {
     @Override
     public Boolean deleteChannelConfig(Integer appId, ChannelType channelType) {
         return channelConfigDao.delete(appId, channelType) > 0;
+    }
+
+    @Override
+    public Boolean addNewChannelCert(CertificateDto dto) {
+        Certificate certificate = BeanConverter.covert(dto, Certificate.class);
+        return certificateDao.insert(certificate) > 0;
+    }
+
+    @Override
+    public Map<CertificateType, CertificateDto> getChannelCert(Integer appId, ChannelType channel) {
+        List<Certificate> certList = certificateDao.loadChannelCert(appId, channel);
+        if (certList == null || certList.size() < 1){
+            return new HashMap<>(2);
+        }
+        Map<CertificateType, CertificateDto> dtoMap = new HashMap<>(8);
+        for (Certificate certificate : certList) {
+            dtoMap.put(certificate.getType(), BeanConverter.covert(certificate, CertificateDto.class));
+        }
+        return dtoMap;
+    }
+
+    @Override
+    public Boolean deleteChannelCert(Integer appId, ChannelType channel) {
+        return certificateDao.deleteChannelAllCert(appId, channel) > 0;
     }
 
 

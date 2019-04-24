@@ -30,7 +30,7 @@ import java.util.concurrent.TimeUnit;
  * @since 0.1
  */
 @Slf4j
-@Component
+//@Component
 public class RedisDistributeLock implements DistributeLock {
 
     /**

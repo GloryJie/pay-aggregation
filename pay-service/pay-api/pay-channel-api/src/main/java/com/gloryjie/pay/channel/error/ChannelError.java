@@ -35,7 +35,11 @@ public enum ChannelError implements BaseErrorEnum {
     CHANNEL_CONFIG_NOT_EXISTS(HttpStatus.BAD_REQUEST,"202","渠道未配置"),
     CHANNEL_CONFIG_NOT_USING(HttpStatus.BAD_REQUEST,"203","渠道配置未启用"),
     PLATFORM_NOTIFY_SIGN_NOT_THROUGH(HttpStatus.BAD_REQUEST,"204","渠道异步通知签名未通过"),
-    PLATFORM_NOTIFY_PARAM_ILLEGAL(HttpStatus.BAD_REQUEST,"205","渠道异步通知参数异常")
+    PLATFORM_NOTIFY_PARAM_ILLEGAL(HttpStatus.BAD_REQUEST,"205","渠道异步通知参数异常"),
+    CERT_FILE_TYPE_NOT_CORRECT(HttpStatus.BAD_REQUEST,"206","证书文件格式不正确"),
+    CERT_FILE_DATA_EMPTY(HttpStatus.BAD_REQUEST,"207","证书文件数据为空"),
+    READ_CERT_FILE_DATA_FAIL(HttpStatus.INTERNAL_SERVER_ERROR,"208","读取证书内容错误"),
+    CERT_NOT_ALL_READY(HttpStatus.BAD_REQUEST, "209", "证书配置不齐全")
     ;
 
     private int code;

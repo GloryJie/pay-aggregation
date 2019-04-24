@@ -173,3 +173,18 @@ CREATE TABLE `t_http_log` (
   primary key (`id`),
   index `http_log_app_type`(`app_id`,`type`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT;
+
+-- -- ----------------------------
+-- -- 证书数据
+-- -- ----------------------------
+DROP TABLE IF EXISTS `t_certificate`;
+CREATE TABLE `t_certificate` (
+  `id` int not null auto_increment,
+  `app_id` int comment '应用标识',
+  `type` varchar(64) not null comment '证书类型',
+  `channel` varchar(50) NOT NULL COMMENT '渠道',
+  `cert_data` blob not null comment '证书数据',
+  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+  `update_time` datetime DEFAULT NULL COMMENT '修改时间',
+  primary key (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT;

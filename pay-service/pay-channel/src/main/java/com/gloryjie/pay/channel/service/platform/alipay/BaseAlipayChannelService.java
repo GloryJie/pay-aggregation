@@ -78,9 +78,6 @@ public abstract class BaseAlipayChannelService implements PayChannelService {
     private static final List<String> REDUCE_PRICE_TYPE = Arrays.asList("COUPON", "DISCOUNT", "MDISCOUNT", "MCOUPON");
 
     @Autowired
-    protected RedisTemplate redisTemplate;
-
-    @Autowired
     protected ChannelConfigDao channelConfigDao;
 
     @Value("${pay.channel.alipay.sandboxMode:false}")

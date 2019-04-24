@@ -35,8 +35,8 @@ import java.util.*;
  * @since
  */
 @Slf4j
-@Component
-@Aspect
+//@Component
+//@Aspect
 public class DistributeLockAdvise {
 
     @Autowired

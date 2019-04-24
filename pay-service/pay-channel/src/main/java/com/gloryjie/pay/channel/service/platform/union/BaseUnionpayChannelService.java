@@ -19,16 +19,19 @@ import com.gloryjie.pay.channel.dto.*;
 import com.gloryjie.pay.channel.dto.response.ChannelRefundResponse;
 import com.gloryjie.pay.channel.dto.response.ChannelResponse;
 import com.gloryjie.pay.channel.enums.AsyncNotifyType;
+import com.gloryjie.pay.channel.enums.CertificateType;
 import com.gloryjie.pay.channel.enums.ChannelType;
 import com.gloryjie.pay.channel.enums.UnionpayStatus;
 import com.gloryjie.pay.channel.error.ChannelError;
 import com.gloryjie.pay.channel.service.ChannelConfigService;
 import com.gloryjie.pay.channel.service.PayChannelService;
+import com.gloryjie.pay.channel.service.platform.union.sdk.MyUnionpayConfigStorage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.time.LocalDateTime;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -54,19 +57,27 @@ public abstract class BaseUnionpayChannelService implements PayChannelService {
     @Autowired
     ChannelConfigService configService;
 
-    public PayService getUnionpayService(Integer appId, ChannelType channelType, AsyncNotifyType asyncNotifyType, String returnUrl, Boolean liveMode) {
+
+    // TODO: 2019/4/24 需要优化
+
+    protected PayService getUnionpayService(Integer appId, ChannelType channelType, AsyncNotifyType asyncNotifyType, String returnUrl, Boolean liveMode) {
         ChannelConfigDto channelConfigDto = configService.getUsingChannelConfig(appId, channelType);
         Map<String, Object> configMap = new HashMap<>(channelConfigDto.getChannelConfig());
         UnionpayChannelConfig configModel = BeanConverter.mapToBean(configMap, UnionpayChannelConfig.class);
-
+        Map<CertificateType, CertificateDto> certificateDtoMap = configService.getChannelCert(appId, getChannelType());
+        for (CertificateType type : CertificateType.getUnionpayAllCertType()) {
+            if (!certificateDtoMap.containsKey(type)){
+                throw ExternalException.create(ChannelError.CERT_NOT_ALL_READY);
+            }
+        }
         // SDK配置内容
-        UnionPayConfigStorage configStorage = new UnionPayConfigStorage();
+        UnionPayConfigStorage configStorage = new MyUnionpayConfigStorage();
         configStorage.setMerId(configModel.getMerchantId());
-        configStorage.setKeyPrivateCert(configModel.getPrivateCertPath());
-        configStorage.setKeyPrivateCertPwd(configModel.getPrivateCertPwd());
-        configStorage.setAcpMiddleCert(configModel.getMiddleCert());
-        configStorage.setAcpRootCert(configModel.getRootCert());
         configStorage.setCertSign(true);
+        configStorage.setKeyPrivateCertPwd(configModel.getPrivateCertPwd());
+        configStorage.setKeyPrivateCert(Base64.getEncoder().encodeToString(certificateDtoMap.get(CertificateType.UNIONPAY_SIGN_CERT).getCertData()));
+        configStorage.setAcpMiddleCert(Base64.getEncoder().encodeToString(certificateDtoMap.get(CertificateType.UNIONPAY_MIDDLE_CERT).getCertData()));
+        configStorage.setAcpRootCert(Base64.getEncoder().encodeToString(certificateDtoMap.get(CertificateType.UNIONPAY_ROOT_CERT).getCertData()));
         configStorage.setInputCharset(DefaultConstant.CHARSET);
         configStorage.setSignType(SignUtils.RSA2.name());
         if (AsyncNotifyType.TRADE_RESULT == asyncNotifyType) {
