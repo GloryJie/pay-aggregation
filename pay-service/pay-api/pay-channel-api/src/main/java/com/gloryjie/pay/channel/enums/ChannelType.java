@@ -13,6 +13,7 @@ package com.gloryjie.pay.channel.enums;
 
 import com.gloryjie.pay.base.exception.error.BusinessException;
 import com.gloryjie.pay.channel.config.AlipayChannelConfig;
+import com.gloryjie.pay.channel.config.UnionpayChannelConfig;
 import com.gloryjie.pay.channel.constant.ChannelConstant;
 import com.gloryjie.pay.channel.error.ChannelError;
 import lombok.Getter;
@@ -96,6 +97,8 @@ public enum ChannelType {
     public Class getConfigClass() {
         if (PlatformType.ALIPAY == this.getPlatformType()) {
             return AlipayChannelConfig.class;
+        }else if (PlatformType.UNIONPAY == this.getPlatformType()){
+            return UnionpayChannelConfig.class;
         }
         return Map.class;
     }

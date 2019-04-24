@@ -19,19 +19,29 @@ public interface CertificateDao {
 
     /**
      * 获取渠道的所有证书
+     *
      * @param appid
      * @param channel
-     * @param certTypes
      * @return
      */
     List<Certificate> loadChannelCert(@Param("appId") Integer appid, @Param("channel") ChannelType channel);
 
     /**
      * 删除渠道对应的而所有证书
+     *
      * @param appid
      * @param channel
      * @return
      */
     int deleteChannelAllCert(@Param("appId") Integer appid, @Param("channel") ChannelType channel);
+
+    /**
+     * 删除指定的证书
+     * @param appid
+     * @param channel
+     * @param type
+     * @return
+     */
+    int deleteSpecifyCert(@Param("appId") Integer appid, @Param("channel") ChannelType channel, @Param("certType") CertificateType type);
 
 }

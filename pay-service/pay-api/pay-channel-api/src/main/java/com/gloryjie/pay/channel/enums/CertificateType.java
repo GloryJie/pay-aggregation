@@ -17,8 +17,8 @@ public enum CertificateType implements BaseEnum {
      * 支付平台证书类型
      */
     UNIONPAY_SIGN_CERT(0, PlatformType.UNIONPAY, "签名证书", "application/x-pkcs12"),
-    UNIONPAY_ROOT_CERT(1, PlatformType.UNIONPAY, "银联根证书", "application/pkix-cert"),
-    UNIONPAY_MIDDLE_CERT(2, PlatformType.UNIONPAY, "银联中级证书", "application/pkix-cert");
+    UNIONPAY_ROOT_CERT(1, PlatformType.UNIONPAY, "银联根证书", "application/x-x509-ca-cert"),
+    UNIONPAY_MIDDLE_CERT(2, PlatformType.UNIONPAY, "银联中级证书", "application/x-x509-ca-cert");
 
     private int code;
 

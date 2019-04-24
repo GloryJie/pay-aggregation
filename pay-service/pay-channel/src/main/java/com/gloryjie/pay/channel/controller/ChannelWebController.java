@@ -67,10 +67,10 @@ public class ChannelWebController {
     }
 
 
-    @PostMapping("/cert")
-    public Response<Boolean> uploadCert(@RequestParam("appId") Integer appId,
-                                        @RequestParam("channel") ChannelType channelType,
-                                        @RequestParam("certType") CertificateType certType,
+    @PostMapping("/{appId}/channel/{channel}/cert/{certType}")
+    public Response<Boolean> uploadCert(@PathVariable("appId") Integer appId,
+                                        @PathVariable("channel") ChannelType channelType,
+                                        @PathVariable("certType") CertificateType certType,
                                         @RequestParam("file") MultipartFile file) {
 
         CertificateDto dto = new CertificateDto();
@@ -78,10 +78,10 @@ public class ChannelWebController {
         dto.setChannel(channelType);
         dto.setType(certType);
         // 文件类型
-        if (!dto.getType().getFileSuffix().equals(file.getContentType())){
+        if (!dto.getType().getFileSuffix().equals(file.getContentType())) {
             throw ExternalException.create(ChannelError.CERT_FILE_TYPE_NOT_CORRECT);
         }
-        if (file.isEmpty()){
+        if (file.isEmpty()) {
             throw ExternalException.create(ChannelError.CERT_FILE_DATA_EMPTY);
         }
 

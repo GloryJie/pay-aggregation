@@ -39,6 +39,14 @@
         and channel = #{channel}
     </select>
 
+    <delete id="deleteSpecifyCert">
+        delete from
+        <include refid="table"/>
+        where app_id= #{appId}
+        and channel = #{channel}
+        and type = #{certType}
+    </delete>
+
     <delete id="deleteChannelAllCert">
         delete from
         <include refid="table"/>

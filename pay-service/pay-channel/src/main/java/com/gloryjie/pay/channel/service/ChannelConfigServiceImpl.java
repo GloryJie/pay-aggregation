@@ -12,6 +12,7 @@
 package com.gloryjie.pay.channel.service;
 
 import com.gloryjie.pay.base.exception.error.BusinessException;
+import com.gloryjie.pay.base.exception.error.ExternalException;
 import com.gloryjie.pay.base.util.BeanConverter;
 import com.gloryjie.pay.base.util.validator.ParamValidator;
 import com.gloryjie.pay.channel.dao.CertificateDao;
@@ -21,11 +22,11 @@ import com.gloryjie.pay.channel.dto.ChannelConfigDto;
 import com.gloryjie.pay.channel.enums.CertificateType;
 import com.gloryjie.pay.channel.enums.ChannelConfigStatus;
 import com.gloryjie.pay.channel.enums.ChannelType;
+import com.gloryjie.pay.channel.enums.PlatformType;
 import com.gloryjie.pay.channel.error.ChannelError;
 import com.gloryjie.pay.channel.model.Certificate;
 import com.gloryjie.pay.channel.model.ChannelConfig;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -68,6 +69,8 @@ public class ChannelConfigServiceImpl implements ChannelConfigService {
         // 不同渠道配置参数检查
         Map<String, Object> payConfig = new HashMap<>(configDto.getChannelConfig());
         ParamValidator.validate(BeanConverter.mapToBean(payConfig, configDto.getChannel().getConfigClass()));
+        // 检查证书完整性
+        checkIntegrityCert(configDto.getAppId(), configDto.getChannel());
 
         ChannelConfig config = channelConfigDao.loadByAppIdAndChannel(configDto.getAppId(), configDto.getChannel());
         if (config != null) {
@@ -116,11 +119,14 @@ public class ChannelConfigServiceImpl implements ChannelConfigService {
 
     @Override
     public Boolean deleteChannelConfig(Integer appId, ChannelType channelType) {
+        certificateDao.deleteChannelAllCert(appId, channelType);
         return channelConfigDao.delete(appId, channelType) > 0;
     }
 
     @Override
     public Boolean addNewChannelCert(CertificateDto dto) {
+        // 删除后插入, 确保证书的唯一性
+        certificateDao.deleteSpecifyCert(dto.getAppId(), dto.getChannel(), dto.getType());
         Certificate certificate = BeanConverter.covert(dto, Certificate.class);
         return certificateDao.insert(certificate) > 0;
     }
@@ -141,6 +147,24 @@ public class ChannelConfigServiceImpl implements ChannelConfigService {
     @Override
     public Boolean deleteChannelCert(Integer appId, ChannelType channel) {
         return certificateDao.deleteChannelAllCert(appId, channel) > 0;
+    }
+
+    /**
+     * 检查证书的完整性
+     * @param appId
+     * @param channelType
+     */
+    private void checkIntegrityCert(Integer appId, ChannelType channelType){
+        // 检查证书完整性
+        if (PlatformType.UNIONPAY == channelType.getPlatformType()){
+            List<Certificate> certificateList = certificateDao.loadChannelCert(appId, channelType);
+            Map<CertificateType, List<Certificate>> map = certificateList.stream().collect(Collectors.groupingBy(Certificate::getType));
+            CertificateType.getUnionpayAllCertType().forEach(item->{
+                if (!map.containsKey(item) || map.get(item).size() < 0){
+                    throw ExternalException.create(ChannelError.CERT_NOT_ALL_READY, "请重新上传");
+                }
+            });
+        }
     }
 
 
