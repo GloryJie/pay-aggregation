@@ -86,6 +86,12 @@ public enum ChannelType {
                     checkResult = false;
                 }
                 break;
+            case UNIONPAY_WAP:
+            case UNIONPAY_PAGE:
+                // 银联redirectUrl必填, 否则无法通过签名校验
+                if (extra == null || StringUtils.isBlank(extra.get(ChannelConstant.Unionpay.WAP_PAGE_EXTRA))) {
+                    checkResult = false;
+                }
             default:
                 break;
         }
