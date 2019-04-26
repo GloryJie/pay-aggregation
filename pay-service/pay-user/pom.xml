@@ -13,6 +13,7 @@
 
     <properties>
         <pay-base.version>0.0.1-SNAPSHOT</pay-base.version>
+        <pay-user-api.version>0.0.1-SNAPSHOT</pay-user-api.version>
     </properties>
 
     <dependencies>
@@ -20,6 +21,12 @@
             <groupId>com.gloryjie</groupId>
             <artifactId>pay-base</artifactId>
             <version>${pay-base.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.gloryjie</groupId>
+            <artifactId>pay-user-api</artifactId>
+            <version>${pay-user-api.version}</version>
         </dependency>
 
 

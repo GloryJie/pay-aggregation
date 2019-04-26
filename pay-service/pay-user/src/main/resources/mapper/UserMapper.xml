@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.gloryjie.pay.user.dao.UserDao">
+
+    <resultMap id="BaseResultMap" type="com.gloryjie.pay.user.model.User">
+        <id column="user_no" property="userNo"/>
+        <result column="nick_name" property="nickName"/>
+        <result column="password" property="password"/>
+        <result column="salt" property="salt"/>
+        <result column="phone" property="phone"/>
+        <result column="email" property="email"/>
+        <result column="sex" property="sex"/>
+        <result column="avatar" property="avatar"/>
+        <result column="type" property="type"/>
+        <result column="status" property="status"/>
+        <result column="original_app_id" property="originalAppId"/>
+        <result column="created_user_no" property="createdUserNo"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <sql id="table">
+        t_auth_user
+    </sql>
+
+    <sql id="all_column">
+        user_no, nick_name, password, salt, phone, email, sex, avatar, type, status, original_app_id,
+        created_user_no, create_time, update_time
+    </sql>
+
+    <sql id="all_value">
+        #{userNo}, #{nickName}, #{password}, #{salt}, #{phone}, #{email}, #{sex}, #{avatar}, #{type},
+        #{status}, #{originalAppId}, #{createdUserNo}, now(), now()
+    </sql>
+
+    <insert id="insert" parameterType="com.gloryjie.pay.user.model.User">
+        insert into
+        <include refid="table"/>
+        (<include refid="all_column"/>)
+        values
+        (<include refid="all_value"/>)
+    </insert>
+
+
+    <delete id="delete" parameterType="java.lang.Long">
+        delete
+        from
+        <include refid="table"/>
+        where user_no = #{userNo}
+    </delete>
+
+
+    <update id="update" parameterType="com.gloryjie.pay.user.model.User">
+        update
+        <include refid="table"/>
+        <set>
+            <if test="nickName != null">nick_name = #{nickName},</if>
+            <if test="password != null">password = #{password},</if>
+            <if test="salt != null">salt = #{salt},</if>
+            <if test="phone != null">phone = #{phone},</if>
+            <if test="email != null">email = #{email},</if>
+            <if test="sex != null">sex = #{sex},</if>
+            <if test="avatar != null">avatar = #{avatar},</if>
+            <if test="type != null">type = #{type},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="originalAppId != null">original_app_id = #{originalAppId},</if>
+            <if test="createdUserNo != null">created_user_no = #{createdUserNo},</if>
+            update_time = now()
+        </set>
+        where user_no = #{userNo}
+    </update>
+
+    <select id="getByUserNo" resultMap="BaseResultMap">
+        select
+        <include refid="all_column"/>
+        from
+        <include refid="table"/>
+        where user_no = #{userNo}
+    </select>
+
+    <select id="getByPhone" resultMap="BaseResultMap">
+        select
+        (<include refid="all_column"/>)
+        from
+        <include refid="table"/>
+        where phone = #{phone}
+    </select>
+
+
+</mapper>

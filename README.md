@@ -4,8 +4,11 @@
 ## 使用到的技术
 
 基础：SpringBoot 2.1.0, Spring Cloud
+
 数据存储：MySQL，MongoDB
+
 缓存：Redis
+
 中间件：RocketMQ
 
 ## 文档

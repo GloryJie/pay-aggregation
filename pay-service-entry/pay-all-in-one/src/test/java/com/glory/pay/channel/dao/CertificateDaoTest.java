@@ -23,7 +23,6 @@ import java.util.List;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = PayAllApplication.class)
-//@MybatisTest
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class CertificateDaoTest {
 
