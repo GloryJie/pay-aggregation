@@ -8,17 +8,17 @@ CREATE TABLE `t_app` (
   `name` varchar(50) NOT NULL COMMENT '应用名',
   `description` varchar(200) NOT NULL COMMENT '应用描述',
   `status` varchar(16) NOT NULL COMMENT '应用状态 0 停用 1 启用',
-  `user_id` varchar(32) COMMENT '应用关联的用户对象id，创建应用时同时会创建用户',
+  `responsible_user_no` bigint DEFAULT NULL COMMENT '应用关联的用户对象id,即负责人',
+  `create_user_no` BIGINT DEFAULT NULL COMMENT '创建当前应用的人',
   `use_platform_config` tinyint(4) DEFAULT NULL COMMENT '是否使用平台商户渠道配置，默认使用平台商户配置，子商户字段',
-  `parent_app` int(11) DEFAULT NULL,
+  `parent_app_id` int(11) DEFAULT NULL COMMENT '父级应用',
   `trade_public_key` varchar(4096) DEFAULT NULL COMMENT '交易公钥',
   `notify_private_key` varchar(4096) NOT NULL COMMENT '通知私钥',
   `notify_public_key` varchar(4096) NOT NULL COMMENT '通知公钥',
   `level` int(11) NOT NULL DEFAULT 0 COMMENT 'APP树的层级',
   `create_time` datetime NOT NULL COMMENT '创建时间',
   `update_time` datetime NOT NULL COMMENT '更新时间',
-  PRIMARY KEY (`app_id`),
-  KEY `idx_parent_app_status` (`parent_app`,`status`) USING BTREE
+  PRIMARY KEY (`app_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='应用表';
 
 

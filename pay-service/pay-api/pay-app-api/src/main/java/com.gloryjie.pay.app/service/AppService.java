@@ -28,7 +28,18 @@ public interface AppService {
      * @param desc
      * @return
      */
-    AppDto createMasterApp(String name, String desc);
+    AppDto createMasterApp(String name, String desc, Long createUserNo, Long responseUserNo);
+
+    /**
+     * 创建子应用
+     * @param name 应用名
+     * @param desc
+     * @param parentAppID 父节点
+     * @param createUserNo 创建人
+     * @param responseUserNo 负责人
+     * @return
+     */
+    AppDto createSubApp(String name, String desc, Integer parentAppID, Long createUserNo, Long responseUserNo);
 
     /**
      * 查询主APP列表
@@ -49,4 +60,11 @@ public interface AppService {
      * @return
      */
     AppDto getSingleAppInfo(Integer appId);
+
+    /**
+     * 获取应用树所有的节点信息
+     * @param rootAppId
+     * @return
+     */
+    List<AppDto> getAppTreeAllNode(Integer rootAppId);
 }

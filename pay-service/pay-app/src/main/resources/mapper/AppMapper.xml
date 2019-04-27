@@ -8,9 +8,10 @@
         <result column="name" property="name"/>
         <result column="description" property="description"/>
         <result column="status" property="status"/>
-        <result column="user_id" property="userId"/>
+        <result column="create_user_no" property="createUserNo"/>
+        <result column="responsible_user_no" property="responsibleUserNo"/>
         <result column="use_platform_config" property="usePlatformConfig"/>
-        <result column="parent_app" property="parentApp"/>
+        <result column="parent_app_id" property="parentAppId"/>
         <result column="trade_public_key" property="tradePublicKey"/>
         <result column="notify_private_key" property="notifyPrivateKey"/>
         <result column="notify_public_key" property="notifyPublicKey"/>
@@ -25,19 +26,19 @@
 
 
     <sql id="all_column">
-        app_id, type, name, description, status, user_id, use_platform_config,
-        parent_app, trade_public_key, notify_private_key, notify_public_key,
+        app_id, type, name, description, status, create_user_no, responsible_user_no, use_platform_config,
+        parent_app_id, trade_public_key, notify_private_key, notify_public_key,
         level, create_time, update_time
     </sql>
 
     <sql id="all_value">
-        #{appId}, #{type}, #{name}, #{description}, #{status}, #{userId}, #{usePlatformConfig},
-        #{parentApp}, #{tradePublicKey}, #{notifyPrivateKey}, #{notifyPublicKey},
+        #{appId}, #{type}, #{name}, #{description}, #{status}, #{createUserNo}, #{responsibleUserNo}, #{usePlatformConfig},
+        #{parentAppId}, #{tradePublicKey}, #{notifyPrivateKey}, #{notifyPublicKey},
         #{level}, now(), now()
     </sql>
 
 
-    <select id="load" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    <select id="getByAppId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
         select
         <include refid="all_column"/>
         from
@@ -45,19 +46,36 @@
         where app_id = #{appId}
     </select>
 
-    <select id="getByName" resultMap="BaseResultMap">
+    <select id="getMasterByName" resultMap="BaseResultMap">
         select
         <include refid="all_column"/>
         from
         <include refid="table"/>
-        where name = #{name}
+        where name = #{name} and type = 'MASTER'
     </select>
 
-    <select id="getMaxAppId" resultType="java.lang.Integer">
+    <select id="getSubByName" resultMap="BaseResultMap">
+        select
+        <include refid="all_column"/>
+        from
+        <include refid="table"/>
+        where name = #{name} and type = 'SUBORDINATE' and (app_id between #{rootAppId} and #{maxAppId})
+    </select>
+
+    <select id="getMasterMaxAppId" resultType="java.lang.Integer">
         select
         MAX(app_id)
         from
         <include refid="table"/>
+        where type = 'MASTER'
+    </select>
+
+    <select id="getSubMaxAppId" resultType="java.lang.Integer">
+        select
+        MAX(app_id)
+        from
+        <include refid="table"/>
+        where type = 'SUBORDINATE' and (app_id between #{minAppId} and #{maxAppId})
     </select>
 
     <select id="getMasterAppList" resultMap="BaseResultMap">
@@ -68,23 +86,33 @@
         where type = 'MASTER'
     </select>
 
+    <select id="getAppTree" resultMap="BaseResultMap">
+        select
+        <include refid="all_column"/>
+        from
+        <include refid="table"/>
+        where app_id between #{minAppId} and #{maxAppId}
+    </select>
+
     <insert id="insert" parameterType="com.gloryjie.pay.app.model.App">
-        insert into <include refid="table"/>
+        insert into
+        <include refid="table"/>
         (<include refid="all_column"/>)
         values
         (<include refid="all_value"/>)
     </insert>
 
     <update id="update" parameterType="com.gloryjie.pay.app.model.App">
-        update <include refid="table"/>
+        update
+        <include refid="table"/>
         <set>
             <if test="type != null">type = #{type},</if>
             <if test="name != null">name = #{name},</if>
             <if test="description != null">description = #{description},</if>
             <if test="status != null">status = #{status},</if>
-            <if test="userId != null">user_id = #{userId},</if>
+            <if test="responsibleUserNo != null">responsible_user_no = #{responsibleUserNo},</if>
             <if test="usePlatformConfig != null">use_platform_config = #{usePlatformConfig},</if>
-            <if test="parentApp != null">parent_app = #{parentApp},</if>
+            <if test="parentAppId != null">parent_app_id = #{parentAppId},</if>
             <if test="tradePublicKey != null">trade_public_key = #{tradePublicKey},</if>
             <if test="notifyPrivateKey != null">notify_private_key = #{notifyPrivateKey},</if>
             <if test="notifyPublicKey != null">notify_public_key = #{notifyPublicKey},</if>

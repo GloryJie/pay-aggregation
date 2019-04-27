@@ -1,4 +1,4 @@
-package com.glory.pay.channel.dao;
+package com.glory.pay.user.dao;
 
 import com.gloryjie.pay.PayAllApplication;
 import com.gloryjie.pay.user.dao.UserDao;

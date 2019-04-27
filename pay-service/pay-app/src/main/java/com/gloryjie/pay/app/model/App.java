@@ -34,9 +34,14 @@ public class App {
     private AppStatus status;
 
     /**
-     * 应用关联的用户对象id，创建应用时同时会创建用户
+     * 应用关联的用户对象id, 即负责人
      */
-    private String userId;
+    private Long responsibleUserNo;
+
+    /**
+     * 创建人
+     */
+    private Long createUserNo;
 
     /**
      * 是否使用平台商户渠道配置，默认使用平台商户配置，子商户字段
@@ -60,7 +65,7 @@ public class App {
 
     private Integer level;
 
-    private Integer parentApp;
+    private Integer parentAppId;
 
     /**
      * 创建时间
