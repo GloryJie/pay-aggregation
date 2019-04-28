@@ -80,7 +80,7 @@
 
     <select id="getByPhone" resultMap="BaseResultMap">
         select
-        (<include refid="all_column"/>)
+        <include refid="all_column"/>
         from
         <include refid="table"/>
         where phone = #{phone}

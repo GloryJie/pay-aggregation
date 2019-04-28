@@ -1,18 +1,22 @@
-package com.gloryjie.pay.user.model;
+package com.gloryjie.pay.user.dto;
 
 import com.gloryjie.pay.user.enums.UserSex;
 import com.gloryjie.pay.user.enums.UserStatus;
 import com.gloryjie.pay.user.enums.UserType;
 import lombok.Data;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
-import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.Collections;
 
 /**
  * @author jie
- * @since 2019/4/26
+ * @since 2019/4/28
  */
 @Data
-public class User {
+public class UserInfoDto implements UserDetails {
     /**
      * 全局唯一的用户号
      */
@@ -73,7 +77,34 @@ public class User {
      */
     private Long createdUserNo;
 
-    private LocalDateTime createTime;
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        // TODO: 2019/4/28 测试用,需要修改
+        return Collections.singletonList(new SimpleGrantedAuthority("super_admin"));
+    }
 
-    private LocalDateTime updateTime;
+    @Override
+    public String getUsername() {
+        return getPhone();
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return UserStatus.FREEZE != getStatus();
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 }

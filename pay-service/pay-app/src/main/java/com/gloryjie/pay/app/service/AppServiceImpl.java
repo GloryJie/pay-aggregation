@@ -83,7 +83,7 @@ public class AppServiceImpl implements AppService {
         Integer maxAppId = computeTreeMaxAppId(parentAppId);
         app = appDao.getSubByName(name, rootAppId, maxAppId);
         if (app != null) {
-            throw ExternalException.create(CommonErrorEnum.ILLEGAL_ARGUMENT_ERROR, "应用名已存在");
+            throw BusinessException.create(CommonErrorEnum.ILLEGAL_ARGUMENT_ERROR, "应用名已存在");
         }
 
         app = new App();

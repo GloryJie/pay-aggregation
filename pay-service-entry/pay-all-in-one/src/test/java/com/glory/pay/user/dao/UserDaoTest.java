@@ -2,6 +2,7 @@ package com.glory.pay.user.dao;
 
 import com.gloryjie.pay.PayAllApplication;
 import com.gloryjie.pay.user.dao.UserDao;
+import com.gloryjie.pay.user.enums.UserSex;
 import com.gloryjie.pay.user.enums.UserStatus;
 import com.gloryjie.pay.user.enums.UserType;
 import com.gloryjie.pay.user.model.User;
@@ -44,14 +45,15 @@ public class UserDaoTest {
     @Test
     public void aInsertTest() {
         User user = new User();
-        user.setUserNo(userNo);
-        user.setNickName("super_root");
+        user.setUserNo(1000000L);
+        user.setNickName("super_admin");
         user.setPassword(passwordEncoder.encode("123456"));
-        user.setPhone("123456");
+        user.setPhone("15811112222");
         user.setEmail("123@123.com");
         user.setStatus(UserStatus.NORMALITY);
-        user.setType(UserType.PLATFORM_INNER_USER);
-
+        user.setType(UserType.SUPER_ADMIN);
+        user.setSex(UserSex.MALE);
+        user.setAvatar("https://pic2.zhimg.com/80/v2-1ceecf8a8ce3b882d326e8c3d5382a90_hd.jpg");
         Assert.assertEquals(1, userDao.insert(user));
     }
 

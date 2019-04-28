@@ -41,7 +41,7 @@ public class AppWebController {
     @GetMapping("/app/{appId}/info")
     public Response<AppDto> getAppInfo(@PathVariable("appId") Integer appId) {
         AppDto appDto = appService.getSingleAppInfo(appId);
-        if (appDto != null){
+        if (appDto != null) {
             appDto.setNotifyPrivateKey(null);
         }
         return Response.success(appDto);
@@ -49,7 +49,9 @@ public class AppWebController {
 
     @PostMapping("/app")
     public Response<AppDto> createMasterApp(@Valid @RequestBody AppCreateDto createDto) {
-        return Response.success(appService.createMasterApp(createDto.getName(), createDto.getDescription()));
+        // TODO: 2019/4/26 需要获取真正用户,创建主应用只有super_admin才可
+        long userNo = 123456;
+        return Response.success(appService.createMasterApp(createDto.getName(), createDto.getDescription(), userNo, userNo));
     }
 
     @PutMapping("/app/{appId}")

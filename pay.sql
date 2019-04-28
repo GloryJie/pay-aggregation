@@ -188,3 +188,92 @@ CREATE TABLE `t_certificate` (
   `update_time` datetime DEFAULT NULL COMMENT '修改时间',
   primary key (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT;
+
+-- ----------------------------
+-- Table structure for t_auth_permission
+-- ----------------------------
+DROP TABLE IF EXISTS `t_auth_permission`;
+CREATE TABLE `t_auth_permission` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '权限id',
+  `name` varchar(128) NOT NULL COMMENT '权限名',
+  `description` varchar(64) NOT NULL COMMENT '权限描述信息',
+  `type` varchar(64) NOT NULL COMMENT '权限类型',
+  `is_high_risk` tinyint(4) DEFAULT NULL COMMENT '是否高危权限',
+  `create_time` datetime NOT NULL,
+  `update_time` datetime NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uni_permission_name` (`name`) COMMENT '权限名唯一'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Table structure for t_auth_role
+-- ----------------------------
+DROP TABLE IF EXISTS `t_auth_role`;
+CREATE TABLE `t_auth_role` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '角色id',
+  `code` varchar(32) NOT NULL COMMENT '角色编码',
+  `name` varchar(32) NOT NULL COMMENT '角色名',
+  `description` varchar(64) NOT NULL COMMENT '角色描述信息',
+  `app_id` int(11) NOT NULL COMMENT '在哪个应用下的角色',
+  `create_time` datetime NOT NULL,
+  `update_time` datetime NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uni_role_name` (`name`) COMMENT '角色名唯一'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Table structure for t_auth_role_permission_relation
+-- ----------------------------
+DROP TABLE IF EXISTS `t_auth_role_permission_relation`;
+CREATE TABLE `t_auth_role_permission_relation` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键id',
+  `role_code` bigint(32) NOT NULL COMMENT '角色编码',
+  `permission_id` varchar(32) NOT NULL COMMENT '权限id',
+  `create_time` datetime NOT NULL,
+  `update_time` datetime NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `user_role_relation` (`role_code`,`permission_id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Table structure for t_auth_user
+-- ----------------------------
+DROP TABLE IF EXISTS `t_auth_user`;
+CREATE TABLE `t_auth_user` (
+  `user_no` bigint(32) NOT NULL COMMENT '全局唯一的用户号',
+  `nick_name` varchar(32) NOT NULL COMMENT '昵称',
+  `password` varchar(128) NOT NULL COMMENT '密码',
+  `salt` varchar(64) DEFAULT NULL COMMENT '密码加盐',
+  `phone` varchar(11) NOT NULL COMMENT '手机号码,全局唯一',
+  `email` varchar(64) DEFAULT NULL COMMENT '邮箱,全局唯一',
+  `sex` varchar(16) NOT NULL COMMENT '性别,女性,男性',
+  `avatar` varchar(512) DEFAULT NULL COMMENT '头像地址',
+  `type` varchar(32) NOT NULL COMMENT '用户类型',
+  `status` varchar(32) NOT NULL COMMENT '账号状态,1正常,2锁定',
+  `original_app_id` int(11) DEFAULT NULL COMMENT '最初创建该用户的应用',
+  `created_user_no` bigint(20) DEFAULT NULL COMMENT '创建当前用户的用户',
+  `create_time` datetime NOT NULL,
+  `update_time` datetime NOT NULL,
+  PRIMARY KEY (`user_no`),
+  UNIQUE KEY `t_auth_user_phone` (`phone`) USING BTREE COMMENT '手机号全局唯一',
+  UNIQUE KEY `t_auth_user_email` (`email`) USING BTREE COMMENT '邮箱全局唯一'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- super admin user data
+-- ----------------------------
+INSERT INTO `pay`.`t_auth_user`(`user_no`, `nick_name`, `password`, `salt`, `phone`, `email`, `sex`, `avatar`, `type`, `status`, `original_app_id`, `created_user_no`, `create_time`, `update_time`) VALUES (1000000, 'super_admin', '$2a$10$QHUj.9oFcZMhzdv9mJID5Or76zsdIE0VxCRMurvbhkVJeGAW.87Re', NULL, '15811112222', '123@123.com', 'MALE', 'https://pic2.zhimg.com/80/v2-1ceecf8a8ce3b882d326e8c3d5382a90_hd.jpg', 'SUPER_ADMIN', 'NORMALITY', NULL, NULL, '2019-04-28 10:08:45', '2019-04-28 10:08:45');
+
+-- ----------------------------
+-- Table structure for t_auth_user_role_relation
+-- ----------------------------
+DROP TABLE IF EXISTS `t_auth_user_role_relation`;
+CREATE TABLE `t_auth_user_role_relation` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键id',
+  `user_no` bigint(32) NOT NULL COMMENT '全局的用户号',
+  `role_code` varchar(32) NOT NULL COMMENT '角色id',
+  `create_time` datetime NOT NULL,
+  `update_time` datetime NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `user_role_relation` (`user_no`,`role_code`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;

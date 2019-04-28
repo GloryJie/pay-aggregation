@@ -13,6 +13,8 @@ package com.gloryjie.pay.user.controller;
 
 import com.gloryjie.pay.base.response.Response;
 import com.gloryjie.pay.base.util.JsonUtil;
+import com.gloryjie.pay.user.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,6 +28,9 @@ import java.util.Map;
 @RestController
 @RequestMapping("/web/user")
 public class UserWebController {
+
+    @Autowired
+    private UserService userService;
 
     @GetMapping("/info")
     public Response<Map> getInfo() {
