@@ -60,7 +60,7 @@ public class AlipayPageChannelServiceImpl extends BaseAlipayChannelService {
             AlipayResponse alipayResponse = client.pageExecute(request);
             ChannelPayResponse payResponse = new ChannelPayResponse(alipayResponse);
             if (alipayResponse.isSuccess()) {
-                payResponse.setCredential(alipayResponse.getBody());
+                payResponse.setCredential(buildFormHtmlRequest(alipayResponse.getBody()));
             }
             return payResponse;
         } catch (AlipayApiException e) {

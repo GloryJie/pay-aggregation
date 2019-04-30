@@ -37,21 +37,18 @@ import com.gloryjie.pay.base.util.JsonUtil;
 import com.gloryjie.pay.channel.config.AlipayChannelConfig;
 import com.gloryjie.pay.channel.constant.ChannelConstant;
 import com.gloryjie.pay.channel.dao.ChannelConfigDao;
-import com.gloryjie.pay.channel.dto.ChannelPayQueryDto;
-import com.gloryjie.pay.channel.dto.ChannelPayQueryResponse;
-import com.gloryjie.pay.channel.dto.ChannelRefundDto;
-import com.gloryjie.pay.channel.dto.ChannelRefundQueryDto;
+import com.gloryjie.pay.channel.dto.*;
 import com.gloryjie.pay.channel.dto.response.ChannelRefundResponse;
 import com.gloryjie.pay.channel.dto.response.ChannelResponse;
 import com.gloryjie.pay.channel.enums.AlipayStatus;
 import com.gloryjie.pay.channel.enums.ChannelType;
 import com.gloryjie.pay.channel.error.ChannelError;
 import com.gloryjie.pay.channel.model.ChannelConfig;
+import com.gloryjie.pay.channel.service.ChannelConfigService;
 import com.gloryjie.pay.channel.service.PayChannelService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.core.RedisTemplate;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -89,14 +86,14 @@ public abstract class BaseAlipayChannelService implements PayChannelService {
     @Value("${pay.channel.alipay.notifyUri:/pay/trade/platform/notify/alipay}")
     protected String notifyUri;
 
+    @Autowired
+    private ChannelConfigService channelConfigService;
+
 
     // TODO: 2018/11/27  AlipayClient为线程安全,可以缓存起来进行优化
     protected AlipayClient getAlipayClient(Integer appId, ChannelType channelType) {
-        ChannelConfig config = channelConfigDao.loadByAppIdAndChannel(appId, channelType);
-        if (config == null || config.getStatus().isStop()) {
-            throw BusinessException.create(ChannelError.CHANNEL_CONFIG_NOT_EXISTS, "或已停用");
-        }
-        Map<String, Object> payConfig = new HashMap<>(config.getChannelConfig());
+        ChannelConfigDto configDto = channelConfigService.getUsingChannelConfig(appId, channelType);
+        Map<String, Object> payConfig = new HashMap<>(configDto.getChannelConfig());
         AlipayChannelConfig alipayChannelConfig = BeanConverter.mapToBean(payConfig, AlipayChannelConfig.class);
         String url = sandboxMode ? ALIPAY_SANDBOX_URL : ALIPAY_PRODUCT_URL;
         return DefaultAlipayClient.builder(url, alipayChannelConfig.getMerchantId(), alipayChannelConfig.getMerchantPrivateKey())
@@ -233,5 +230,17 @@ public abstract class BaseAlipayChannelService implements PayChannelService {
             log.warn("verify platform=ALIPAY notify sign fail", e);
         }
         return false;
+    }
+
+    protected String buildFormHtmlRequest(String form) {
+        StringBuffer sf = new StringBuffer();
+        sf.append("<html><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=" + DefaultConstant.CHARSET + "\"/></head><body>");
+        sf.append(form);
+        sf.append("</body>");
+        sf.append("<script type=\"text/javascript\">");
+        sf.append("document.all.pay_form.submit();");
+        sf.append("</script>");
+        sf.append("</html>");
+        return sf.toString();
     }
 }

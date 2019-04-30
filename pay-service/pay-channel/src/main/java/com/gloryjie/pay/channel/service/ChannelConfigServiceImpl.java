@@ -50,7 +50,9 @@ public class ChannelConfigServiceImpl implements ChannelConfigService {
 
     @Override
     public ChannelConfigDto getUsingChannelConfig(Integer appId, ChannelType channelType) {
-        ChannelConfig channelConfig = channelConfigDao.loadByAppIdAndChannel(appId, channelType);
+        // 适配多级应用场景, 根据appId计算出 平台商户
+        Integer rootAppId = (appId / 100000 * 10 + 1) * 10000;
+        ChannelConfig channelConfig = channelConfigDao.loadByAppIdAndChannel(rootAppId, channelType);
         // 是否启用进行判断
         if (channelConfig == null || channelConfig.getStatus().isStop()){
             throw BusinessException.create(ChannelError.CHANNEL_CONFIG_NOT_EXISTS, "或未启用");
