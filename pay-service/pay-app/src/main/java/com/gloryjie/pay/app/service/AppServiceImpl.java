@@ -103,14 +103,14 @@ public class AppServiceImpl implements AppService {
         app.setNotifyPublicKey(keyPair.get(Rsa.PUBLIC_KEY));
 
         appDao.insert(app);
-        return BeanConverter.covert(app, AppDto.class);
+        return BeanConverter.covertIgnore(app, AppDto.class);
     }
 
     @Override
     public List<AppDto> queryMasterAppList() {
         // TODO: 2019/2/7 是否一次性全部获取待后续优化
         List<App> appList = appDao.getMasterAppList();
-        return BeanConverter.batchCovert(appList, AppDto.class);
+        return BeanConverter.batchCovertIgnore(appList, AppDto.class);
     }
 
     @Override
@@ -132,7 +132,7 @@ public class AppServiceImpl implements AppService {
     @Override
     public List<AppDto> getAppTreeAllNode(Integer rootAppId) {
         List<App> appList = appDao.getAppTree(computeRootAppId(rootAppId), computeTreeMaxAppId(rootAppId));
-        return BeanConverter.batchCovert(appList, AppDto.class);
+        return BeanConverter.batchCovertIgnore(appList, AppDto.class);
     }
 
     /**

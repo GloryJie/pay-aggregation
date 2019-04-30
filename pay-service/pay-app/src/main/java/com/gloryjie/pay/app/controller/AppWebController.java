@@ -60,4 +60,22 @@ public class AppWebController {
         return Response.success(appService.updateAppInfo(updateParam));
     }
 
+    @PostMapping("/app/{parentAppId}/sub")
+    public Response<AppDto> createSubApp(@Valid @RequestBody AppCreateDto createDto,
+                                         @PathVariable("parentAppId") Integer parentAppId) {
+        // TODO: 2019/4/26 需要获取真正用户,创建主应用只有super_admin才可
+        long userNo = 123456;
+        return Response.success(appService.createSubApp(createDto.getName(), createDto.getDescription(), parentAppId, userNo, userNo));
+    }
+
+    @GetMapping("/app/{rootAppId}/tree")
+    public Response<List<AppDto>> getAppTree(@PathVariable("rootAppId") Integer rootAppId){
+        List<AppDto> list = appService.getAppTreeAllNode(rootAppId);
+        list.forEach(item ->{
+            item.setNotifyPublicKey(null);
+            item.setTradePublicKey(null);
+        });
+        return Response.success(list);
+    }
+
 }

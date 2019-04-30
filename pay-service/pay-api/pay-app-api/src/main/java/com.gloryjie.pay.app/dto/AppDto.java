@@ -13,6 +13,7 @@ package com.gloryjie.pay.app.dto;
 
 import com.gloryjie.pay.app.enums.AppStatus;
 import com.gloryjie.pay.app.enums.AppType;
+import com.gloryjie.pay.base.annotation.IgnoreCovertProperty;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
@@ -64,6 +65,21 @@ public class AppDto {
     /**
      * 通知私钥
      */
+    @IgnoreCovertProperty
     private String notifyPrivateKey;
+
+    /**
+     * 应用关联的用户对象id, 即负责人
+     */
+    private Long responsibleUserNo;
+
+    /**
+     * 创建人
+     */
+    private Long createUserNo;
+
+    private Integer level;
+
+    private Integer parentAppId;
 
 }

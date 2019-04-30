@@ -1,8 +1,12 @@
 package com.gloryjie.pay.user.dao;
 
 
+import com.gloryjie.pay.user.enums.UserType;
 import com.gloryjie.pay.user.model.User;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 
 @Mapper
@@ -18,7 +22,6 @@ public interface UserDao {
 
     User getByPhone(String phone);
 
-
-
+    List<User> listByType(@Param("type")UserType type, @Param("appId")Integer appId);
 
 }

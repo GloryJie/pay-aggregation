@@ -17,6 +17,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.List;
+
 
 /**
  * @author jie
@@ -37,7 +39,7 @@ public class UserDaoTest {
     static long userNo;
 
     @BeforeClass
-    public static void init(){
+    public static void init() {
         userNo = System.currentTimeMillis();
     }
 
@@ -65,7 +67,7 @@ public class UserDaoTest {
     }
 
     @Test
-    public void cUpdateTest(){
+    public void cUpdateTest() {
         User user = new User();
         user.setUserNo(userNo);
         user.setNickName("admin");
@@ -75,8 +77,15 @@ public class UserDaoTest {
     }
 
     @Test
-    public void dDelete(){
+    public void dDelete() {
         Assert.assertEquals(1, userDao.delete(userNo));
+    }
+
+    @Test
+    public void eListUserTest() {
+        List<User> userList = userDao.listByType(UserType.SUPER_ADMIN, null);
+        Assert.assertNotNull(userList);
+        Assert.assertFalse(userList.isEmpty());
     }
 
 }

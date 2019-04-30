@@ -34,4 +34,8 @@ public class AppCreateDto {
     @Pattern(regexp = "^[a-z0-9A-Z\\u4e00-\\u9fa5]+$",message = "描述只能是中英文或数字，不能有空格")
     private String description;
 
+    /**
+     * 负责人用户号
+     */
+    private Long responsibleUserNo;
 }

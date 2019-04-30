@@ -8,6 +8,9 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -25,11 +28,15 @@ public class UserInfoDto implements UserDetails {
     /**
      * 昵称
      */
+    @NotBlank
+    @Size(min = 2, max = 24)
     private String nickName;
 
     /**
      * 密码
      */
+    @NotNull
+    @Size(min = 6, max = 32)
     private String password;
 
     /**
@@ -40,6 +47,8 @@ public class UserInfoDto implements UserDetails {
     /**
      * 手机号码,全局唯一
      */
+    @NotBlank
+    @Size(min = 11, max = 11)
     private String phone;
 
     /**
@@ -50,6 +59,7 @@ public class UserInfoDto implements UserDetails {
     /**
      * 性别,女性,男性
      */
+    @NotNull
     private UserSex sex;
 
     /**
@@ -70,6 +80,7 @@ public class UserInfoDto implements UserDetails {
     /**
      * 最初创建该用户的应用
      */
+    @NotNull
     private Integer originalAppId;
 
     /**
