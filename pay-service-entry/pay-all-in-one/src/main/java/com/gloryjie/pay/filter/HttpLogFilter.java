@@ -75,14 +75,13 @@ public class HttpLogFilter implements Filter {
         String respBody = new String(responseWrapper.getBody(),StandardCharsets.UTF_8);
         logDocument.setRespBody(respBody);
 
-        logDocument.setAppId(String.valueOf(servletRequest.getAttribute("appId")));
-
         if (path.contains(SignCheckFilter.API_FLAG)) {
+            logDocument.setAppId(Integer.valueOf(String.valueOf(servletRequest.getAttribute("appId"))));
             logDocument.setReqBody(String.valueOf(servletRequest.getAttribute(SignCheckFilter.ORIGINAL_REQ_BODY)));
             logDocument.setType(HttpLogType.API_REQUEST.name().toLowerCase());
             HTTP_LOG.info(logDocument.getType(), logDocument);
         } else {
-            logDocument.setAppId(respHeaderMap.get("appId"));
+            logDocument.setAppId(Integer.valueOf(respHeaderMap.get("appId")));
             logDocument.setReqBody(new String(requestWrapper.getContentAsByteArray(),StandardCharsets.UTF_8));
             logDocument.setPlatform(getPlatformName(path));
             logDocument.setType(HttpLogType.PLATFORM_NOTIFY_REQUEST.name().toLowerCase());

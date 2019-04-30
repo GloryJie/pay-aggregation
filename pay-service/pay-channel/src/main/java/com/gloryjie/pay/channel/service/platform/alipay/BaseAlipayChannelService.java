@@ -215,7 +215,7 @@ public abstract class BaseAlipayChannelService implements PayChannelService {
 
     @Override
     public boolean verifySign(Integer appId, Map<String, String> param) {
-        ChannelConfig config = channelConfigDao.loadByAppIdAndChannel(appId, getChannelType());
+        ChannelConfigDto config = channelConfigService.getChannelConfig(appId, getChannelType());
         if (config == null) {
             throw SystemException.create(ChannelError.CHANNEL_CONFIG_NOT_EXISTS);
         }

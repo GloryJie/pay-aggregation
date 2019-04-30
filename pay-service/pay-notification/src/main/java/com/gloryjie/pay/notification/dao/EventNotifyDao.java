@@ -12,6 +12,7 @@
 package com.gloryjie.pay.notification.dao;
 
 import com.gloryjie.pay.notification.model.EventNotify;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -31,6 +32,10 @@ public interface EventNotifyDao {
 
     int update(EventNotify record);
 
-    List<EventNotify> getByAppId(Integer appId);
+    /**
+     * 列出树范围内的的记录
+     * @return
+     */
+    List<EventNotify> listByAppTree(@Param("minAppId") Integer minAppId, @Param("maxAppId")Integer maxAppId);
 
 }

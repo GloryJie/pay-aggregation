@@ -38,6 +38,15 @@ public interface ChannelConfigService {
     ChannelConfigDto getUsingChannelConfig(Integer appId, ChannelType channelType) throws BusinessException;
 
     /**
+     * 获取渠道配置, 状态无关
+     * @param appId
+     * @param channelType
+     * @return
+     * @throws BusinessException 不存在或者状态不对,则抛异常
+     */
+    ChannelConfigDto getChannelConfig(Integer appId, ChannelType channelType) throws BusinessException;
+
+    /**
      * 获取所有已经配置的, 状态无关
      * @param appId
      * @return

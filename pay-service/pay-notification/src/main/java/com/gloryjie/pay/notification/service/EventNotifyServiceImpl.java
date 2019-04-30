@@ -60,6 +60,7 @@ public class EventNotifyServiceImpl implements EventNotifyService {
      *
      * @param chargeDto
      */
+    @Override
     public void handleChargeSuccessEvent(ChargeDto chargeDto) {
 
         EventSubscription subscription = checkTriggerEvent(chargeDto.getAppId(), chargeDto.getChargeNo(),
@@ -99,7 +100,8 @@ public class EventNotifyServiceImpl implements EventNotifyService {
     @Override
     public PageInfo<EventNotifyDto> getRecord(Integer appId, Integer startPage, Integer pageSize) {
         PageHelper.startPage(startPage, pageSize);
-        List<EventNotify> notifyList = eventNotifyDao.getByAppId(appId);
+        Integer maxAppId = appId / 100000 * 100000 + 99999;
+        List<EventNotify> notifyList = eventNotifyDao.listByAppTree(appId, maxAppId);
         PageInfo pageInfo = PageInfo.of(notifyList);
         pageInfo.setList(BeanConverter.batchCovert(notifyList, EventNotifyDto.class));
         return pageInfo;

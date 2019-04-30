@@ -55,6 +55,10 @@
         <appender-ref ref="ASYNC_HTTP_LOG_APPENDER"/>
     </logger>
 
+    <!--<logger name="com.gloryjie.pay" level="debug" additivity="false">-->
+        <!--<appender-ref ref="CONSOLE_APPENDER"/>-->
+    <!--</logger>-->
+
     <!--基本日志为控制台以及文件输出-->
     <root level="${LOG_LEVEL:-info}">
         <appender-ref ref="CONSOLE_APPENDER"/>

@@ -32,5 +32,7 @@ public class OauthResourceConfig extends ResourceServerConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/feign-api/**").permitAll()
                 .antMatchers("/web/**").authenticated();
+//                        .antMatchers("/web/**").permitAll();
+
     }
 }

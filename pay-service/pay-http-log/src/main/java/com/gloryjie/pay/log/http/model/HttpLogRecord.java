@@ -14,7 +14,7 @@ public class HttpLogRecord {
 
     private String type;
 
-    private String appId;
+    private Integer appId;
 
     private String platform;
 

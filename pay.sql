@@ -156,7 +156,7 @@ DROP TABLE IF EXISTS `t_http_log`;
 CREATE TABLE `t_http_log` (
   `id` int not null auto_increment,
   `type` varchar(32) not null comment 'http日志类型',
-  `app_id` varchar(16) comment '应用标识',
+  `app_id` int comment '应用标识',
   `platform` varchar(16) comment '支付平台',
   `live_mode` tinyint(2) comment '是否是生产模式',
   `req_timestamp` bigint comment '请求时间戳',

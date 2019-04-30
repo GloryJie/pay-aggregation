@@ -35,7 +35,7 @@ public interface ChargeDao {
     int update(Charge record);
 
     /**
-     * 根据APPID查找支付单
+     * 根据指定的APPID查找支付单
      * @param queryParam 查询参数
      * @return
      */

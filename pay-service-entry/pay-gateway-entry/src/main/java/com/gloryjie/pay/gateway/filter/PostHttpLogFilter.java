@@ -79,7 +79,7 @@ public class PostHttpLogFilter extends ZuulFilter {
         List<Pair<String, String>> headerList = context.getOriginResponseHeaders();
         for (Pair<String, String> pair : headerList) {
             if ("appId".equals(pair.first())) {
-                logDocument.setAppId(pair.second());
+                logDocument.setAppId(Integer.valueOf(pair.second()));
                 continue;
             }
             if (!pair.first().contains("Zuul")) {
@@ -99,7 +99,7 @@ public class PostHttpLogFilter extends ZuulFilter {
             logDocument.setRespBody(respBody);
 
             if (path.contains(SignCheckFilter.API_FLAG)) {
-                logDocument.setAppId(context.getZuulRequestHeaders().get(SignCheckFilter.APP_ID_HEADER));
+                logDocument.setAppId(Integer.valueOf(context.getZuulRequestHeaders().get(SignCheckFilter.APP_ID_HEADER)));
                 logDocument.setReqBody(String.valueOf(context.get(SignCheckFilter.ORIGINAL_REQ_BODY)));
                 logDocument.setType(HttpLogType.API_REQUEST.name().toLowerCase());
                 HTTP_LOG.info(logDocument.getType(), logDocument);

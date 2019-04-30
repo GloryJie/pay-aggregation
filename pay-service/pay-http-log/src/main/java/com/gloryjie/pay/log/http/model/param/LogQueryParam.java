@@ -9,7 +9,7 @@ import lombok.Data;
 @Data
 public class LogQueryParam {
 
-    private String appId;
+    private Integer appId;
 
     private String type;
 
@@ -22,5 +22,7 @@ public class LogQueryParam {
     private Long startTime;
 
     private Long endTime;
+
+    private Integer maxAppId;
 
 }

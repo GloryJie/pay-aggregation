@@ -36,6 +36,9 @@ public class ErrorHandlerFilter implements Filter {
     }
 
     private void handle(Response customResponse, HttpServletResponse servletResponse) throws IOException {
+        if (servletResponse.isCommitted()){
+            return;
+        }
         servletResponse.setStatus(Integer.valueOf(customResponse.getStatus().substring(0,3)));
         servletResponse.setContentType(DefaultConstant.CONTENT_TYPE);
         servletResponse.getWriter().write(JsonUtil.toJson(customResponse));

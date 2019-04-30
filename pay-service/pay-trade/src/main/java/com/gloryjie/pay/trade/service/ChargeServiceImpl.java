@@ -136,7 +136,7 @@ public class ChargeServiceImpl implements ChargeService {
             return BeanConverter.batchCovert(refundList, RefundDto.class);
         }
         Refund refund = refundDao.getByAppIdAndRefundNo(appId, refundNo);
-        if (refund == null){
+        if (refund == null) {
             return new ArrayList<>();
         }
         return Collections.singletonList(BeanConverter.covert(refund, RefundDto.class));
@@ -195,6 +195,8 @@ public class ChargeServiceImpl implements ChargeService {
     @Override
     public PageInfo<ChargeDto> queryPaymentList(ChargeQueryParam queryParam) {
         PageHelper.startPage(queryParam.getStartPage(), queryParam.getPageSize());
+        // 未指定应用则为范围查找整棵树的交易
+        queryParam.setMaxAppId(queryParam.getAppId() / 100000 * 100000 + 99999);
         List<Charge> chargeList = chargeDao.getByQueryParam(queryParam);
         PageInfo pageInfo = PageInfo.of(chargeList);
         pageInfo.setList(BeanConverter.batchCovertIgnore(chargeList, ChargeDto.class));
@@ -204,6 +206,8 @@ public class ChargeServiceImpl implements ChargeService {
     @Override
     public PageInfo<RefundDto> queryRefundList(RefundQueryParam queryParam) {
         PageHelper.startPage(queryParam.getStartPage(), queryParam.getPageSize());
+        // 未指定应用则为范围查找整棵树的交易
+        queryParam.setMaxAppId(queryParam.getAppId() / 100000 * 100000 + 99999);
         List<Refund> refundList = refundDao.getByQueryParam(queryParam);
         PageInfo pageInfo = PageInfo.of(refundList);
         pageInfo.setList(BeanConverter.batchCovertIgnore(refundList, RefundDto.class));

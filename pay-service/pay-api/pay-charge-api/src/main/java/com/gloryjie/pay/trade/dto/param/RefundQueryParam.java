@@ -47,4 +47,9 @@ public class RefundQueryParam {
     private LocalDateTime endDate;
 
     private RefundStatus status;
+
+
+    private Integer maxAppId;
+
+    private Integer subAppId;
 }

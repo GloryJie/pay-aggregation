@@ -43,7 +43,7 @@ public class HTTPLogWebController {
     private HttpLogService httpLogService;
 
     @GetMapping("/{appId}/log/notification")
-    public Response<PageInfo<HttpLogRecord>> getPlatformNotifyLog(@PathVariable("appId") String appId,
+    public Response<PageInfo<HttpLogRecord>> getPlatformNotifyLog(@PathVariable("appId") Integer appId,
                                                                   @RequestParam(value = "startPage", required = false, defaultValue = "1") int startPage,
                                                                   @RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize) {
         LogQueryParam param = new LogQueryParam();
@@ -55,7 +55,7 @@ public class HTTPLogWebController {
     }
 
     @RequestMapping("/{appId}/log/req")
-    public Response<PageInfo<HttpLogRecord>> getApiReqLog(@PathVariable("appId") String appId,
+    public Response<PageInfo<HttpLogRecord>> getApiReqLog(@PathVariable("appId") Integer appId,
                                               @RequestParam(value = "startPage", required = false, defaultValue = "1") int startPage,
                                               @RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize) {
 

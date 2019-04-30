@@ -28,6 +28,7 @@ public class MysqlHttpLogServiceImpl implements HttpLogService {
     public PageInfo<HttpLogRecord> find(LogQueryParam param) {
         param.setOffset((param.getStartPage() - 1) * param.getPageSize());
         long total = recordDao.countByParam(param);
+        param.setMaxAppId(param.getAppId() / 100000 * 100000 + 99999);
         List<HttpLogRecord> recordList = recordDao.listByParam(param);
 
         PageInfo<HttpLogRecord> pageInfo = new PageInfo<>();

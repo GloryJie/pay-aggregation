@@ -47,4 +47,8 @@ public class ChargeQueryParam {
     private LocalDateTime endDate;
 
     private ChargeStatus status;
+
+    private Integer maxAppId;
+
+    private Integer subAppId;
 }

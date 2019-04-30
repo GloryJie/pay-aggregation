@@ -50,7 +50,8 @@
         from
         <include refid="table"/>
         where
-        app_id = #{appId} AND type = #{type}
+        ( app_id between #{appId} and #{maxAppId} )
+        AND type = #{type}
         <if test="startTime != null and endTime != null">AND (req_timestamp BETWEEN #{startTime} AND #{endTime})</if>
         limit #{pageSize} offset #{offset}
     </select>

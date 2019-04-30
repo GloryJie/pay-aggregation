@@ -33,7 +33,7 @@ public class HttpLogServiceTest {
     @Test
     public void aInsertTest() {
         HttpLogRecord record = new HttpLogRecord();
-        record.setAppId("123456");
+        record.setAppId(123456);
         record.setPlatform("支付吧");
         record.setReqBody("{}");
         record.setType(HttpLogType.PLATFORM_NOTIFY_REQUEST.name().toLowerCase());
@@ -46,7 +46,7 @@ public class HttpLogServiceTest {
     @Test
     public void bQueryTest(){
         LogQueryParam queryParam = new LogQueryParam();
-        queryParam.setAppId("123456");
+        queryParam.setAppId(123456);
         queryParam.setType(HttpLogType.PLATFORM_NOTIFY_REQUEST.name().toLowerCase());
         queryParam.setStartPage(1);
         queryParam.setPageSize(10);
