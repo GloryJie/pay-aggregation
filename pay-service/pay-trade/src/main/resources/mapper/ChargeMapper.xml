@@ -88,6 +88,45 @@
         order by create_time desc
     </select>
 
+    <select id="countByAppTreeAndStatusAndTime" resultType="com.gloryjie.pay.trade.dto.StatCountDto">
+        select
+               COUNT(*) AS countNum, SUM(amount) AS totalAmount
+        from
+              <include refid="table"/>
+        where
+                (app_id between #{appId} and #{maxAppId})
+        AND status = #{status}
+        AND (time_created between #{minTime} and #{maxTime})
+    </select>
+
+    <select id="countAppOneDayTrade" resultType="com.gloryjie.pay.trade.dto.StatCountDto">
+        select
+            COUNT(*) AS countNum, SUM(amount) AS totalAmount
+        from
+            <include refid="table"/>
+        where
+            app_id = #{appId}
+        AND
+            status = #{status}
+        AND
+            Date(time_created) = #{dayTime}
+    </select>
+
+    <select id="countAppTreeChannelOneDayTrade" resultType="com.gloryjie.pay.trade.dto.StatCountDto">
+        select
+          COUNT(*) AS countNum, SUM(amount) AS totalAmount
+        from
+          <include refid="table"/>
+        where
+          (app_id between #{appId} and #{maxAppId})
+        AND
+          status = #{status}
+        AND
+          channel = #{channel}
+        AND
+          Date(time_created) = #{dayTime}
+    </select>
+
     <insert id="insert" parameterType="com.gloryjie.pay.trade.model.Charge">
         insert into
         <include refid="table"/>

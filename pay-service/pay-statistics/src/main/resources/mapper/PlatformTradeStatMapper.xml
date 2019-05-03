@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.gloryjie.pay.statistics.dao.PlatformTradeStatDao">
+
+    <resultMap id="BaseResultMap" type="com.gloryjie.pay.statistics.model.PlatformTradeStat">
+        <id column="id" property="id"/>
+        <result column="app_id" property="appId"/>
+        <result column="process_count" property="processCount"/>
+        <result column="process_amount" property="processAmount"/>
+        <result column="success_count" property="successCount"/>
+        <result column="success_amount" property="successAmount"/>
+        <result column="close_count" property="closeCount"/>
+        <result column="close_amount" property="closeAmount"/>
+        <result column="fail_count" property="failCount"/>
+        <result column="fail_amount" property="failAmount"/>
+        <result column="statistics_day" property="statisticsDay"/>
+        <result column="stat_date_time" property="statDateTime"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <sql id="table">
+        t_stat_platform_trade
+    </sql>
+
+    <sql id="Base_Column_List">
+        id, app_id, process_count, process_amount, success_count, success_amount, close_count,
+        close_amount, fail_count, fail_amount, statistics_day, stat_date_time,
+        create_time, update_time
+    </sql>
+
+    <insert id="insert" parameterType="com.gloryjie.pay.statistics.model.PlatformTradeStat" useGeneratedKeys="true"
+            keyProperty="id">
+        insert into
+        <include refid="table"/>
+        (<include refid="Base_Column_List"/>)
+        values (#{id}, #{appId}, #{processCount}, #{processAmount}, #{successCount}, #{successAmount},
+        #{closeCount}, #{closeAmount}, #{failCount}, #{failAmount}, #{statisticsDay}, #{statDateTime},
+        now(), now() )
+    </insert>
+
+    <insert id="insertBatch" parameterType="com.gloryjie.pay.statistics.model.PlatformTradeStat" useGeneratedKeys="true"
+            keyProperty="id">
+        insert into
+        <include refid="table"/>
+        (
+          <include refid="Base_Column_List"/>
+        )
+        values
+        <foreach collection="statList" item="statRecord" open="(" separator="," close=")">
+            #{statRecord.id}, #{statRecord.appId}, #{statRecord.processCount}, #{statRecord.processAmount},
+            #{statRecord.successCount}, #{statRecord.successAmount}, #{statRecord.closeCount}, #{statRecord.closeAmount},
+            #{statRecord.failCount}, #{statRecord.failAmount}, #{statRecord.statisticsDay}, #{statRecord.statDateTime},
+            now(), now()
+        </foreach>
+
+    </insert>
+
+    <update id="update" parameterType="com.gloryjie.pay.statistics.model.PlatformTradeStat">
+        update
+        <include refid="table"/>
+        <set>
+            <if test="processCount != null">process_count = #{processCount},</if>
+            <if test="processAmount != null">process_amount = #{processAmount},</if>
+            <if test="successCount != null">success_count = #{successCount},</if>
+            <if test="successAmount != null">success_amount = #{successAmount},</if>
+            <if test="closeCount != null">close_count = #{closeCount},</if>
+            <if test="closeAmount != null">close_amount = #{closeAmount},</if>
+            <if test="failCount != null">fail_count = #{failCount},</if>
+            <if test="failAmount != null">fail_amount = #{failAmount},</if>
+            <if test="statDateTime != null">stat_date_time = #{statDateTime},</if>
+            update_time = now()
+        </set>
+        where app_id = #{appId} and statistics_day = #{statisticsDay}
+    </update>
+
+    <select id="getByAppIdAndStatDay" resultMap="BaseResultMap">
+        select
+          <include refid="Base_Column_List"/>
+        from
+          <include refid="table"/>
+        where
+          app_id = #{appId}
+        and
+          statistics_day = #{statDay}
+    </select>
+
+    <select id="listByAppId" resultMap="BaseResultMap">
+        select
+          <include refid="Base_Column_List"/>
+        from
+          <include refid="table"/>
+        where
+          app_id = #{appId}
+        AND
+          statistics_day &lt; CurDate()
+        order by
+          statistics_day desc
+        limit
+          #{limit}
+    </select>
+
+</mapper>

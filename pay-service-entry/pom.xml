@@ -27,6 +27,7 @@
         <pay-notification.version>0.0.1-SNAPSHOT</pay-notification.version>
         <pay-channel.version>0.0.1-SNAPSHOT</pay-channel.version>
         <pay-user.version>0.0.1-SNAPSHOT</pay-user.version>
+        <pay-statistics.version>0.0.1-SNAPSHOT</pay-statistics.version>
     </properties>
 
     <dependencyManagement>
@@ -60,6 +61,11 @@
                 <groupId>com.gloryjie</groupId>
                 <artifactId>pay-user</artifactId>
                 <version>${pay-user.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.gloryjie</groupId>
+                <artifactId>pay-statistics</artifactId>
+                <version>${pay-statistics.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

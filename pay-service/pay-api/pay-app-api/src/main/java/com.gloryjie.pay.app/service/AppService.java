@@ -67,4 +67,12 @@ public interface AppService {
      * @return
      */
     List<AppDto> getAppTreeAllNode(Integer rootAppId);
+
+    /**
+     * 获取所有的子应用id
+     * @return
+     */
+    List<Integer> listSubAppId();
+
+    List<Integer> listMasterAppId();
 }

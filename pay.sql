@@ -277,3 +277,60 @@ CREATE TABLE `t_auth_user_role_relation` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `user_role_relation` (`user_no`,`role_code`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- 每天统计平台的交易
+-- Table structure for t_stat_trade
+-- ----------------------------
+DROP TABLE IF EXISTS `t_stat_platform_trade`;
+CREATE TABLE `t_stat_platform_trade`  (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'ID编码',
+  `app_id` int(11) NOT NULL COMMENT '应用ID',
+  `process_count` bigint NOT NULL COMMENT '待支付笔数',
+  `process_amount` bigint NOT NULL COMMENT '待支付金额',
+  `success_count` bigint NOT NULL COMMENT '支付成功笔数',
+  `success_amount` bigint NOT NULL COMMENT '支付成功金额',
+  `close_count` bigint NOT NULL COMMENT '关闭笔数',
+  `close_amount` bigint NOT NULL COMMENT '关闭金额',
+  `fail_count` bigint NOT NULL COMMENT '支付失败笔数',
+  `fail_amount` bigint NOT NULL COMMENT '支付失败金额',
+  `statistics_day` date NOT NULL COMMENT '统计日',
+  `stat_date_time` datetime(0) NOT NULL COMMENT '统计时间',
+  `last_stat_date_time` datetime(0) NOT NULL COMMENT '统计时间',
+  `create_time` datetime NOT NULL,
+  `update_time` datetime NOT NULL,
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
+
+
+-- ----------------------------
+-- Table structure for t_stats_app
+-- ----------------------------
+DROP TABLE IF EXISTS `t_stat_app_trade`;
+CREATE TABLE `t_stat_app_trade`  (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'ID编码',
+  `app_id` int(11) NOT NULL COMMENT '应用ID',
+  `success_count` bigint NOT NULL COMMENT '支付成功笔数',
+  `success_amount` bigint NOT NULL COMMENT '支付成功金额',
+  `stat_day` date NOT NULL COMMENT '统计日',
+  `create_time` datetime NOT NULL,
+  `update_time` datetime NOT NULL,
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
+
+-- ----------------------------
+-- Table structure for t_stats_channel
+-- ----------------------------
+DROP TABLE IF EXISTS `t_stat_channel`;
+CREATE TABLE `t_stat_channel`  (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'ID编码',
+  `app_id` int(11) NOT NULL COMMENT '根应用ID',
+  `channel_type` varchar(32) NOT NULL comment '支付渠道',
+  `platform_type` varchar(32) NOT NULL comment '交易平台',
+  `success_count` bigint NOT NULL COMMENT '支付成功笔数',
+  `success_amount` bigint NOT NULL COMMENT '支付成功金额',
+  `stat_day` date NOT NULL COMMENT '统计日',
+  `create_time` datetime NOT NULL,
+  `update_time` datetime NOT NULL,
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;

@@ -135,6 +135,16 @@ public class AppServiceImpl implements AppService {
         return BeanConverter.batchCovertIgnore(appList, AppDto.class);
     }
 
+    @Override
+    public List<Integer> listSubAppId() {
+        return appDao.listAllAppIdByType(AppType.SUBORDINATE);
+    }
+
+    @Override
+    public List<Integer> listMasterAppId() {
+        return appDao.listAllAppIdByType(AppType.MASTER);
+    }
+
     /**
      * 产生平台app的应用id
      *

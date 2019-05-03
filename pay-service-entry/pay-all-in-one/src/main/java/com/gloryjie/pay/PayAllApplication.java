@@ -5,6 +5,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
  * @author jie
@@ -14,6 +15,7 @@ import org.springframework.context.annotation.ComponentScan;
 @ComponentScan("com.gloryjie.pay.*")
 @MapperScan(basePackages = "com.gloryjie.pay.*.dao")
 @ServletComponentScan("com.gloryjie.pay")
+@EnableScheduling
 public class PayAllApplication {
 
     public static void main(String[] args) {

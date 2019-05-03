@@ -19,6 +19,7 @@
         <module>pay-notification</module>
         <module>pay-user</module>
         <module>pay-http-log</module>
+        <module>pay-statistics</module>
     </modules>
 
 

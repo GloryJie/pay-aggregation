@@ -36,6 +36,10 @@
             <groupId>com.gloryjie</groupId>
             <artifactId>pay-user</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.gloryjie</groupId>
+            <artifactId>pay-statistics</artifactId>
+        </dependency>
 
         <!--外部依赖-->
         <dependency>

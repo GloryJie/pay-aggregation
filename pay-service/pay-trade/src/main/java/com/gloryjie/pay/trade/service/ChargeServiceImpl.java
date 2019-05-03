@@ -26,10 +26,7 @@ import com.gloryjie.pay.trade.biz.ChargeBiz;
 import com.gloryjie.pay.trade.biz.RefundBiz;
 import com.gloryjie.pay.trade.dao.ChargeDao;
 import com.gloryjie.pay.trade.dao.RefundDao;
-import com.gloryjie.pay.trade.dto.ChargeDto;
-import com.gloryjie.pay.trade.dto.RefreshChargeDto;
-import com.gloryjie.pay.trade.dto.RefreshRefundDto;
-import com.gloryjie.pay.trade.dto.RefundDto;
+import com.gloryjie.pay.trade.dto.*;
 import com.gloryjie.pay.trade.dto.param.ChargeQueryParam;
 import com.gloryjie.pay.trade.dto.param.RefundParam;
 import com.gloryjie.pay.trade.dto.param.RefundQueryParam;
@@ -45,10 +42,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.*;
 
 /**
  * @author Jie
@@ -212,6 +208,49 @@ public class ChargeServiceImpl implements ChargeService {
         PageInfo pageInfo = PageInfo.of(refundList);
         pageInfo.setList(BeanConverter.batchCovertIgnore(refundList, RefundDto.class));
         return pageInfo;
+    }
+
+    @Override
+    public Map<ChargeStatus, StatCountDto> countPlatformTrade(Integer appId, LocalDateTime minTime, LocalDateTime maxTime) {
+        Map<ChargeStatus, StatCountDto> result = new HashMap<>(6);
+        Integer maxAppId = (appId / 100000 * 100000) + 99999;
+        List<ChargeStatus> statuslList = Arrays.asList(ChargeStatus.SUCCESS, ChargeStatus.WAIT_PAY, ChargeStatus.CLOSED);
+        for (ChargeStatus status : statuslList) {
+            StatCountDto countDto = chargeDao.countByAppTreeAndStatusAndTime(appId, maxAppId, status, minTime, maxTime);
+            countDto.setStatus(status);
+            result.put(status, countDto);
+        }
+        return result;
+    }
+
+    @Override
+    public StatCountDto countSubAppTradeInDay(Integer appId, ChargeStatus status, LocalDate date) {
+        StatCountDto dto = chargeDao.countAppOneDayTrade(appId, status, date);
+        if (dto.getCountNum() == null) {
+            dto.setCountNum(0L);
+        }
+        if (dto.getTotalAmount() == null) {
+            dto.setTotalAmount(0L);
+        }
+        return dto;
+    }
+
+    @Override
+    public Map<ChannelType, StatCountDto> countAllChannelTradeInDay(Integer appId, ChargeStatus status, LocalDate date) {
+        Map<ChannelType, StatCountDto> resultMap = new HashMap<>(18);
+        Integer maxAppId = (appId / 100000 * 100000) + 99999;
+        for (ChannelType channelType : ChannelType.values()) {
+            StatCountDto dto = chargeDao.countAppTreeChannelOneDayTrade(appId, maxAppId, status, channelType, date);
+            if (dto.getCountNum() == null) {
+                dto.setCountNum(0L);
+            }
+            if (dto.getTotalAmount() == null) {
+                dto.setTotalAmount(0L);
+            }
+            resultMap.put(channelType, dto);
+        }
+
+        return resultMap;
     }
 
 

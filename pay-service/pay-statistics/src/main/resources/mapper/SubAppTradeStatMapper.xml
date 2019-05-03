@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gloryjie.pay.statistics.dao.SubAppTradeStatDao">
+
+    <resultMap id="BaseResultMap" type="com.gloryjie.pay.statistics.model.SubAppTradeStat">
+        <id column="id" property="id"/>
+        <result column="app_id" property="appId"/>
+        <result column="success_count" property="successCount"/>
+        <result column="success_amount" property="successAmount"/>
+        <result column="stat_day" property="statDay"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, app_id, success_count, success_amount, stat_day, create_time, update_time
+    </sql>
+
+    <sql id="table">
+        t_stat_app_trade
+    </sql>
+
+    <insert id="insert" parameterType="com.gloryjie.pay.statistics.model.SubAppTradeStat" useGeneratedKeys="true"
+            keyProperty="id">
+        insert into
+        <include refid="table"/>
+        (
+        <include refid="Base_Column_List"/>
+        )
+        values (#{id}, #{appId}, #{successCount}, #{successAmount}, #{statDay}, now(), now())
+    </insert>
+
+    <update id="update" parameterType="com.gloryjie.pay.statistics.model.SubAppTradeStat">
+        update
+        <include refid="table"/>
+        <set>
+            <if test="successCount != null">success_count = #{successCount},</if>
+            <if test="successAmount != null">success_amount = #{successAmount},</if>
+            <if test="statDay != null">stat_day = #{statDay},</if>
+            update_time = now()
+        </set>
+        where app_id = #{appId}
+    </update>
+
+    <select id="getByAppId" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from
+        <include refid="table"/>
+        where
+        app_id = #{appId}
+    </select>
+
+    <select id="listByAppTreeAndTime" resultMap="BaseResultMap">
+        select
+          <include refid="Base_Column_List"/>
+        from
+          <include refid="table"/>
+        where
+          (app_id between #{appId} and #{maxAppId})
+        order by
+          success_amount desc
+        limit
+          #{limit}
+    </select>
+</mapper>

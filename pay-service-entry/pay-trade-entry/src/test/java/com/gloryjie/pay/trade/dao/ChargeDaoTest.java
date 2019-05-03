@@ -27,8 +27,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.IntStream;
 
 /**
  * @author Jie
@@ -61,33 +64,65 @@ public class ChargeDaoTest {
 
     @Test
     public void aInsertTest() {
-        Charge charge = new Charge();
-        charge.setChargeNo(chargeNo);
-        charge.setOrderNo(orderNo);
-        charge.setAppId(123456);
-        charge.setServiceAppId(123456);
-        charge.setPlatformTradeNo("123456789");
-        charge.setAmount(1L);
-        charge.setSubject("测试");
-        charge.setBody("测试");
-        charge.setChannel(ChannelType.ALIPAY_PAGE);
-        charge.setClientIp("127.0.0.1");
-        charge.setDescription("测试");
-        charge.setTimeCreated(LocalDateTime.now());
-        charge.setTimePaid(LocalDateTime.now());
-        charge.setTimeExpire(15L);
-        charge.setLiveMode(false);
-        charge.setStatus(ChargeStatus.SUCCESS);
-        charge.setCurrency("cny");
-        charge.setVersion(0);
-        charge.setCredential("测试凭证");
+        List<Integer> appList = Arrays.asList(10120001, 10120002, 10130001);
+        IntStream.range(0, 1000).forEach(i -> {
+            Charge charge = new Charge();
+            charge.setChargeNo(IdFactory.generateStringId());
+            charge.setOrderNo(String.valueOf(System.currentTimeMillis()));
+            charge.setAppId(appList.get(i % appList.size()));
+            charge.setServiceAppId(10110000);
+            charge.setPlatformTradeNo("123456789");
+            charge.setAmount((long) (Math.random() * 1000));
+            charge.setSubject("测试");
+            charge.setBody("测试");
+            ChannelType[] typeArray = ChannelType.values();
+            charge.setChannel(typeArray[i%typeArray.length]);
+            charge.setClientIp("127.0.0.1");
+            charge.setDescription("测试");
+            charge.setTimeCreated(LocalDateTime.now().minusMinutes((long) (Math.random() * 10)));
+            charge.setTimePaid(LocalDateTime.now());
+            charge.setTimeExpire(15L);
+            charge.setLiveMode(false);
+            ChargeStatus[] statusArray = ChargeStatus.values();
+            charge.setStatus(statusArray[i % statusArray.length]);
+            charge.setCurrency("cny");
+            charge.setVersion(0);
+            charge.setCredential("测试凭证");
 
-        Map<String,String> extra = new HashMap<>(1);
-        extra.put("redirectUrl","http://www.baidu.com");
+            Map<String, String> extra = new HashMap<>(1);
+            extra.put("redirectUrl", "http://www.baidu.com");
 
-        charge.setExtra(extra);
+            charge.setExtra(extra);
 
-        Assert.assertEquals(1, chargeDao.insert(charge));
+            Assert.assertEquals(1, chargeDao.insert(charge));
+        });
+//        Charge charge = new Charge();
+//        charge.setChargeNo(chargeNo);
+//        charge.setOrderNo(orderNo);
+//        charge.setAppId(123456);
+//        charge.setServiceAppId(123456);
+//        charge.setPlatformTradeNo("123456789");
+//        charge.setAmount(1L);
+//        charge.setSubject("测试");
+//        charge.setBody("测试");
+//        charge.setChannel(ChannelType.ALIPAY_PAGE);
+//        charge.setClientIp("127.0.0.1");
+//        charge.setDescription("测试");
+//        charge.setTimeCreated(LocalDateTime.now());
+//        charge.setTimePaid(LocalDateTime.now());
+//        charge.setTimeExpire(15L);
+//        charge.setLiveMode(false);
+//        charge.setStatus(ChargeStatus.SUCCESS);
+//        charge.setCurrency("cny");
+//        charge.setVersion(0);
+//        charge.setCredential("测试凭证");
+//
+//        Map<String, String> extra = new HashMap<>(1);
+//        extra.put("redirectUrl", "http://www.baidu.com");
+//
+//        charge.setExtra(extra);
+//
+//        Assert.assertEquals(1, chargeDao.insert(charge));
 
     }
 

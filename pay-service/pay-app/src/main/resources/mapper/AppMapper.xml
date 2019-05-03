@@ -94,6 +94,15 @@
         where app_id between #{minAppId} and #{maxAppId}
     </select>
 
+    <select id="listAllAppIdByType" resultType="java.lang.Integer">
+        select
+          app_id
+        from
+          <include refid="table"/>
+        where
+          type = #{appType}
+    </select>
+
     <insert id="insert" parameterType="com.gloryjie.pay.app.model.App">
         insert into
         <include refid="table"/>

@@ -1,6 +1,7 @@
 package com.gloryjie.pay.app.dao;
 
 
+import com.gloryjie.pay.app.enums.AppType;
 import com.gloryjie.pay.app.model.App;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -40,4 +41,11 @@ public interface AppDao {
      * @return
      */
     List<App> getAppTree(@Param("minAppId") Integer minAppId, @Param("maxAppId") Integer maxAppId);
+
+    /**
+     * 获取所有的指定类型的appId
+     * @return
+     */
+    List<Integer> listAllAppIdByType(AppType appType);
+
 }
